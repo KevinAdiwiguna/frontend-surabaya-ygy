@@ -22,7 +22,7 @@ export const SidebarComp = () => {
   console.log(auth)
 
   const logout = async () => {
-    await axios.delete("http://localhost:3001/logout");
+    await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/logout`);
     navigate("/login");
   };
   

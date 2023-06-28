@@ -8,7 +8,7 @@ export const useAuth = () => {
 
   const authUser = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/me");
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/me`);
       setAuth(response.data.user);
     } catch (error) {
       console.log(error);

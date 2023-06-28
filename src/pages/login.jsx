@@ -10,7 +10,7 @@ export const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            await axios.post("http://localhost:3001/login", {
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/login`, {
                 username: username,
                 password: password
             });
@@ -22,7 +22,7 @@ export const Login = () => {
 
     const loginCHeck = async () => {
         try {
-            console.log(await axios.get('http://localhost:3001/me'))
+            console.log(await axios.get(`${process.env.REACT_APP_API_BASE_URL}/me`))
             navigate('/')
         } catch (error) {
             navigate('/login')
