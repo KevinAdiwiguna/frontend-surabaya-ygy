@@ -27,7 +27,7 @@ export const SidebarComp = () => {
   };
   
   return (
-    <div className={`${open ? "w-20" : "w-80"}`}>
+    <div className={`${open ? "w-16" : "w-80"}`}>
     <Sidebar
       aria-label="Sidebar with multi-level dropdown example"
       className={`h-screen fixed ${open ? "left-[-200px]" : ""}`}
