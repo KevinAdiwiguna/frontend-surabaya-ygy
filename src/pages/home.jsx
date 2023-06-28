@@ -1,7 +1,7 @@
 import React from 'react'
-import { Template1, templte2, templte23, templte4 } from '../components/templte'
 import { SidebarComp } from '../components/sidebar'
 import { useNavigate, useParams } from 'react-router-dom'
+import { PurchaseReq } from './menu/PurchaseReq'
 
 export const Home = () => {
     const params = useParams().id
@@ -11,9 +11,12 @@ export const Home = () => {
         switch (params) {
             case 'Good Issue':
                 return (
-                    <Template1 />
+                    <></>
                 )
-
+            case 'Purchase Request':
+                return (
+                    <PurchaseReq/>
+                )
             default:
                 navigate('/404');
         }
@@ -26,7 +29,9 @@ export const Home = () => {
 
                 <div className='flex'>
                     <div className='w-64'><SidebarComp /></div>
-                    {paramsHandler()}
+                    <div className='p-6'>
+                        {paramsHandler()}
+                    </div>
                 </div>
             </div>
         </>

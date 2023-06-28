@@ -2,14 +2,13 @@ import React from 'react'
 
 export const Template1 = () => {
   return (
-  
-        <div>test</div>
+        <div>testtt</div>
   )
 }
 
-export const templte2 = () => {
+export const Template2 = () => {
   return (
-    <div>templte2</div>
+    <div>test</div>
   )
 }
 export const templte23 = () => {
