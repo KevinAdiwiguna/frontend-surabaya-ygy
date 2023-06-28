@@ -6,7 +6,7 @@ import { useAuth } from "../hooks/API/useAuth";
 
 
 export const Routing = () => {
-  const { auth, authUser } = useAuth()
+  const { authUser } = useAuth()
 
   useEffect(() => {
     authUser()
@@ -14,8 +14,8 @@ export const Routing = () => {
 
   return (
     <Routes>
-      <Route path="/login" element={<Login me={auth} />} />
-      <Route path="/:id" element={<Home me={auth} />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/:id" element={<Home />} />
       <Route path="/" element={<Home />} />
     </Routes>
   );

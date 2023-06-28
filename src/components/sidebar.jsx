@@ -8,10 +8,17 @@ import {
 } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../hooks/API/useAuth";
+import { useEffect } from "react";
 
-export const SidebarComp = ({ me }) => {
+export const SidebarComp = () => {
+  const { auth, authUser } = useAuth()
   const navigate = useNavigate();
 
+  useEffect(() => {
+    authUser()
+  }, [])
+  console.log(auth)
 
   const logout = async () => {
     await axios.delete("http://localhost:3001/logout");
@@ -66,7 +73,7 @@ export const SidebarComp = ({ me }) => {
           </Sidebar.Collapse>
           <Sidebar.Collapse
             icon={HiUser}
-            label={`${me?.username} (${me?.role})`}
+            label={`${auth?.username} (${auth?.role})`}
           >
             <Sidebar.Item
               href="/Change Password">

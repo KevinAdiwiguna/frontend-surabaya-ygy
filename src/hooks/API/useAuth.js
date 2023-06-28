@@ -12,7 +12,8 @@ export const useAuth = () => {
       setAuth(response.data.user);
     } catch (error) {
       console.log(error);
-      navigate("/login");
+      const errorMessage = error.response?.data?.message || "Failed to authenticate.";
+      navigate("/login", { state: { error: errorMessage } });
     }
   };
   return {
