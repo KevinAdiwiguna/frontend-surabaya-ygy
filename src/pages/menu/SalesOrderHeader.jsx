@@ -1,12 +1,12 @@
 import React from 'react'
 
 
-export const SalesOrder = () => {
+export const SalesOrderHeader = () => {
   return (
     <div>
-      <div className='text-2xl font-bold mb-4'>Sales Order</div>
+      <div className='text-2xl font-bold mb-4'>Sales Order Header</div>
 
-      <div className=''>
+      <div className='w-full'>
         <div className='flex justify-start items-center'>
           <table className='border-separate border-spacing-2 '>
             <tr>

@@ -1,5 +1,5 @@
 import { Sidebar } from "flowbite-react";
-import { HiShoppingBag, HiUser } from "react-icons/hi";
+import { HiShoppingBag, HiUser, HiMenuAlt3, HiMenu} from "react-icons/hi";
 import {
   BiPackage,
   BiSolidBackpack,
@@ -9,11 +9,12 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../hooks/API/useAuth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const SidebarComp = () => {
   const { auth, authUser } = useAuth()
   const navigate = useNavigate();
+  const [ open, setOpen ] = useState()
 
   useEffect(() => {
     authUser()
@@ -24,21 +25,33 @@ export const SidebarComp = () => {
     await axios.delete("http://localhost:3001/logout");
     navigate("/login");
   };
-
+  
   return (
+    <div className={`${open ? "w-20" : "w-80"}`}>
     <Sidebar
       aria-label="Sidebar with multi-level dropdown example"
-      className=" h-screen fixed"
+      className={`h-screen fixed ${open ? "left-[-200px]" : ""}`}
     >
-      <Sidebar.Items className="">
-        <Sidebar.ItemGroup>
+      <Sidebar.Items>
+          <div className="flex justify-between items-center">
+            <div className="font-bold text-xl">Logo</div>
+            <div className="cursor-pointer p-2 hover:bg-gray-100 rounded-md" onClick={() => setOpen(!open)}>
+              {open ? <HiMenu className="w-5 h-5"/> : <HiMenuAlt3 className="w-5 h-5"/>}
+            </div>
+          </div>
+        <Sidebar.ItemGroup className={`${open ? "hidden" : "block"}`}>
           <Sidebar.Item href="/">
-            <p className="font-bold text-xl">Dashboard</p>
+            <p>Dashboard</p>
           </Sidebar.Item>
           <Sidebar.Collapse icon={BiMoney} label="Transaction">
             <div className="pl-4">
               <Sidebar.Collapse icon={BiSolidNotepad} label="Sales">
-                <Sidebar.Item href="/Sales Order">Sales Order</Sidebar.Item>
+                <div className="pl-6">
+                <Sidebar.Collapse label="Sales Order">
+                  <Sidebar.Item href="/Sales Order Header">Header</Sidebar.Item>
+                  <Sidebar.Item href="/Sales Order Detail">Detail</Sidebar.Item>
+                </Sidebar.Collapse>
+                </div>
                 <Sidebar.Item href="/Good Issue">Good Issue</Sidebar.Item>
                 <Sidebar.Item href="/Sales Invoice">Sales Invoice</Sidebar.Item>
               </Sidebar.Collapse>
@@ -92,5 +105,6 @@ export const SidebarComp = () => {
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>
+    </div>
   );
 };
