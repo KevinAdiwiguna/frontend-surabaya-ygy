@@ -9,15 +9,13 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export const SidebarComp = () => {
+export const SidebarComp = ({ me }) => {
   const navigate = useNavigate();
+
+
   const logout = async () => {
     await axios.delete("http://localhost:3001/logout");
     navigate("/login");
-  };
-
-  const routeHandle = (e) => {
-    navigate("/");
   };
 
   return (
@@ -64,32 +62,25 @@ export const SidebarComp = () => {
                   Stock Transfer
                 </Sidebar.Item>
               </Sidebar.Collapse>
-              {/* <Sidebar.Collapse
-                        icon={HiUser}
-                        label="Tenvy sen"
-                    >
-                        <Sidebar.Item
-                        href="/Change Password">
-                            Change Password
-                        </Sidebar.Item>
-                        <Sidebar.Item
-                            onClick={logout}
-                            className="cursor-pointer"
-                        >
-                            <p>
-                                Logout
-                            </p>
-                        </Sidebar.Item>
-                    </Sidebar.Collapse> */}
             </div>
           </Sidebar.Collapse>
-          <Sidebar.Item
-            href="/Profile Settings"
+          <Sidebar.Collapse
             icon={HiUser}
-            className="cursor-pointer"
+            label={`${me?.username} (${me?.role})`}
           >
-            <p>Profile Settings</p>
-          </Sidebar.Item>
+            <Sidebar.Item
+              href="/Change Password">
+              Change Password
+            </Sidebar.Item>
+            <Sidebar.Item
+              onClick={logout}
+              className="cursor-pointer"
+            >
+              <p>
+                Logout
+              </p>
+            </Sidebar.Item>
+          </Sidebar.Collapse>
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>

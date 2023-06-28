@@ -8,8 +8,8 @@ export const useAuth = () => {
 
   const authUser = async () => {
     try {
-      const response = axios.get("http://localhost:3001/me");
-      setAuth(response);
+      const response = await axios.get("http://localhost:3001/me");
+      setAuth(response.data.user);
     } catch (error) {
       console.log(error);
       navigate("/login");

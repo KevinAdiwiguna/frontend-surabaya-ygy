@@ -3,7 +3,7 @@ import { SidebarComp } from '../components/sidebar'
 import { useNavigate, useParams } from 'react-router-dom'
 import { PurchaseReq } from './menu/PurchaseReq'
 
-export const Home = () => {
+export const Home = ({ me }) => {
     const params = useParams().id
     const navigate = useNavigate()
 
@@ -15,7 +15,7 @@ export const Home = () => {
                 )
             case 'Purchase Request':
                 return (
-                    <PurchaseReq/>
+                    <PurchaseReq />
                 )
             default:
                 navigate('/404');
@@ -24,16 +24,13 @@ export const Home = () => {
 
 
     return (
-        <>
-            <div>
-
-                <div className='flex'>
-                    <div className='w-64'><SidebarComp /></div>
-                    <div className='p-6'>
-                        {paramsHandler()}
-                    </div>
+        <div>
+            <div className='flex'>
+                <div className='w-64'><SidebarComp me={me} /></div>
+                <div className='p-6'>
+                    {paramsHandler()}
                 </div>
             </div>
-        </>
+        </div>
     )
 }
