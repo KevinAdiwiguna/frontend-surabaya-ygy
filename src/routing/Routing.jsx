@@ -1,4 +1,4 @@
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Login } from "../pages/login";
 import { Home } from "../pages/home";
 import { useEffect } from "react";
@@ -12,7 +12,6 @@ export const Routing = () => {
     authUser()
   }, []);
 
-  console.log(auth)
   return (
     <Routes>
       <Route path="/login" element={<Login me={auth} />} />
@@ -21,4 +20,3 @@ export const Routing = () => {
     </Routes>
   );
 };
- 
