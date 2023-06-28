@@ -1,6 +1,7 @@
 import React from 'react'
 import { SidebarComp } from '../components/sidebar'
 import { useNavigate, useParams } from 'react-router-dom'
+import { SalesOrder } from './menu/SalesOrder'
 import { PurchaseReq } from './menu/PurchaseReq'
 
 export const Home = () => {
@@ -9,9 +10,9 @@ export const Home = () => {
 
     const paramsHandler = () => {
         switch (params) {
-            case 'Good Issue':
+            case 'Sales Order':
                 return (
-                    <></>
+                    <SalesOrder></SalesOrder>
                 )
             case 'Purchase Request':
                 return (

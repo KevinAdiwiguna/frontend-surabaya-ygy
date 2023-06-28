@@ -37,10 +37,10 @@ export const SidebarComp = () => {
           </Sidebar.Item>
           <Sidebar.Collapse icon={BiMoney} label="Transaction">
             <div className="pl-4">
-              <Sidebar.Collapse icon={BiSolidNotepad} label="Sales Order">
+              <Sidebar.Collapse icon={BiSolidNotepad} label="Sales">
+                <Sidebar.Item href="/Sales Order">Sales Order</Sidebar.Item>
                 <Sidebar.Item href="/Good Issue">Good Issue</Sidebar.Item>
                 <Sidebar.Item href="/Sales Invoice">Sales Invoice</Sidebar.Item>
-                <Sidebar.Item href="/Refunds">Refunds</Sidebar.Item>
               </Sidebar.Collapse>
 
               <Sidebar.Collapse icon={HiShoppingBag} label="Purchase">
@@ -51,6 +51,7 @@ export const SidebarComp = () => {
                   Purchase Order
                 </Sidebar.Item>
                 <Sidebar.Item href="/Goods Receipt">Goods Receipt</Sidebar.Item>
+                <Sidebar.Item href="/Purchase Invoic">Purchase Invoice</Sidebar.Item>
               </Sidebar.Collapse>
 
               <Sidebar.Collapse icon={BiPackage} label="Production">
