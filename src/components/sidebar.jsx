@@ -6,7 +6,7 @@ import {
   BiSolidNotepad,
   BiMoney,
 } from "react-icons/bi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../hooks/API/useAuth";
 import { useEffect, useState } from "react";
@@ -18,8 +18,7 @@ export const SidebarComp = () => {
 
   useEffect(() => {
     authUser()
-  }, [])
-  console.log(auth)
+  },[])
 
   const logout = async () => {
     await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/logout`);
@@ -27,7 +26,7 @@ export const SidebarComp = () => {
   };
   
   return (
-    <div className={`${open ? "w-16" : "w-80"}`}>
+    <div className={`${open ? "w-16" : "w-60"}`}>
     <Sidebar
       aria-label="Sidebar with multi-level dropdown example"
       className={`h-screen fixed ${open ? "left-[-200px]" : ""}`}
@@ -43,6 +42,7 @@ export const SidebarComp = () => {
           <Sidebar.Item href="/">
             <p>Dashboard</p>
           </Sidebar.Item>
+          {/* Transaction */}
           <Sidebar.Collapse icon={BiMoney} label="Transaction">
             <div className="pl-4">
               <Sidebar.Collapse icon={BiSolidNotepad} label="Sales">
@@ -85,6 +85,43 @@ export const SidebarComp = () => {
               </Sidebar.Collapse>
             </div>
           </Sidebar.Collapse>
+          {/* End of Transaction  */}
+          {/* Master */}
+          <Sidebar.Collapse icon={BiMoney} label="Master">
+              <Sidebar.Item href="/Document Series">Document Series</Sidebar.Item>
+            <div className="pl-4">
+
+              <Sidebar.Collapse icon={HiShoppingBag} label="Purchase">
+                <Sidebar.Item href="/Purchase Request">
+                  Purchase Request
+                </Sidebar.Item>
+                <Sidebar.Item href="/Purchase Order">
+                  Purchase Order
+                </Sidebar.Item>
+                <Sidebar.Item href="/Goods Receipt">Goods Receipt</Sidebar.Item>
+                <Sidebar.Item href="/Purchase Invoic">Purchase Invoice</Sidebar.Item>
+              </Sidebar.Collapse>
+
+              <Sidebar.Collapse icon={BiPackage} label="Production">
+                <Sidebar.Item href="/Job Order">Job Order</Sidebar.Item>
+                <Sidebar.Item href="/Material Usage">
+                  Material Usage
+                </Sidebar.Item>
+                <Sidebar.Item href="/Job Result">Job Result</Sidebar.Item>
+              </Sidebar.Collapse>
+
+              <Sidebar.Collapse icon={BiSolidBackpack} label="Inventory">
+                <Sidebar.Item href="/Stock Transfer Request">
+                  Stock Transfer Request
+                </Sidebar.Item>
+                <Sidebar.Item href="/Stock Transfer">
+                  Stock Transfer
+                </Sidebar.Item>
+              </Sidebar.Collapse>
+            </div>
+          </Sidebar.Collapse>
+          {/* End of Master */}
+          {/* Account  */}
           <Sidebar.Collapse
             icon={HiUser}
             label={`${auth?.username} (${auth?.role})`}
@@ -102,6 +139,7 @@ export const SidebarComp = () => {
               </p>
             </Sidebar.Item>
           </Sidebar.Collapse>
+          {/* End of Account */}
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>

@@ -1,8 +1,12 @@
 import React from 'react'
 import { SidebarComp } from '../components/sidebar'
 import { useNavigate, useParams } from 'react-router-dom'
-import { SalesOrderHeader } from './menu/SalesOrderHeader'
-import { PurchaseReq } from './menu/PurchaseReq'
+// transaction
+import { SalesOrderHeader } from './transaction/sales/SalesOrderHeader'
+import { PurchaseReq } from './transaction/purchase/PurchaseReq'
+// master
+import { DocumentSeries } from './master/DocumentSeries'
+import { JobOrder } from './production/JobOrder'
 
 export const Home = () => {
     const params = useParams().id
@@ -12,11 +16,19 @@ export const Home = () => {
         switch (params) {
             case 'Sales Order Header':
                 return (
-                    <SalesOrderHeader></SalesOrderHeader>
+                    <SalesOrderHeader />
                 )
             case 'Purchase Request':
                 return (
                     <PurchaseReq />
+                )
+            case 'Document Series':
+                return (
+                    <DocumentSeries />
+                )
+            case 'Job Order':
+                return (
+                    <JobOrder />
                 )
             default:
                 navigate('/404');
@@ -28,7 +40,7 @@ export const Home = () => {
         <div>
             <div className='flex'>
                 <SidebarComp />
-                <div className='p-6 w-full'>
+                <div className='p-6 w-[75%]'>
                     {paramsHandler()}
                 </div>
             </div>
