@@ -37,24 +37,24 @@ export const Login = () => {
 
 
     return (
-        <div className="container mx-auto">
+        <div style={{backgroundImage: `url("./images.png")`}} className="bg-center">
             <div className="flex justify-center items-center h-screen">
-                <div className="border p-4 rounded-sm">
+                <div className="border-4 border-double p-4 rounded-lg bg-red-600">
                     <h1 className="font-bold text-xl mb-4">Login Page</h1>
                     <form onSubmit={handleLogin} >
                         <div className="mb-2">
                             <label>Username</label>
                             <div>
-                                <input type="text" onChange={(e) => setUsername(e.target.value.trim())}></input>
+                                <input type="text" className="border rounded-lg" onChange={(e) => setUsername(e.target.value.trim())}></input>
                             </div>
                         </div>
                         <div>
                             <label>Password</label>
                             <div>
-                                <input type="password" onChange={(e) => setPassword(e.target.value.trim())}></input>
+                                <input type="password" className="border rounded-lg" onChange={(e) => setPassword(e.target.value.trim())}></input>
                             </div>
                         </div>
-                        <input type="submit" className="border px-2 py-1 mt-4 cursor-pointer float-right rounded-md hover:bg-blue-500 hover:text-white" value="Login" />
+                        <input type="submit" className="border px-2 py-1 mt-4 cursor-pointer float-right bg-yellow-200 rounded-lg hover:bg-yellow-500 hover:text-white" value="Login" />
                     </form>
                 </div>
             </div>

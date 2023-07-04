@@ -3,8 +3,7 @@ import React from 'react'
 export const JobOrder = () => {
   return (
     <div>
-      <div className='text-2xl font-bold mb-4'>Sales Order Header</div>
-
+      <div className='text-2xl font-bold mb-4'>Job Order</div>
       <div className='w-full'>
         <div className='flex justify-start items-center'>
           <table className='border-separate border-spacing-2 '>

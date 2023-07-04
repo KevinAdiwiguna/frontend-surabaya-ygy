@@ -1,12 +1,24 @@
 import React from 'react'
 import { SidebarComp } from '../components/sidebar'
 import { useNavigate, useParams } from 'react-router-dom'
+import { Profile } from './Profile'
 // transaction
 import { SalesOrderHeader } from './transaction/sales/SalesOrderHeader'
 import { PurchaseReq } from './transaction/purchase/PurchaseReq'
 // master
 import { DocumentSeries } from './master/DocumentSeries'
 import { JobOrder } from './production/JobOrder'
+import { Currency } from './master/Currency'
+import { Location } from './master/Location'
+import { Unit } from './master/material/Unit'
+import { MaterialGroup1 } from './master/material/materialGroup/MaterialGroup1'
+import { MaterialGroup2 } from './master/material/materialGroup/MaterialGroup2'
+import { MaterialGroup3 } from './master/material/materialGroup/MaterialGroup3'
+import { MaterialType } from './master/material/MaterialType'
+import { Material } from './master/material/Material'
+import { UnitConversion } from './master/material/UnitConversion'
+import { Dashboard } from './dashboard'
+import { SalesOrderDetail } from './transaction/sales/SalesOrderDetail'
 
 export const Home = () => {
     const params = useParams().id
@@ -14,9 +26,53 @@ export const Home = () => {
 
     const paramsHandler = () => {
         switch (params) {
-            case 'Sales Order Header':
+            case 'Dashboard':
+                return (
+                    <Dashboard />
+                )
+            case 'Unit Conversion':
+                return (
+                    <UnitConversion />
+                )
+            case 'Material':
+                return (
+                    <Material />
+                )
+            case 'Material Type':
+                return (
+                    <MaterialType />
+                )
+            case 'Material Group 1':
+                return (
+                    <MaterialGroup1 />
+                )
+            case 'Material Group 2':
+                return (
+                    <MaterialGroup2 />
+                )
+            case 'Material Group 3':
+                return (
+                    <MaterialGroup3 />
+                )
+            case 'Unit':
+                return (
+                    <Unit />
+                )
+            case 'Location':
+                return (
+                    <Location />
+                )
+            case 'Sales Order':
                 return (
                     <SalesOrderHeader />
+                )
+            case 'Sales Order Detail':
+                return (
+                    <SalesOrderDetail />
+                )
+            case 'Currency':
+                return (
+                    <Currency />
                 )
             case 'Purchase Request':
                 return (
@@ -30,6 +86,10 @@ export const Home = () => {
                 return (
                     <JobOrder />
                 )
+            case 'Profile':
+                return (
+                    <Profile />
+                )
             default:
                 navigate('/404');
         }
@@ -37,7 +97,7 @@ export const Home = () => {
 
 
     return (
-        <div>
+        <div >
             <div className='flex'>
                 <SidebarComp />
                 <div className='p-6 w-[75%]'>
