@@ -1,5 +1,17 @@
 import { Sidebar } from "flowbite-react";
-import { HiShoppingCart, HiMenuAlt3, HiMenu, HiSwitchHorizontal, HiIdentification, HiKey, HiLocationMarker, HiCube, HiDocumentText} from "react-icons/hi";
+import {
+  HiShoppingCart,
+  HiMenuAlt3,
+  HiMenu,
+  HiSwitchHorizontal,
+  HiIdentification,
+  HiKey,
+  HiLocationMarker,
+  HiCube,
+  HiDocumentText,
+  HiUsers,
+  HiUser
+} from "react-icons/hi";
 import {
   BiPackage,
   BiSolidBackpack,
@@ -10,7 +22,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 
 export const SidebarComp = () => {
-  const [open, setOpen] = useState()
+  const [open, setOpen] = useState();
 
   return (
     <div className={`${open ? "w-16" : "w-[250px]"}`}>
@@ -20,16 +32,30 @@ export const SidebarComp = () => {
       >
         <Sidebar.Items>
           <div className="flex justify-between items-center">
-            <img src="./maspion2.png" alt="Maspion Logo" width={125} height={125}/>
-            <div className="cursor-pointer p-2 hover:bg-gray-100 rounded-md" onClick={() => setOpen(!open)}>
-              {open ? <HiMenu className="w-5 h-5" /> : <HiMenuAlt3 className="w-5 h-5" />}
+            <img
+              src="./maspion2.png"
+              alt="Maspion Logo"
+              width={125}
+              height={125}
+            />
+            <div
+              className="cursor-pointer p-2 hover:bg-gray-100 rounded-md"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? (
+                <HiMenu className="w-5 h-5" />
+              ) : (
+                <HiMenuAlt3 className="w-5 h-5" />
+              )}
             </div>
           </div>
           <Sidebar.ItemGroup className={`${open ? "hidden" : "block"}`}>
             <Link to="/Dashboard">
-            <Sidebar.Item>
-              <p className="text-red-600 font-extrabold text-left">Dashboard</p>
-            </Sidebar.Item>
+              <Sidebar.Item>
+                <p className="text-red-600 font-extrabold text-left">
+                  Dashboard
+                </p>
+              </Sidebar.Item>
             </Link>
             {/* Transaction */}
             <Sidebar.Collapse icon={HiSwitchHorizontal} label="Transaction">
@@ -46,49 +72,73 @@ export const SidebarComp = () => {
                     </Sidebar.Collapse>
                   </div> */}
                   <Link to="/Sales Order">
-                    <Sidebar.Item>Sales Order</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Sales Order
+                    </p>
                   </Link>
                   <Link to="/Good Issue">
-                    <Sidebar.Item>Good Issue</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Good Issue
+                    </p>
                   </Link>
                   <Link to="/Sales Invoice">
-                    <Sidebar.Item>Sales Invoice</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Sales Invoice
+                    </p>
                   </Link>
                 </Sidebar.Collapse>
 
                 <Sidebar.Collapse icon={HiShoppingCart} label="Purchase">
                   <Link to="/Purchase Request">
-                    <Sidebar.Item>Purchase Request</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Purchase Request
+                    </p>
                   </Link>
                   <Link to="/Purchase Order">
-                    <Sidebar.Item>Purchase Order</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Purchase Order
+                    </p>
                   </Link>
                   <Link to="/Goods Receipt">
-                    <Sidebar.Item>Goods Receipt</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Goods Receipt
+                    </p>
                   </Link>
                   <Link to="/Purchase Invoice">
-                    <Sidebar.Item>Purchase Invoice</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Purchase Invoice
+                    </p>
                   </Link>
                 </Sidebar.Collapse>
 
                 <Sidebar.Collapse icon={BiPackage} label="Production">
                   <Link to="/Job Order">
-                    <Sidebar.Item>Job Order</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Job Order
+                    </p>
                   </Link>
                   <Link to="/Material Usage">
-                    <Sidebar.Item>Material Usage</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Material Usage
+                    </p>
                   </Link>
                   <Link to="/Job Result">
-                    <Sidebar.Item>Job Result</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Job Result
+                    </p>
                   </Link>
                 </Sidebar.Collapse>
 
                 <Sidebar.Collapse icon={BiSolidBackpack} label="Inventory">
                   <Link to="/Stock Transfer Request">
-                    <Sidebar.Item>Stock Transfer Request</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Stock Transfer Request
+                    </p>
                   </Link>
                   <Link to="/Stock Transfer">
-                    <Sidebar.Item>Stock Transfer</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Stock Transfer
+                    </p>
                   </Link>
                 </Sidebar.Collapse>
               </div>
@@ -105,40 +155,104 @@ export const SidebarComp = () => {
               <div className="pl-6 !mt-0">
                 <Sidebar.Collapse icon={HiCube} label="Material" className="">
                   <Link to="/Unit">
-                    <Sidebar.Item>Unit</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Unit
+                    </p>
                   </Link>
                   <div className="pl-6 !mt-0">
                     <Sidebar.Collapse label="Material Group">
                       <Link to="/Material Group 1">
-                        <Sidebar.Item>Material Group 1</Sidebar.Item>
+                        <p className="flex items-center p-3 pl-8 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                          Material Group 1
+                        </p>
                       </Link>
                       <Link to="/Material Group 2">
-                        <Sidebar.Item>Material Group 2</Sidebar.Item>
+                        <p className="flex items-center p-3 pl-8 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                          Material Group 2
+                        </p>
                       </Link>
                       <Link to="/Material Group 3">
-                        <Sidebar.Item>Material Group 3</Sidebar.Item>
+                        <p className="flex items-center p-3 pl-8 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                          Material Group 3
+                        </p>
                       </Link>
                     </Sidebar.Collapse>
                   </div>
                   <Link to="/Material Type">
-                    <Sidebar.Item>Material Type</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Material Type
+                    </p>
                   </Link>
                   <Link to="/Material">
-                    <Sidebar.Item>Material</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 groups">
+                      Material
+                    </p>
                   </Link>
                   <Link to="/Unit Conversion">
-                    <Sidebar.Item>Unit Conversion</Sidebar.Item>
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Unit Conversion
+                    </p>
                   </Link>
                 </Sidebar.Collapse>
               </div>
+              <div className="pl-6 !mt-0">
+                <Sidebar.Collapse icon={HiUsers} label="Customer">
+                  <Link to="/Country">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Country
+                    </p>
+                  </Link>
+                  <Link to="/Pricelist Type">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Pricelist Type
+                    </p>
+                  </Link>
+                  <Link to="/Customer Group">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Customer Group
+                    </p>
+                  </Link>
+                  <div className="pl-6 !mt-0">
+                    <Sidebar.Collapse label="Sales Area">
+                      <Link to="/Sales Area 1">
+                        <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                          Sales Area 1
+                        </p>
+                      </Link>
+                      <Link to="/Sales Area 2">
+                        <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                          Sales Area 2
+                        </p>
+                      </Link>
+                      <Link to="/Sales Area 3">
+                        <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                          Sales Area 3
+                        </p>
+                      </Link>
+                    </Sidebar.Collapse>
+                  </div>
+                  <Link to="/Customer">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Customer
+                    </p>
+                  </Link>
+                </Sidebar.Collapse>
+              </div>
+              <Link to="/Salesman">
+                <Sidebar.Item icon={HiUser}>Salesman</Sidebar.Item>
+              </Link>
               <Link to="/Document Series">
-                <Sidebar.Item icon={HiDocumentText}>Document Series</Sidebar.Item>
+                <Sidebar.Item icon={HiDocumentText}>
+                  Document Series
+                </Sidebar.Item>
               </Link>
             </Sidebar.Collapse>
             {/* End of Master */}
             {/* Account  */}
             <Link to="/Profile">
-              <Sidebar.Item icon={HiIdentification} className="my-2">Profile</Sidebar.Item>
+              <Sidebar.Item icon={HiIdentification} className="my-2">
+                Profile
+              </Sidebar.Item>
             </Link>
             {/* End of Account */}
           </Sidebar.ItemGroup>

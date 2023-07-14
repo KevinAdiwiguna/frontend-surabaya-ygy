@@ -31,8 +31,13 @@ export const Dashboard = () => {
   }, [currentTime]);
 
   return (
-    <div className="flex text-2xl text-red-600 font-extrabold">
-      <h1>{greeting}, {auth?.username}</h1>
+    <div className="flex flex-col w-full h-[92vh] justify-between text-2xl text-red-600 font-extrabold">
+      <h1>{greeting}, {auth?.User}</h1>
+      <div className="">
+        <h1>CV. Gemilang Multi Kreasi</h1>
+        <h2>Jl. Berbek Industri III No. 15 Sidoarjo</h2>
+        <h2>+62-318-494-605</h2>
+      </div>
     </div>
   );
 };

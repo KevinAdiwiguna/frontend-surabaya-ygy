@@ -19,6 +19,14 @@ import { Material } from './master/material/Material'
 import { UnitConversion } from './master/material/UnitConversion'
 import { Dashboard } from './dashboard'
 import { SalesOrderDetail } from './transaction/sales/SalesOrderDetail'
+import { Country } from './master/customer/Country'
+import { PricelistType } from './master/customer/PricelistType'
+import { CustomerGroup } from './master/customer/CustomerGroup'
+import { SalesArea1 } from './master/customer/SalesArea/SalesArea1'
+import { SalesArea2 } from './master/customer/SalesArea/SalesArea2'
+import { SalesArea3 } from './master/customer/SalesArea/SalesArea3'
+import { Customer } from './master/customer/Customer'
+import { Salesman } from './master/Salesman'
 
 export const Home = () => {
     const params = useParams().id
@@ -26,10 +34,41 @@ export const Home = () => {
 
     const paramsHandler = () => {
         switch (params) {
-            case 'Dashboard':
+            // Customer Master
+            case 'Salesman':
                 return (
-                    <Dashboard />
+                    <Salesman />
                 )
+            case 'Customer':
+                return (
+                    <Customer />
+                )
+            case 'Customer Group':
+                return (
+                    <CustomerGroup />
+                )
+            case 'Country':
+                return (
+                    <Country />
+                )
+            case 'Pricelist Type':
+                return (
+                    <PricelistType />
+                )
+                case 'Sales Area 1':
+                    return (
+                        <SalesArea1 />
+                    )
+                case 'Sales Area 2':
+                    return (
+                        <SalesArea2 />
+                    )
+                case 'Sales Area 3':
+                    return (
+                        <SalesArea3 />
+                    )
+            // End Of Customer Master
+            // Material Master
             case 'Unit Conversion':
                 return (
                     <UnitConversion />
@@ -57,6 +96,11 @@ export const Home = () => {
             case 'Unit':
                 return (
                     <Unit />
+                )
+            // end of Material Master
+            case 'Dashboard':
+                return (
+                    <Dashboard />
                 )
             case 'Location':
                 return (

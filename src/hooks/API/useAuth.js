@@ -11,9 +11,8 @@ export const useAuth = () => {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/me`);
       setAuth(response.data.user);
     } catch (error) {
-      console.log(error);
       const errorMessage = error.response?.data?.message || "Failed to authenticate.";
-      navigate("/login", { state: { error: errorMessage } });
+      navigate("/login",{ state:{ error: errorMessage }});
     }
   };
   return {

@@ -1,104 +1,72 @@
-import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useMe } from "../../../../hooks/API/useMe";
-import { toast, ToastContainer } from "react-toastify";
+import React, { useEffect, useState } from "react";
 import { dateConverter } from "../../../../components/dateConverter";
+import { toast, ToastContainer } from "react-toastify";
+import { useMe } from "../../../../hooks/API/useMe";
 
-export const MaterialGroup3 = () => {
+export const SalesArea3 = () => {
   const { fetchMe, response } = useMe();
-  const [group1, setGroup1] = useState([]);
-  const [group2, setGroup2] = useState([]);
-  const [group1val, setGroup1Val] = useState("");
-  const [group2val, setGroup2Val] = useState("");
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
+  const [sales1, setSales1] = useState([]);
+  const [sales2, setSales2] = useState([]);
+  const [sales1val, setSales1val] = useState([]);
+  const [sales2val, setSales2val] = useState([]);
   const [getData, setGetData] = useState([]);
 
   useEffect(() => {
     fetchMe();
   }, [!response]);
 
-  const fetchGroup1 = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/materialgroup1`
-      );
-      setGroup1(response.data);
-    } catch (error) {}
-  };
-
-  const fetchGroup2 = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/materialgroup2Code/${group1val}`
-      );
-      setGroup2(response.data);
-    } catch (error) {}
-  };
-
-  useEffect(() => {
-    fetchGroup1();
-    fetchGroup2();  
-  }, [group1val, group2val]);
-
   const dataFetching = async () => {
     try {
       const data = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/materialgroup3`
+        `${process.env.REACT_APP_API_BASE_URL}/salesarea3`
       );
       setGetData(data.data);
     } catch (error) {}
   };
 
-  const submitClick = async (e) => {
-    e.preventDefault();
+  const fetchSales1 = async () => {
     try {
-      const postData = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/materialgroup3`,
-        {
-          group1: group1val,
-          group2: group2val,
-          code: code,
-          name: name,
-          createdBy: response.User,
-          changedBy: response.User,
-        }
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/salesarea1`
       );
-      console.log(postData);
-      dataFetching();
-      toast.success("Data Saved", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-      });
-    } catch (error) { 
-      toast.warn("Code Sudah Digunakan", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-      });
-
-    }
+      setSales1(response.data);
+    } catch (error) {}
   };
+  const fetchSales2 = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/salesarea2Code/${sales1val}`
+      );
+      setSales2(response.data);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    fetchSales1();
+    fetchSales2();
+  }, [sales1val, sales2val]);
+
   const deleteData = async (params) => {
     try {
       await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/materialgroup3/${params}`
+        `${process.env.REACT_APP_API_BASE_URL}/salesarea3/${params}`
       );
       dataFetching();
       toast.success("Data Deleted", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
-    });
-
+      });
     } catch (error) {}
   };
 
   const updateData = async (params) => {
     try {
       await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/materialgroup3/${params}`,
+        `${process.env.REACT_APP_API_BASE_URL}/salesarea3/${params}`,
         {
           name: name,
           changedBy: response.User,
@@ -111,10 +79,38 @@ export const MaterialGroup3 = () => {
         hideProgressBar: true,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
+  };
 
-  }
+  const submitClick = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/salesarea3`,
+        {
+          code: code,
+          area1: sales1val,
+          area2: sales2val,
+          name: name,
+          createdBy: response.User,
+          changedBy: response.User,
+        }
+      );
+      dataFetching();
+      toast.success("Data Saved", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    } catch (error) {
+      toast.warn("Code Sudah Digunakan", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
+    }
+  };
 
   useEffect(() => {
     dataFetching();
@@ -122,20 +118,22 @@ export const MaterialGroup3 = () => {
 
   return (
     <div>
-      <div className="text-2xl font-bold mb-4">Material Group 3</div>
+      <div className="text-2xl font-bold mb-4">Sales Area 3</div>
       <form onSubmit={submitClick}>
         <table className="border-separate border-spacing-2 w-1/2">
           <tr>
-            <td className="text-right">Group 1:</td>
+            <td className="text-right">Sales 1:</td>
             <td>
               <select
-                onChange={(e) => setGroup1Val(e.target.value)}
+                onChange={(e) => {
+                  setSales1val(e.target.value);
+                }}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               >
                 <option disabled selected hidden>
-                  Pilih group 1
+                  Pilih Sales 1
                 </option>
-                {group1.map((res, key) => {
+                {sales1.map((res, key) => {
                   return (
                     <option key={key} value={res.Code}>
                       {res.Code}
@@ -146,16 +144,18 @@ export const MaterialGroup3 = () => {
             </td>
           </tr>
           <tr>
-            <td className="text-right">Group 2:</td>
+            <td className="text-right">Sales 2:</td>
             <td>
               <select
-                onChange={(e) => setGroup2Val(e.target.value)}
+                onChange={(e) => {
+                  setSales2val(e.target.value);
+                }}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               >
                 <option disabled selected hidden>
-                  Pilih group 2
+                  Pilih Sales 1
                 </option>
-                {group2.map((res, key) => {
+                {sales2.map((res, key) => {
                   return (
                     <option key={key} value={res.Code}>
                       {res.Code}
@@ -169,7 +169,9 @@ export const MaterialGroup3 = () => {
             <td className="text-right">Code: </td>
             <td>
               <input
-                onChange={(e) => setCode(e.target.value)}
+                onChange={(e) => {
+                  setCode(e.target.value);
+                }}
                 type="text"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[20%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Isi kode"
@@ -181,7 +183,9 @@ export const MaterialGroup3 = () => {
             <td className="text-right">Name: </td>
             <td>
               <input
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
                 type="text"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Isi nama"
@@ -193,7 +197,7 @@ export const MaterialGroup3 = () => {
             <td></td>
             <td>
               <button
-                type="submit"
+                type={"submit"}
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
               >
                 Save
@@ -208,10 +212,10 @@ export const MaterialGroup3 = () => {
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
-                Group 1
+                Sales 1
               </th>
               <th scope="col" className="px-6 py-3">
-                Group 2
+                Sales 2
               </th>
               <th scope="col" className="px-6 py-3">
                 Code
@@ -239,17 +243,14 @@ export const MaterialGroup3 = () => {
           <tbody>
             {getData.map((res, key) => {
               return (
-                <tr
-                  key={key}
-                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                >
+                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <th
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   >
-                    {res.Group1}
+                    {res.Area1}
                   </th>
-                  <td className="px-6 py-4">{res.Group2}</td>
+                  <td className="px-6 py-4">{res.Area2}</td>
                   <td className="px-6 py-4">{res.Code}</td>
                   <td className="px-6 py-4">{res.Name}</td>
                   <td className="px-6 py-4">{res.CreatedBy}</td>
@@ -262,14 +263,18 @@ export const MaterialGroup3 = () => {
                   </td>
                   <td className="px-6 py-4">
                     <button
-                      onClick={() => deleteData(res.Code)}
+                      onClick={() => {
+                        deleteData(res.Code);
+                      }}
                       type="button"
                       className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                     >
                       Delete
                     </button>
                     <button
-                      onClick={() => updateData(res.Code)}
+                      onClick={() => {
+                        updateData(res.Code);
+                      }}
                       type="button"
                       className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                     >
@@ -282,8 +287,12 @@ export const MaterialGroup3 = () => {
           </tbody>
         </table>
         <div></div>
+        <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar
+      />
       </div>
-      <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
     </div>
   );
 };
