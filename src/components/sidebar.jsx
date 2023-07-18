@@ -10,7 +10,8 @@ import {
   HiCube,
   HiDocumentText,
   HiUsers,
-  HiUser
+  HiUser,
+  HiCurrencyDollar
 } from "react-icons/hi";
 import {
   BiPackage,
@@ -239,7 +240,7 @@ export const SidebarComp = () => {
                 </Sidebar.Collapse>
               </div>
               <Link to="/Price">
-                <Sidebar.Item icon={BiMoney}>Price</Sidebar.Item>
+                <Sidebar.Item icon={HiCurrencyDollar}>Price</Sidebar.Item>
               </Link>
               <Link to="/Supplier">
                 <Sidebar.Item icon={BiPackage}>Supplier</Sidebar.Item>

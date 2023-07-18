@@ -6,8 +6,8 @@ import { Profile } from "./Profile";
 import { SalesOrderHeader } from "./transaction/sales/SalesOrderHeader";
 import { SalesOrderDetail } from "./transaction/sales/SalesOrderDetail";
 import { PurchaseReq } from "./transaction/purchase/PurchaseReq";
-import { PurchaseOrderHeader } from "./transaction/purchase/PurchaseOrderHeader";
-import { PurchaseOrderDetail } from "./transaction/purchase/PurchaseOrderDetail";
+import { PurchaseOrder } from "./transaction/purchase/PurchaseOrder";
+import {GoodsReceipt} from "./transaction/purchase/GoodsReceipt"
 // master
 import { DocumentSeries } from "./master/DocumentSeries";
 import { JobOrder } from "./production/JobOrder";
@@ -93,9 +93,9 @@ export const Home = () => {
       case "Profile":
         return <Profile />;
       case "Purchase Order":
-        return <PurchaseOrderHeader />;
-      case "Purchase Order Detail":
-        return <PurchaseOrderDetail />;
+        return <PurchaseOrder />;
+      case "Goods Receipt":
+        return <GoodsReceipt />;
       case "Price":
         return <Price />;
       default:

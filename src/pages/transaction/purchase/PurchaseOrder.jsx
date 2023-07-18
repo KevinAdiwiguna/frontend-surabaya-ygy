@@ -4,7 +4,7 @@ import { useMe } from "../../../hooks/API/useMe";
 import { toast } from "react-toastify";
 import { dateConverter } from "../../../components/dateConverter";
 
-export const PurchaseOrderHeader = () => {
+export const PurchaseOrder = () => {
   const { fetchMe, response } = useMe();
   const currentDate = new Date().toISOString().slice(0, 16);
   const [docDate, setDocDate] = useState(currentDate);
