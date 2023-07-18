@@ -238,6 +238,12 @@ export const SidebarComp = () => {
                   </Link>
                 </Sidebar.Collapse>
               </div>
+              <Link to="/Price">
+                <Sidebar.Item icon={BiMoney}>Price</Sidebar.Item>
+              </Link>
+              <Link to="/Supplier">
+                <Sidebar.Item icon={BiPackage}>Supplier</Sidebar.Item>
+              </Link>
               <Link to="/Salesman">
                 <Sidebar.Item icon={HiUser}>Salesman</Sidebar.Item>
               </Link>

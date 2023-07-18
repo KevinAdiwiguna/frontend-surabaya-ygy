@@ -4,7 +4,7 @@ import { useMe } from "../../../hooks/API/useMe";
 import { toast } from "react-toastify";
 import { dateConverter } from "../../../components/dateConverter";
 
-export const SalesOrderHeader = () => {
+export const PurchaseOrderHeader = () => {
   const { fetchMe, response } = useMe();
   const currentDate = new Date().toISOString().slice(0, 16);
   const [docDate, setDocDate] = useState(currentDate);
@@ -182,7 +182,7 @@ export const SalesOrderHeader = () => {
   const dataFetching = async () => {
     try {
       const data = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/salesorderh`
+        `${process.env.REACT_APP_API_BASE_URL}/purchaseorderh`
       );
       setGetData(data.data);
     } catch (error) {}
@@ -195,7 +195,7 @@ export const SalesOrderHeader = () => {
   const deleteData = async (params) => {
     try {
       await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/salesorderh/${params}`
+        `${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${params}`
       );
       dataFetching();
       toast.success("Data Deleted", {
@@ -264,7 +264,7 @@ export const SalesOrderHeader = () => {
     e.preventDefault();
     try {
       // const generatedDocNo = ;
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/salesorderh`, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh`, {
         docNo: await generateDocNo(seriesVal),
         series: seriesVal,
         docDate: docDate,
@@ -308,7 +308,7 @@ export const SalesOrderHeader = () => {
   const updateData = async (params) => {
     try {
       await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/salesorderh/${params}`,
+        `${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${params}`,
         {
           docDate: docDate,
           customerCode: customerVal,
@@ -353,7 +353,7 @@ export const SalesOrderHeader = () => {
   return (
     <div>
       <div className="flex justify-between">
-        <div className="text-2xl font-bold mb-4">Sales Order</div>
+        <div className="text-2xl font-bold mb-4">Purchase Order</div>
       </div>
 
       <div className="w-full">
@@ -381,6 +381,26 @@ export const SalesOrderHeader = () => {
                 </td>
               </tr>
               <tr>
+                <td className="text-right font-bold">Doc No: </td>
+                <td>
+                  <select
+                    onChange={(e) => setSeriesVal(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
+                    <option value="" disabled selected hidden>
+                      Pilih nomor dokumen
+                    </option>
+                    {getMySeries.map((res, key) => {
+                      return (
+                        <option value={res.Series} key={key}>
+                          {res.Series}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </td>
+              </tr>
+              <tr>
                 <td className="text-right">Doc Date: </td>
                 <td>
                   <input
@@ -396,14 +416,14 @@ export const SalesOrderHeader = () => {
               </tr>
 
               <tr>
-                <td className="text-right">Customer: </td>
+                <td className="text-right">Supplier: </td>
                 <td>
                   <select
                     onChange={(e) => setCustomerVal(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
                     <option value="" disabled selected hidden>
-                      Pilih Customer
+                      Pilih supplier
                     </option>
                     {getMyCustomer.map((res, key) => {
                       return (
@@ -417,49 +437,6 @@ export const SalesOrderHeader = () => {
               </tr>
 
               <tr>
-                <td className="text-right">Ship To: </td>
-                <td>
-                  <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option selected value={customerVal}>
-                      {customerVal}
-                    </option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td className="text-right">Tax To: </td>
-                <td>
-                  <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value="" disabled selected hidden>
-                      Pilih salesman
-                    </option>
-                    <option selected value={customerVal}>
-                      {customerVal}
-                    </option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td className="text-right">Salesman: </td>
-                <td>
-                  <select
-                    onChange={(e) => setSalesmanVal(e.target.value)}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  >
-                    <option value="" disabled selected hidden>
-                      Pilih salesman
-                    </option>
-                    {getMySelesman.map((res, key) => {
-                      return (
-                        <option value={res.Code} key={key}>
-                          {res.Code}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </td>
-              </tr>
-              <tr>
                 <td className="text-right">Delivery Date: </td>
                 <td>
                   <input
@@ -470,18 +447,6 @@ export const SalesOrderHeader = () => {
                     min={docDate}
                     value={deliveryDate}
                     onChange={(e) => setDeliveryDate(e.target.value)}
-                  />
-                </td>
-                <td className="text-right">PO No: </td>
-                <td>
-                  <input
-                    onChange={(e) => {
-                      setPoNo(e.target.value);
-                    }}
-                    type="number"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="PO No"
-                    required
                   />
                 </td>
               </tr>
@@ -566,6 +531,27 @@ export const SalesOrderHeader = () => {
                 </td>
                 <td> %</td>
               </tr>
+
+              <tr>
+                <td className="text-right">Send To: </td>
+                <td>
+                  <select
+                    onChange={(e) => setCustomerVal(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
+                    <option value="JL. Berbek Industri 3 no 15">
+                    JL. Berbek Industri 3 no 15
+                    </option>
+                    {getMyCustomer.map((res, key) => {
+                      return (
+                        <option value={res.Code} key={key}>
+                          {res.Code}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </td>
+              </tr>
               <tr>
                 <td className="text-right">Information:</td>
                 <td>
@@ -580,52 +566,7 @@ export const SalesOrderHeader = () => {
                   />
                 </td>
               </tr>
-              <tr>
-                <td className="text-right">Material:</td>
-                <td>
-                  <select
-                    onChange={(e) => setMaterialVal(e.target.value)}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  >
-                    <option disabled selected hidden>
-                      Pilih Material
-                    </option>
-                    {getMyMaterial.map((res, key) => {
-                      return (
-                        <option key={key} value={res.Code}>
-                          {res.Code}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </td>
-                <td className="text-right">Quantity:</td>
-                <td>
-                  <input
-                    onChange={(e) => setQuantity(e.target.value)}
-                    type="number"
-                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    required
-                  />
-                </td>
-                <td className="text-right">Price:</td>
-                <td>
-                  <input
-                    disabled
-                    type="text"
-                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    value={getMyMaterialDetail?.DefaultPrice}
-                  />
-                </td>
-                <button
-                    type="submit"
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-                  >
-                    Add
-                  </button>
-              </tr>
+              
               <tr>
                 <td className="text-right">
                   <button
@@ -650,6 +591,7 @@ export const SalesOrderHeader = () => {
             </table>
           </form>
         </div>
+
         <div className="flex justify-between items-start">
           <table className="border-separate border-spacing-2 ">
             <tr>
@@ -697,122 +639,6 @@ export const SalesOrderHeader = () => {
           </table>
         </div>
         <div className="relative overflow-x-auto pt-10">
-        <div className="text-xl font-bold mb-4">Detail</div>
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="px-6 py-3">
-                  Number
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Code
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Name
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Info
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Unit
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Qty
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Price
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Gross
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  DiscPercent
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  DiscPercent2
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  DiscPercent3
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  DiscValue
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  DiscNominal
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Netto
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Control
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {getData.map((res, key) => {
-                return (
-                  <tr
-                    key={key}
-                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                  >
-                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      {res.DocNo}
-                    </td>
-                    <td className="px-6 py-4">{res.Series}</td>
-                    <td className="px-6 py-4">{res.DocDate}</td>
-                    <td className="px-6 py-4">{res.CustomerCode}</td>
-                    <td className="px-6 py-4">{res.ShipToCode}</td>
-                    <td className="px-6 py-4">{res.TaxToCode}</td>
-                    <td className="px-6 py-4">{res.SalesCode}</td>
-                    <td className="px-6 py-4">{res.DeliveryDate}</td>
-                    <td className="px-6 py-4">{res.PONo}</td>
-                    <td className="px-6 py-4">{res.TOP}</td>
-                    <td className="px-6 py-4">{res.DiscPercent}</td>
-                    <td className="px-6 py-4">{res.TaxStatus}</td>
-                    <td className="px-6 py-4">{res.TaxPercent}</td>
-                    <td className="px-6 py-4">{res.Currency}</td>
-                    <td className="px-6 py-4">{res.ExchangeRate}</td>
-                    <td className="px-6 py-4">{res.TotalGross}</td>
-                    <td className="px-6 py-4">{res.TotalDisc}</td>
-                    <td className="px-6 py-4">{res.TaxValue}</td>
-                    <td className="px-6 py-4">{res.TotalNetto}</td>
-                    <td className="px-6 py-4">{res.Information}</td>
-                    <td className="px-6 py-4">{res.Status}</td>
-                    <td className="px-6 py-4">
-                      {res.IsPurchaseReturn === true ? "true" : "false"}
-                    </td>
-                    <td className="px-6 py-4">{res.CreatedBy}</td>
-                    <td className="px-6 py-4">
-                      {dateConverter(res.CreatedDate)}
-                    </td>
-                    <td className="px-6 py-4">{res.ChangedBy}</td>
-                    <td className="px-6 py-4">
-                      {dateConverter(res.ChangedDate)}
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => deleteData(res.DocNo)}
-                        type="button"
-                        className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                      >
-                        Delete
-                      </button>
-                      <button
-                        onClick={() => updateData(res.DocNo)}
-                        type="button"
-                        className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
-                      >
-                        Update
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-        <div className="relative overflow-x-auto pt-10">
-        <div className="text-xl font-bold mb-4">Header Data Table</div>
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
@@ -823,25 +649,25 @@ export const SalesOrderHeader = () => {
                   Series
                 </th>
                 <th scope="col" className="px-6 py-3">
+                  TransactionType
+                </th>
+                <th scope="col" className="px-6 py-3">
                   DocDate
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  CustomerCode
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  ShipToCode
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  TaxToCode
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  SalesCode
+                  SupplierCode
                 </th>
                 <th scope="col" className="px-6 py-3">
                   DeliveryDate
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  PONo
+                  TOP
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  DiscPercent
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  TaxStatus
                 </th>
                 <th scope="col" className="px-6 py-3">
                   TOP
@@ -862,7 +688,16 @@ export const SalesOrderHeader = () => {
                   ExchangeRate
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  TotalGross
+                  JODocNo
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Trip
+                </th>
+                <th scope="col" className="px-6 py-3">
+                 SIDocNo
+                </th>
+                <th scope="col" className="px-6 py-3">
+                 TotalGross
                 </th>
                 <th scope="col" className="px-6 py-3">
                   TotalDisc
@@ -871,31 +706,49 @@ export const SalesOrderHeader = () => {
                   TaxValue
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  TotalNetto
+                 TotalNetto
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  SendTo
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Information
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Status
+                 Status
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  IsPurchaseReturn
+                 IsApproved
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Created By
+                  ApprovedBy
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Created Date
+                  ApprovedDate
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Changed By
+                  PrintCounter
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Changed Date
+                  PrintedBy
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Control
+                  PrintedDate
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  IsSalesReturn
+                </th>
+                <th scope="col" className="px-6 py-3">
+                 CreatedBy
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  CreatedDate
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  ChangedBy
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  ChangedDate
                 </th>
               </tr>
             </thead>
