@@ -46,7 +46,7 @@ export const SalesOrderHeader = () => {
   const [salesmanVal, setSalesmanVal] = useState("");
   const [currencyVal, setCurrencyVal] = useState("");
   const [materialVal, setMaterialVal] = useState("");
-  const props = { openModal, setOpenModal};
+  const props = { openModal, setOpenModal };
   const handleDocDateChange = (e) => {
     const selectedDocDate = e.target.value;
     setDocDate(selectedDocDate);
@@ -171,9 +171,9 @@ export const SalesOrderHeader = () => {
     setNetto(totalNetto);
   };
 
- useEffect(() => {
-  totalHandle()
- }, [quantity,discount,taxVal])
+  useEffect(() => {
+    totalHandle()
+  }, [quantity, discount, taxVal])
 
   useEffect(() => {
     getMaterialDetail(materialVal);
@@ -197,7 +197,7 @@ export const SalesOrderHeader = () => {
         `${process.env.REACT_APP_API_BASE_URL}/salesorderh`
       );
       setGetData(data.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
@@ -215,7 +215,7 @@ export const SalesOrderHeader = () => {
         autoClose: 3000,
         hideProgressBar: true,
       });
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const addSalesDetail = () => {
@@ -238,12 +238,6 @@ export const SalesOrderHeader = () => {
       qtyWO: 0.00,
     }])
   }
-
-  const [crrntDate, setCrrntDate] = useState("");
-  const [currentQueueNumber, setCurrentQueueNumber] = useState(1);
-  const [currentDocumentSeries, setCurrentDocumentSeries] = useState(`${seriesVal}`);
-
-
 
   const generateDocDate = () => {
     const today = new Date(docDate);
@@ -299,7 +293,7 @@ export const SalesOrderHeader = () => {
       });
     }
   };
-  
+
   const updateData = async (params) => {
     props.setOpenModal('form-elements')
     setSalesDetailData(params)
@@ -347,6 +341,10 @@ export const SalesOrderHeader = () => {
     setCurrencyVal(getFCurrency.Currency);
   }, [customerVal, customerVal, getFCurrency?.Currency]);
 
+
+
+  const [modal, setModal] = useState(false);
+  const [modalData, setModalData] = useState(false);
   return (
     <div>
       <div className="flex justify-between">
@@ -515,7 +513,7 @@ export const SalesOrderHeader = () => {
                     placeholder="1.00"
                     value="1.00"
                     required
-                    // disabled
+                  // disabled
                   />
                 </td>
               </tr>
@@ -626,12 +624,12 @@ export const SalesOrderHeader = () => {
                   />
                 </td>
                 <button
-                    onClick={() => {addSalesDetail()}}
-                    type="button"
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-                  >
-                    Add
-                  </button>
+                  onClick={() => { addSalesDetail() }}
+                  type="button"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+                >
+                  Add
+                </button>
               </tr>
               <tr>
                 <td className="text-right">
@@ -695,7 +693,7 @@ export const SalesOrderHeader = () => {
           </table>
         </div>
         <div className="relative overflow-x-auto pt-10">
-        <div className="text-xl font-bold mb-4">Detail</div>
+          <div className="text-xl font-bold mb-4">Detail</div>
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
@@ -769,7 +767,7 @@ export const SalesOrderHeader = () => {
           </table>
         </div>
         <div className="relative overflow-x-auto pt-10">
-        <div className="text-xl font-bold mb-4">Header Data Table</div>
+          <div className="text-xl font-bold mb-4">Header Data Table</div>
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
@@ -905,13 +903,18 @@ export const SalesOrderHeader = () => {
                       >
                         Delete
                       </button>
+                      {console.log(modalData)}
                       <button
-                        onClick={() => updateData(res)}
+                        onClick={() => {
+                          setModalData(res);
+                          setModal(true);
+                        }}
                         type="button"
                         className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                       >
                         Update
                       </button>
+
                     </td>
                   </tr>
                 );
@@ -921,9 +924,295 @@ export const SalesOrderHeader = () => {
         </div>
       </div>
 
-      <div className='text-black bg-white w-[90%] h-[90%]'>
-              
+
+      <div className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${modal ? "block" : "hidden"}`}>
+        <div className="space-y-6">
+          <div className="text-2xl font-bold mb-4 ">
+            DocNo: {modalData.DocNo}
+          </div>
+          <button
+            onClick={() => setModal(false)}
+            className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <form onSubmit={submitClick}>
+            <table className="border-separate border-spacing-2 ">
+              <tr>
+                {console.log(modalData)}
+                <td className="text-right">Series: {modalData.Series}</td>
+                <td>
+                  <input disabled value={salesDetailData.Series} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                </td>
+              </tr>
+              <tr>
+                <td className="text-right">Doc Date: </td>
+                <td>
+                  <input
+                    disabled
+                    type="datetime-local"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    value={modalData.DocDate + "T00:00"}
+                  />
+                </td>
+              </tr>
+
+              <tr>
+                <td className="text-right">Customer: </td>
+                <td>
+                  <select
+                    onChange={(e) => setCustomerVal(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
+                    <option value={salesDetailData.CustomerCode} disabled selected hidden>
+                      {modalData.CustomerCode}
+                    </option>
+                    {getMyCustomer.map((res, key) => {
+                      return (
+                        <option value={res.Code} key={key}>
+                          {res.Code}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </td>
+              </tr>
+
+              <tr>
+                <td className="text-right">Ship To: </td>
+                <td>
+                  <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option selected value={customerVal}>
+                      {customerVal}
+                    </option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td className="text-right">Tax To: </td>
+                <td>
+                  <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option selected value={customerVal}>
+                      {customerVal}
+                    </option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td className="text-right">Salesman: </td>
+                <td>
+                  <select
+                    onChange={(e) => setSalesmanVal(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
+                    <option value={salesDetailData.SalesCode} disabled selected >
+                      {modalData.SalesCode}
+                    </option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td className="text-right">Delivery Date: </td>
+                <td>
+                  <input
+                    type="datetime-local"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    min={salesDetailData.DocDate + "T00:00"}
+                    value={deliveryDate}
+                    onChange={(e) => setDeliveryDate(e.target.value)}
+                  />
+                </td>
+                <td className="text-right">PO No: </td>
+                <td>
+                  <input onChange={(e) => { setPoNo2(e.target.value); }} type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                  <input
+                    onChange={(e) => {
+                      setPoNo(e.target.value);
+                    }}
+                    type="number"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td className="text-right">Term Of Payment: </td>
+                <td>
+                  <input
+                    onChange={(e) => {
+                      setTop(e.target.value);
+                    }}
+                    type="number"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder={salesDetailData.TOP}
+                  />
+                </td>
+                <td>Days</td>
+              </tr>
+              <tr>
+                <td className="text-right">Currency: </td>
+                <td>
+                  <select disabled className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option>{getFCurrency.Currency}</option>
+                  </select>
+                </td>
+                <td className="text-right">Exchange Rate: </td>
+                <td>
+                  <input
+                    onChange={(e) => {
+                      setExchangeRate(e.target.value);
+                    }}
+                    type="text"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder={salesDetailData.ExchangeRate}
+                    value="1.00"
+                  // disabled
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td className="text-right">Information:</td>
+                <td>
+                  <input
+                    onChange={(e) => {
+                      setInfo(e.target.value);
+                    }}
+                    type="text"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder={salesDetailData.Info}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <select
+                    onChange={(e) => {
+                      setTax(e.target.value);
+                    }}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
+                    <option disabled selected hidden>
+                      {salesDetailData.TaxStatus}
+                    </option>
+                    <option value="No">No</option>
+                    <option value="Include">Include</option>
+                    <option value="Exclude">Exclude</option>
+                  </select>
+                </td>
+                <td>
+                  <input
+                    onChange={(e) => {
+                      setTaxVal(e.target.value);
+                    }}
+                    type="number"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder={salesDetailData.TaxPercent}
+                  />
+                </td>
+                <td> % Tax</td>
+              </tr>
+              <tr>
+                <td className="text-right">Discount: </td>
+                <td>
+                  <input
+                    onChange={(e) => {
+                      setDiscount(e.target.value);
+                    }}
+                    type="number"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder={salesDetailData.DiscPercent}
+                  />
+                </td>
+                <td> %</td>
+              </tr>
+              <tr>
+                <td className="text-right">Material:</td>
+                <td>
+                  <select
+                    onChange={(e) => setMaterialVal(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
+                    <option disabled selected hidden>
+                      Pilih Material
+                    </option>
+                    {getMyMaterial.map((res, key) => {
+                      return (
+                        <option key={key} value={res.Code}>
+                          {res.Code}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </td>
+                <td className="text-right">Info:</td>
+                <td>
+                  <input
+                    type="text"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    value={getMyMaterialDetail?.Info}
+                  />
+                </td>
+                <td className="text-right">Quantity:</td>
+                <td>
+                  <input
+                    onChange={(e) => setQuantity(e.target.value)}
+                    type="number"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                  />
+                </td>
+                <td className="text-right">Price:</td>
+                <td>
+                  <input
+                    disabled
+                    type="text"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    value={getMyMaterialDetail?.DefaultPrice}
+                  />
+                </td>
+                <button
+                  onClick={() => { addSalesDetail() }}
+                  type="button"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+                >
+                  Add
+                </button>
+              </tr>
+              <tr>
+                <td className="text-right">
+                </td>
+                <td>
+                  <button
+                    type="submit"
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+                  >
+                    Save
+                  </button>
+                </td>
+              </tr>
+            </table>
+          </form>
+        </div>
       </div>
+
+      // <div className='text-black bg-white w-[90%] h-[90%]'>
+
+      // </div>
       {/* <Modal show={props.openModal === 'form-elements'} size="7xl" popup onClose={() => props.setOpenModal(undefined)}>
         <Modal.Header />
         <Modal.Body>
