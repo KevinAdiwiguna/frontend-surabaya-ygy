@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useMe } from "../../../hooks/API/useMe";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { dateConverter } from "../../../components/dateConverter";
-import { Modal } from 'flowbite-react';
 
 export const SalesOrderHeader = () => {
   const { fetchMe, response } = useMe();
@@ -17,6 +16,8 @@ export const SalesOrderHeader = () => {
   const [getMyCurrency, setGetMyCurrency] = useState([]);
   const [getMyMaterial, setGetMyMaterial] = useState([]);
   const [getMyMaterialDetail, setGetMyMaterialDetail] = useState([]);
+  const [getMyMaterialDetailForUpdate, setGetMyMaterialDetailForUpdate] = useState([]);
+  const [getMyMaterialDetailForChange, setGetMyMaterialDetailForChange] = useState([]);
   const [data, setData] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
@@ -29,24 +30,64 @@ export const SalesOrderHeader = () => {
   const [Netto, setNetto] = useState(0);
   const [getData, setGetData] = useState([]);
   const [poNo, setPoNo] = useState("");
-  const [poNo2, setPoNo2] = useState("");
   const [top, setTop] = useState("");
   const [shipToVal, setShipToVal] = useState("");
   const [taxToVal, setTaxToVal] = useState("");
-  const [exchangeRate, setExchangeRate] = useState("");
+  const [exchangeRate, setExchangeRate] = useState(0.0);
   const [info, setInfo] = useState("");
-  const [salesDetail, setSalesDetail] = useState([])
-  const [salesDetailData, setSalesDetailData] = useState([])
-  const [number, setNumber] = useState(1)
-  const [info2, setInfo2] = useState("")
-  const [modalShow, setModalShow] = React.useState(false);
+  const [info2, setInfo2] = useState("");
+  const [salesDetail, setSalesDetail] = useState([]);
+  const [modal, setModal] = useState(false);
+  const [modalData, setModalData] = useState(false);
 
   const [seriesVal, setSeriesVal] = useState("");
-  const [customerVal, setCustomerVal] = useState("");
   const [salesmanVal, setSalesmanVal] = useState("");
   const [currencyVal, setCurrencyVal] = useState("");
   const [materialVal, setMaterialVal] = useState("");
-  const props = { openModal, setOpenModal };
+  const [customerVal, setCustomerVal] = useState("");
+  const [totalNetto, setTotalNetto] = useState(0);
+  const [totalGross, setTotalGross] = useState(0);
+  const [totalGrossUpdate, setTotalGrossUpdate] = useState(0);
+
+
+  const [nettoChange, setNettoChange] = useState("");
+  const [grossChange, setGrossChange] = useState("");
+  const [discountOutputChange, setDiscountOutputChange] = useState("");
+  const [taxOutputChange, setTaxOutputChange] = useState("");
+  const [taxToValUpdate, setTaxToValUpdate] = useState("");
+  const [shipToValUpdate, setShipToValUpdate] = useState("");
+  const [informationUpdate, setInformationUpdate] = useState("");
+  const [exchangeRateUpdate, setExchangeRateUpdate] = useState("");
+  const [topUpdate, setTopUpdate] = useState("");
+  const [poNoUpdate, setPoNoUpdate] = useState('');
+  const [deliveryDateUpdate, setDeliveryDateUpdate] = useState("");
+  const [salesmanValUpdate, setSalesmanValUpdate] = useState("");
+  const [customerValUpdate, setCustomerValUpdate] = useState("");
+  const [salesDetailUpdate, setSalesDetailUpdate] = useState([]);
+  const [taxUpdate, setTaxUpdate] = useState();
+  const [taxValUpdate, setTaxValUpdate] = useState(0);
+  const [discountUpdate, setDiscountUpdate] = useState(0);
+  const [materialValUpdate, setMaterialValUpdate] = useState("");
+  const [QuantityUpdate, setQuantityUpdate] = useState("");
+  const [grossUpdate, setGrossUpdate] = useState(0);
+  const [discountOutputUpdate, setDiscountOutputUpdate] = useState();
+  const [taxOutputUpdate, setTaxOutputUpdate] = useState(0);
+  const [NettoUpdate, setNettoUpdate] = useState(0);
+  const [infoUpdate, setInfoUpdate] = useState("");
+  const [priceUpdate, setPriceUpdate] = useState(0);
+  const [getSalesOrderDetail, setGetSalesOrderDetail] = useState([]);
+  const [changeTax, setChangeTax] = useState("");
+  const [changeTaxVal, setChangeTaxVal] = useState("");
+  const [changeDiscount, setChangeDiscount] = useState("");
+  const [changeMaterialVal, setChangeMaterialVal] = useState("");
+  const [changeInfo, setChangeInfo] = useState("");
+  const [changeQuantity, setChangeQuantity] = useState("");
+  const [totalNettoUpdate, setTotalNettoUpdate] = useState("");
+  const [salesDetailKey, setSalesDetailKey] = useState(0);
+  const [changedPrice, setChangedPrice] = useState(0);
+  const [salesDetailDocNo, setSalesDetailDocNo] = useState("");
+
+
   const handleDocDateChange = (e) => {
     const selectedDocDate = e.target.value;
     setDocDate(selectedDocDate);
@@ -109,17 +150,70 @@ export const SalesOrderHeader = () => {
     }
   };
 
+  const getSalesOrderDetailByDocNo = async (params) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/salesorderd/${params}`
+      );
+      setGetSalesOrderDetail(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const sendSalesDetailToInput = (e, key) => {
+    setChangeMaterialVal(e.MaterialCode)
+    setChangeInfo(e.Info)
+    setChangeQuantity(e.Qty)
+    setSalesDetailKey(e.Number)
+    setSalesDetailDocNo(e.DocNo)
+  }
+
   const getMaterialDetail = async (params) => {
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/material/${params}`
       );
       setGetMyMaterialDetail(response.data);
-      setPrice(response.data?.DefaultPrice);
+      setPrice(response?.data.DefaultPrice);
     } catch (error) {
       console.log(error);
     }
   };
+
+  const getMaterialDetailForUpdate = async (params) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/material/${params}`
+      );
+      setGetMyMaterialDetailForUpdate(response.data);
+      setPriceUpdate(response?.data.DefaultPrice);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getMaterialDetailForChange = async (params) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/material/${params}`
+      );
+      setGetMyMaterialDetailForChange(response.data);
+      setChangedPrice(response?.data.DefaultPrice);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getMaterialDetail(materialVal);
+  }, [materialVal]);
+  useEffect(() => {
+    getMaterialDetailForUpdate(materialValUpdate);
+  }, [materialValUpdate]);
+  useEffect(() => {
+    getMaterialDetailForChange(changeMaterialVal);
+  }, [changeMaterialVal]);
 
   const [getFCurrency, setGetFCurrency] = useState([]);
 
@@ -136,48 +230,189 @@ export const SalesOrderHeader = () => {
 
   useEffect(() => {
     getCurrencyByCustomer(customerVal);
-  }, [customerVal]);
+    getCurrencyByCustomer(customerValUpdate);
+  }, [customerVal, customerValUpdate]);
 
   const calculateTotalGross = () => {
     return quantity * price;
   };
 
   const calculateDiscount = () => {
-    let total = (quantity * price * discount) / 100;
+    let total = (totalGross * discount) / 100;
     return total;
   };
 
   const calculateTax = (e) => {
+    if (tax === "No") {
+      return 0;
+    }
     let total = (e * taxVal) / 100;
     return total;
   };
 
-  const calculateTotalNetto = () => {
-    let total = quantity * price - calculateDiscount();
-    if (tax === "Exclude") {
-      total = total + (total * taxVal) / 100;
-    }
+  const calculateNetto = () => {
+    let total = quantity * price;
     return total;
   };
 
+  const calculateTotalNetto = () => {
+    let discount = calculateDiscount();
+    let total = totalGross - calculateDiscount();
+    let taks = calculateTax(total)
+    if (tax === "Exclude") {
+      total = total + taks;
+    }
+    setDiscountOutput(discount)
+    setTaxOutput(taks)
+    setTotalNetto(total)
+  };
+
+  useEffect(() => {
+    calculateTotalNetto()
+  }, [totalGross, taxVal, tax, discount])
+
   const totalHandle = () => {
     const totalGross = calculateTotalGross();
-    const totalNetto = calculateTotalNetto();
-    const discount = calculateDiscount();
-    const tax = calculateTax(totalNetto);
-    setTaxOutput(tax);
-    setDiscountOutput(discount);
+    const totalNetto = calculateNetto();
     setGross(totalGross);
     setNetto(totalNetto);
   };
 
   useEffect(() => {
-    totalHandle()
-  }, [quantity, discount, taxVal])
+    totalHandle();
+  }, [quantity, getMyMaterialDetail?.DefaultPrice]);
+
+  const calculateTotalGrossUpdate = () => {
+    let total = 0
+    for (let i = 0; i < salesDetailUpdate.length; i++) {
+      let obj = salesDetailUpdate[i];
+      let nettoAsInteger = parseInt(obj.netto);
+      total += nettoAsInteger;
+    }
+    for (let i = 0; i < getSalesOrderDetail.length; i++) {
+      let obj = getSalesOrderDetail[i];
+      let nettoAsInteger = parseInt(obj.Netto);
+      total += nettoAsInteger;
+    }
+    console.log(total);
+    setTotalGrossUpdate(total);
+  };
+
+  const calculateTotalNettoUpdate = () => {
+    let nettoDiscount = (totalGrossUpdate * discountUpdate) / 100;
+    let totalNetto = totalGrossUpdate - nettoDiscount;
+    let tax = calculateTaxUpdate(nettoDiscount)
+    if (taxUpdate === "Exclude") {
+      totalNetto = nettoDiscount + tax;
+    }
+    setDiscountOutputUpdate(nettoDiscount)
+    setTaxOutputUpdate(tax)
+    setTotalNettoUpdate(totalNetto)
+  }
 
   useEffect(() => {
-    getMaterialDetail(materialVal);
-  }, [materialVal]);
+    calculateTotalNettoUpdate()
+  }, [totalGrossUpdate, taxValUpdate, taxUpdate, discountUpdate])
+
+  useEffect(() => {
+    calculateTotalGrossUpdate()
+  }, [getSalesOrderDetail, salesDetailUpdate])
+
+  const calculateTaxUpdate = (e) => {
+    if (taxUpdate === "No") {
+      return 0;
+    }
+    let total = (e * taxValUpdate) / 100;
+    return total;
+  };
+
+  const calculateNettoUpdate = () => {
+    let total = QuantityUpdate * priceUpdate
+    return total;
+  };
+
+  const calculateGrossUpdate = () => {
+    let total = QuantityUpdate * priceUpdate
+    return total;
+  };
+
+  const totalUpdateHandle = () => {
+    const Netto = calculateNettoUpdate();
+    const Gross = calculateGrossUpdate();
+    setNettoUpdate(Netto);
+    setGrossUpdate(Gross);
+  };
+
+  useEffect(() => {
+    totalUpdateHandle()
+  }, [QuantityUpdate, priceUpdate, getMaterialDetailForUpdate?.DefaultPrice])
+
+  const calculateNettoChange = () => {
+    let total = changeQuantity * changedPrice
+    return total;
+  };
+
+  const calculateGrossChange = () => {
+    let total = changeQuantity * changedPrice
+    return total;
+  };
+
+  const totalChangeHandle = () => {
+    const Netto = calculateNettoChange();
+    const gross = calculateGrossChange();
+    setGrossChange(gross);
+    setNettoChange(Netto);
+  };
+
+  useEffect(() => {
+    totalChangeHandle();
+  }, [
+    changeQuantity,
+    changedPrice,
+    getMyMaterialDetailForChange?.DefaultPrice,
+  ]);
+
+  const changeSalesDetailData = async (key,doc) => {
+    // getSalesOrderDetail[key].Netto = nettoChange
+    // setGetSalesOrderDetail((prevDataArr) => {
+    //   const newDataArr = prevDataArr.map((obj, id) => {
+    //     if (id === key) {
+    //       return { ...obj, Price: changedPrice, MaterialCode: changeMaterialVal, Info: changeInfo, Qty: changeQuantity, Netto: nettoChange };
+    //     }
+    //     return obj;
+    //   });
+    //   return newDataArr;
+    // });
+    try{
+      await axios.patch(
+        `${process.env.REACT_APP_API_BASE_URL}/salesorderd/${doc}/${key}`,
+          {
+            materialCode: changeMaterialVal,
+            info: changeInfo,
+            unit: getSalesOrderDetail[key-1].Unit,
+            qty: changeQuantity,
+            price: getMyMaterialDetailForChange?.DefaultPrice,
+            gross: grossChange,
+            discPercent: getSalesOrderDetail[key-1].DiscPercent,
+            discPercent2: getSalesOrderDetail[key-1].DiscPercent2,
+            discPercent3: getSalesOrderDetail[key-1].DiscPercent3,
+            discValue: getSalesOrderDetail[key-1].DiscValue,
+            discNominal: getSalesOrderDetail[key-1].DiscNominal,
+            netto: nettoChange,
+            qtyDelivered: 0,
+            qtyWO: 0,
+        }
+      );
+      getSalesOrderDetailByDocNo(doc)
+      toast.success("Data Changed", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    }catch(error){
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
     getSeries();
@@ -219,35 +454,84 @@ export const SalesOrderHeader = () => {
   };
 
   const addSalesDetail = () => {
+    if (!materialVal || !quantity) {
+      toast.warn("Material and Quantity is required", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+      return;
+    }
 
-    setSalesDetail([...salesDetail, {
-      number: salesDetail.length + 1,
-      materialCode: materialVal,
-      info: getMyMaterialDetail?.Info ? getMyMaterialDetail?.Info : "-",
-      unit: getMyMaterialDetail?.SmallestUnit,
-      qty: quantity,
-      price: getMyMaterialDetail?.DefaultPrice,
-      gross: gross,
-      discPercent1: 0.00,
-      discPercent2: 0.00,
-      discPercent3: 0.00,
-      discValue: 0.00,
-      discNominal: 0.00,
-      netto: Netto,
-      qtyDelivered: 0.00,
-      qtyWO: 0.00,
-    }])
-  }
+    setTotalGross(totalGross + gross)
+
+    setSalesDetail([
+      ...salesDetail,
+      {
+        number: salesDetailUpdate.length + 1,
+        materialCode: materialVal,
+        info:
+          info2 || getMyMaterialDetail?.Info
+            ? info2 || getMyMaterialDetail?.Info
+            : "-",
+        unit: getMyMaterialDetail?.SmallestUnit,
+        qty: quantity,
+        price: getMyMaterialDetail?.DefaultPrice,
+        gross: gross,
+        discPercent1: 0.0,
+        discPercent2: 0.0,
+        discPercent3: 0.0,
+        discValue: 0.0,
+        discNominal: 0.0,
+        netto: Netto,
+        qtyDelivered: 0.0,
+        qtyWO: 0.0,
+      },
+    ]);
+  };
+
+  const addSalesDetailOnUpdate = () => {
+    if (!materialValUpdate || !QuantityUpdate) {
+      toast.warn("Material and Quantity is required", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+      return;
+    }
+
+    setSalesDetailUpdate([
+      ...salesDetailUpdate,
+      {
+        number: salesDetailUpdate.length + 1,
+        materialCode: materialValUpdate,
+        info:
+          infoUpdate || getMyMaterialDetailForUpdate?.Info
+            ? infoUpdate || getMyMaterialDetailForUpdate?.Info
+            : "-",
+        unit: getMyMaterialDetailForUpdate?.SmallestUnit,
+        qty: QuantityUpdate,
+        price: getMyMaterialDetailForUpdate?.DefaultPrice,
+        gross: grossUpdate,
+        discPercent1: 0.0,
+        discPercent2: 0.0,
+        discPercent3: 0.0,
+        discValue: 0.0,
+        discNominal: 0.0,
+        netto: NettoUpdate,
+        qtyDelivered: 0.0,
+        qtyWO: 0.0,
+      },
+    ]);
+  };
 
   const generateDocDate = () => {
     const today = new Date(docDate);
     const year = today.getFullYear().toString().substring(2);
-    const month = (today.getMonth() + 1).toString().padStart(2, '0');
-    const day = today.getDate().toString().padStart(2, '0');
-
+    const month = (today.getMonth() + 1).toString().padStart(2, "0");
+    const day = today.getDate().toString().padStart(2, "0");
     return year + month + day;
-  }
-
+  };
 
   const submitClick = async (e) => {
     e.preventDefault();
@@ -268,16 +552,16 @@ export const SalesOrderHeader = () => {
         taxPercent: taxVal,
         currency: currencyVal,
         exchangeRate: exchangeRate,
-        totalGross: gross,
+        totalGross: totalGross,
         totalDisc: discountOutput,
         taxValue: taxOutput,
-        totalNetto: Netto,
+        totalNetto: totalNetto,
         information: info,
         status: "OPEN",
         isPurchaseReturn: false,
         createdBy: response.User,
         changedBy: response.User,
-        salesOrderDetail: salesDetail
+        salesOrderDetail: salesDetail,
       });
       dataFetching();
       toast.success("Data Saved", {
@@ -285,7 +569,9 @@ export const SalesOrderHeader = () => {
         autoClose: 3000,
         hideProgressBar: true,
       });
+      setSalesDetail([])
     } catch (error) {
+      console.log(error);
       toast.warn("Code Sudah Digunakan", {
         position: "top-center",
         autoClose: 3000,
@@ -294,57 +580,88 @@ export const SalesOrderHeader = () => {
     }
   };
 
-  const updateData = async (params) => {
-    props.setOpenModal('form-elements')
-    setSalesDetailData(params)
-    // try {
-    //   await axios.patch(
-    //     `${process.env.REACT_APP_API_BASE_URL}/salesorderh/${params}`,
-    //     {
-    //       docDate: docDate,
-    //       customerCode: customerVal,
-    //       shipToCode: shipToVal,
-    //       taxToCode: taxToVal,
-    //       salesCode: salesmanVal,
-    //       deliveryDate: deliveryDate,
-    //       poNo: poNo,
-    //       top: top,
-    //       discPercent: discount,
-    //       taxStatus: tax,
-    //       taxPercent: taxVal,
-    //       currency: currencyVal,
-    //       exchangeRate: exchangeRate,
-    //       totalGross: gross,
-    //       totalDisc: discountOutput,
-    //       taxValue: taxOutput,
-    //       totalNetto: Netto,
-    //       information: info,
-    //       status: "OPEN",
-    //       isPurchaseReturn: false,
-    //       changedBy: response.User,
-    //     }
-    //   );
-    //   dataFetching();
-    //   toast.success("Data Updated", {
-    //     position: "top-center",
-    //     autoClose: 3000,
-    //     hideProgressBar: true,
-    //   });
-    // } catch (error) {
-    //   console.log(error);
-    // }
+  const closeModal = () => {
+    setModal(false);
+    setSalesDetailUpdate([]);
+    setDeliveryDateUpdate("");
   };
+
+  const updateData = async (params) => {
+    try {
+      await axios.patch(
+        `${process.env.REACT_APP_API_BASE_URL}/salesorderh/${params}`,
+        {
+          customerCode: customerValUpdate,
+          shipToCode: shipToValUpdate,
+          taxToCode: taxToValUpdate,
+          salesCode: salesmanValUpdate,
+          deliveryDate: deliveryDateUpdate,
+          poNo: poNoUpdate,
+          top: topUpdate,
+          discPercent: discountUpdate,
+          taxStatus: taxUpdate,
+          taxPercent: taxValUpdate,
+          currency: currencyVal,
+          exchangeRate: exchangeRate,
+          totalGross: grossUpdate,
+          totalDisc: discountOutputUpdate,
+          taxValue: taxOutputUpdate,
+          totalNetto: NettoUpdate,
+          information: infoUpdate,
+          status: "OPEN",
+          isPurchaseReturn: false,
+          changedBy: response.User,
+        }
+      );
+      if (salesDetailUpdate) {
+        await axios.patch(
+          `${process.env.REACT_APP_API_BASE_URL}/salesorderd/${params}`,
+          salesDetailUpdate.map((detail) => ({
+            ...detail,
+            materialCode: detail.materialCode,
+            info: detail.info,
+            unit: detail.unit,
+            qty: detail.qty,
+            price: detail.price,
+            gross: detail.gross,
+            discPercent: detail.discPercent1,
+            discPercent2: detail.discPercent2,
+            discPercent3: detail.discPercent3,
+            discValue: detail.discValue,
+            discNominal: detail.discNominal,
+            netto: detail.netto,
+            QtyDelivered: 0,
+            QtyWO: 0,
+          }))
+        );
+      }
+
+      dataFetching();
+      getSalesOrderDetailByDocNo(params)
+      toast.success("Data Updated", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    setTaxUpdate(modalData?.TaxStatus);
+    setTaxValUpdate(modalData?.TaxPercent);
+    setDiscountUpdate(modalData?.DiscPercent);
+  }, [modalData.DiscPercent, modalData.TaxPercent, modalData.TaxStatus])
 
   useEffect(() => {
     setShipToVal(customerVal);
     setTaxToVal(customerVal);
+    setShipToValUpdate(customerValUpdate);
+    setTaxToValUpdate(customerValUpdate);
     setCurrencyVal(getFCurrency.Currency);
-  }, [customerVal, customerVal, getFCurrency?.Currency]);
+  }, [customerVal, customerValUpdate, getFCurrency?.Currency]);
 
-
-
-  const [modal, setModal] = useState(false);
-  const [modalData, setModalData] = useState(false);
   return (
     <div>
       <div className="flex justify-between">
@@ -477,6 +794,7 @@ export const SalesOrderHeader = () => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="PO No"
                     required
+                    min="0"
                   />
                 </td>
               </tr>
@@ -491,6 +809,7 @@ export const SalesOrderHeader = () => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="0"
                     required
+                    min="0"
                   />
                 </td>
                 <td>Days</td>
@@ -510,8 +829,7 @@ export const SalesOrderHeader = () => {
                     }}
                     type="text"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="1.00"
-                    value="1.00"
+                    placeholder="0.00"
                     required
                   // disabled
                   />
@@ -537,6 +855,7 @@ export const SalesOrderHeader = () => {
                     onChange={(e) => {
                       setTax(e.target.value);
                     }}
+                    required
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
                     <option disabled selected hidden>
@@ -556,6 +875,7 @@ export const SalesOrderHeader = () => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="10.00"
                     required
+                    min="0"
                   />
                 </td>
                 <td> % Tax</td>
@@ -571,6 +891,7 @@ export const SalesOrderHeader = () => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="0.00"
                     required
+                    min="0"
                   />
                 </td>
                 <td> %</td>
@@ -597,10 +918,11 @@ export const SalesOrderHeader = () => {
                 <td className="text-right">Info:</td>
                 <td>
                   <input
+                    onChange={(e) => setInfo2(e.target.value)}
                     type="text"
                     className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder=""
-                    value={getMyMaterialDetail?.Info}
+                    value={info2 || getMyMaterialDetail?.Info}
                   />
                 </td>
                 <td className="text-right">Quantity:</td>
@@ -611,6 +933,7 @@ export const SalesOrderHeader = () => {
                     className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder=""
                     required
+                    min="0"
                   />
                 </td>
                 <td className="text-right">Price:</td>
@@ -624,7 +947,9 @@ export const SalesOrderHeader = () => {
                   />
                 </td>
                 <button
-                  onClick={() => { addSalesDetail() }}
+                  onClick={() => {
+                    addSalesDetail();
+                  }}
                   type="button"
                   className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
                 >
@@ -632,8 +957,7 @@ export const SalesOrderHeader = () => {
                 </button>
               </tr>
               <tr>
-                <td className="text-right">
-                </td>
+                <td className="text-right"></td>
                 <td>
                   <button
                     type="submit"
@@ -656,7 +980,7 @@ export const SalesOrderHeader = () => {
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="0.00"
                   disabled
-                  value={gross}
+                  value={totalGross}
                 />
               </td>
               <td className="text-right">Total Disc: </td>
@@ -679,7 +1003,7 @@ export const SalesOrderHeader = () => {
                   value={taxOutput}
                 />
               </td>
-              <td className="text-right font-bold">Total Netto: </td>
+              <td className="text-right font-bold">Netto: </td>
               <td>
                 <input
                   type="text"
@@ -690,10 +1014,22 @@ export const SalesOrderHeader = () => {
                 />
               </td>
             </tr>
+            <tr>
+              <td className="text-right font-bold">Total Netto: </td>
+              <td>
+                <input
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="0.00"
+                  disabled
+                  value={totalNetto}
+                />
+              </td>
+            </tr>
           </table>
         </div>
-        <div className="relative overflow-x-auto pt-10">
-          <div className="text-xl font-bold mb-4">Detail</div>
+        <div className="text-xl font-bold mb-4 pt-10">Detail</div>
+        <div className="relative overflow-x-auto">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
@@ -736,6 +1072,9 @@ export const SalesOrderHeader = () => {
                 <th scope="col" className="px-6 py-3">
                   Netto
                 </th>
+                <th scope="col" className="px-6 py-3">
+                  Control
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -766,8 +1105,8 @@ export const SalesOrderHeader = () => {
             </tbody>
           </table>
         </div>
-        <div className="relative overflow-x-auto pt-10">
-          <div className="text-xl font-bold mb-4">Header Data Table</div>
+        <div className="text-xl font-bold mb-4 pt-10">Header Data Table</div>
+        <div className="relative overflow-x-auto">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
@@ -903,18 +1242,17 @@ export const SalesOrderHeader = () => {
                       >
                         Delete
                       </button>
-                      {console.log(modalData)}
                       <button
                         onClick={() => {
                           setModalData(res);
                           setModal(true);
+                          getSalesOrderDetailByDocNo(res.DocNo);
                         }}
                         type="button"
                         className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                       >
                         Update
                       </button>
-
                     </td>
                   </tr>
                 );
@@ -924,14 +1262,18 @@ export const SalesOrderHeader = () => {
         </div>
       </div>
 
-
-      <div className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${modal ? "block" : "hidden"}`}>
+      <div
+        className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${modal ? "block" : "hidden"
+          }`}
+      >
         <div className="space-y-6">
           <div className="text-2xl font-bold mb-4 ">
             DocNo: {modalData.DocNo}
           </div>
           <button
-            onClick={() => setModal(false)}
+            onClick={() => {
+              closeModal();
+            }}
             className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none"
           >
             <svg
@@ -949,13 +1291,17 @@ export const SalesOrderHeader = () => {
               />
             </svg>
           </button>
-          <form onSubmit={submitClick}>
-            <table className="border-separate border-spacing-2 ">
+          <form>
+            <table className="border-separate border-spacing-2">
               <tr>
-                {console.log(modalData)}
-                <td className="text-right">Series: {modalData.Series}</td>
+                <td className="text-right">Series:</td>
                 <td>
-                  <input disabled value={salesDetailData.Series} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                  <input
+                    disabled
+                    value={modalData.Series}
+                    type="text"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  />
                 </td>
               </tr>
               <tr>
@@ -974,10 +1320,15 @@ export const SalesOrderHeader = () => {
                 <td className="text-right">Customer: </td>
                 <td>
                   <select
-                    onChange={(e) => setCustomerVal(e.target.value)}
+                    onChange={(e) => setCustomerValUpdate(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
-                    <option value={salesDetailData.CustomerCode} disabled selected hidden>
+                    <option
+                      value={modalData.CustomerCode}
+                      disabled
+                      selected
+                      hidden
+                    >
                       {modalData.CustomerCode}
                     </option>
                     {getMyCustomer.map((res, key) => {
@@ -995,8 +1346,8 @@ export const SalesOrderHeader = () => {
                 <td className="text-right">Ship To: </td>
                 <td>
                   <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option selected value={customerVal}>
-                      {customerVal}
+                    <option selected value={customerValUpdate}>
+                      {customerValUpdate}
                     </option>
                   </select>
                 </td>
@@ -1005,8 +1356,8 @@ export const SalesOrderHeader = () => {
                 <td className="text-right">Tax To: </td>
                 <td>
                   <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option selected value={customerVal}>
-                      {customerVal}
+                    <option selected value={customerValUpdate}>
+                      {customerValUpdate}
                     </option>
                   </select>
                 </td>
@@ -1015,10 +1366,10 @@ export const SalesOrderHeader = () => {
                 <td className="text-right">Salesman: </td>
                 <td>
                   <select
-                    onChange={(e) => setSalesmanVal(e.target.value)}
+                    onChange={(e) => setSalesmanValUpdate(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
-                    <option value={salesDetailData.SalesCode} disabled selected >
+                    <option value={modalData.SalesCode} selected>
                       {modalData.SalesCode}
                     </option>
                   </select>
@@ -1031,18 +1382,18 @@ export const SalesOrderHeader = () => {
                     type="datetime-local"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder=""
-                    min={salesDetailData.DocDate + "T00:00"}
-                    value={deliveryDate}
-                    onChange={(e) => setDeliveryDate(e.target.value)}
+                    min={modalData.DocDate + "T00:00"}
+                    value={deliveryDateUpdate || modalData.DeliveryDate + "T00:00"}
+                    onChange={(e) => setDeliveryDateUpdate(e.target.value)}
                   />
                 </td>
                 <td className="text-right">PO No: </td>
                 <td>
-                  <input onChange={(e) => { setPoNo2(e.target.value); }} type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                   <input
                     onChange={(e) => {
-                      setPoNo(e.target.value);
+                      setPoNoUpdate(e.target.value);
                     }}
+                    placeholder={modalData.PONo}
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   />
@@ -1053,11 +1404,11 @@ export const SalesOrderHeader = () => {
                 <td>
                   <input
                     onChange={(e) => {
-                      setTop(e.target.value);
+                      setTopUpdate(e.target.value);
                     }}
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder={salesDetailData.TOP}
+                    placeholder={modalData.TOP}
                   />
                 </td>
                 <td>Days</td>
@@ -1065,7 +1416,7 @@ export const SalesOrderHeader = () => {
               <tr>
                 <td className="text-right">Currency: </td>
                 <td>
-                  <select disabled className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option>{getFCurrency.Currency}</option>
                   </select>
                 </td>
@@ -1073,12 +1424,11 @@ export const SalesOrderHeader = () => {
                 <td>
                   <input
                     onChange={(e) => {
-                      setExchangeRate(e.target.value);
+                      setExchangeRateUpdate(e.target.value);
                     }}
                     type="text"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder={salesDetailData.ExchangeRate}
-                    value="1.00"
+                    placeholder={modalData.ExchangeRate}
                   // disabled
                   />
                 </td>
@@ -1088,11 +1438,11 @@ export const SalesOrderHeader = () => {
                 <td>
                   <input
                     onChange={(e) => {
-                      setInfo(e.target.value);
+                      setInformationUpdate(e.target.value);
                     }}
                     type="text"
                     className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder={salesDetailData.Info}
+                    placeholder={modalData.Info}
                   />
                 </td>
               </tr>
@@ -1100,12 +1450,12 @@ export const SalesOrderHeader = () => {
                 <td>
                   <select
                     onChange={(e) => {
-                      setTax(e.target.value);
+                      setTaxUpdate(e.target.value);
                     }}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
                     <option disabled selected hidden>
-                      {salesDetailData.TaxStatus}
+                      {taxUpdate}
                     </option>
                     <option value="No">No</option>
                     <option value="Include">Include</option>
@@ -1115,11 +1465,12 @@ export const SalesOrderHeader = () => {
                 <td>
                   <input
                     onChange={(e) => {
-                      setTaxVal(e.target.value);
+                      setTaxValUpdate(e.target.value);
                     }}
                     type="number"
+                    placeholder={modalData.TaxPercent}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder={salesDetailData.TaxPercent}
+                    value={taxValUpdate}
                   />
                 </td>
                 <td> % Tax</td>
@@ -1129,11 +1480,12 @@ export const SalesOrderHeader = () => {
                 <td>
                   <input
                     onChange={(e) => {
-                      setDiscount(e.target.value);
+                      setDiscountUpdate(e.target.value);
                     }}
                     type="number"
+                    placeholder={modalData.DiscountPercent}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder={salesDetailData.DiscPercent}
+                    value={discountUpdate}
                   />
                 </td>
                 <td> %</td>
@@ -1142,7 +1494,7 @@ export const SalesOrderHeader = () => {
                 <td className="text-right">Material:</td>
                 <td>
                   <select
-                    onChange={(e) => setMaterialVal(e.target.value)}
+                    onChange={(e) => setMaterialValUpdate(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
                     <option disabled selected hidden>
@@ -1160,16 +1512,17 @@ export const SalesOrderHeader = () => {
                 <td className="text-right">Info:</td>
                 <td>
                   <input
+                    onChange={(e) => setInfoUpdate(e.target.value)}
                     type="text"
                     className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder=""
-                    value={getMyMaterialDetail?.Info}
+                    value={infoUpdate || getMyMaterialDetailForUpdate?.Info}
                   />
                 </td>
                 <td className="text-right">Quantity:</td>
                 <td>
                   <input
-                    onChange={(e) => setQuantity(e.target.value)}
+                    onChange={(e) => setQuantityUpdate(e.target.value)}
                     type="number"
                     className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder=""
@@ -1182,11 +1535,13 @@ export const SalesOrderHeader = () => {
                     type="text"
                     className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder=""
-                    value={getMyMaterialDetail?.DefaultPrice}
+                    value={getMyMaterialDetailForUpdate?.DefaultPrice}
                   />
                 </td>
                 <button
-                  onClick={() => { addSalesDetail() }}
+                  onClick={() => {
+                    addSalesDetailOnUpdate();
+                  }}
                   type="button"
                   className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
                 >
@@ -1194,25 +1549,312 @@ export const SalesOrderHeader = () => {
                 </button>
               </tr>
               <tr>
-                <td className="text-right">
-                </td>
+                <td className="text-right"></td>
                 <td>
                   <button
-                    type="submit"
+                    onClick={() => { updateData(modalData.DocNo) }}
+                    type="button"
                     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
                   >
-                    Save
+                    Update
                   </button>
                 </td>
               </tr>
             </table>
           </form>
+          <div className="flex justify-between items-start">
+            <table className="border-separate border-spacing-2 ">
+              <tr>
+                <td className="text-right">Total Gross : </td>
+                <td>
+                  <input
+                    type="number"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="0.00"
+                    disabled
+                    value={totalGrossUpdate}
+                  />
+                </td>
+                <td className="text-right">Total Disc: </td>
+                <td>
+                  <input
+                    type="number"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="0.00"
+                    disabled
+                    value={discountOutputUpdate}
+                  />
+                </td>
+                <td className="text-right">Tax: </td>
+                <td>
+                  <input
+                    type="number"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="0.00"
+                    disabled
+                    value={taxOutputUpdate}
+                  />
+                </td>
+                <td className="text-right font-bold">Netto:</td>
+                <td>
+                  <input
+                    type="text"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="0.00"
+                    disabled
+                    value={NettoUpdate}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td className="text-right font-bold">Total Netto: </td>
+                <td>
+                  <input
+                    type="text"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="0.00"
+                    disabled
+                    value={totalNettoUpdate}
+                  />
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div className="text-xl font-bold mb-4">New Series Data</div>
+          <div className="relative overflow-x-auto">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" className="px-6 py-3">
+                    Number
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Code
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Info
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Unit
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Qty
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Price
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Gross
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DiscPercent
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DiscPercent2
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DiscPercent3
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DiscValue
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DiscNominal
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Netto
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {salesDetailUpdate.map((res, key) => {
+                  return (
+                    <tr
+                      key={key}
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                    >
+                      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {res.number}
+                      </td>
+                      <td className="px-6 py-4">{res.materialCode}</td>
+                      <td className="px-6 py-4">{res.info}</td>
+                      <td className="px-6 py-4">{res.unit}</td>
+                      <td className="px-6 py-4">{res.qty}</td>
+                      <td className="px-6 py-4">{res.price}</td>
+                      <td className="px-6 py-4">{res.gross}</td>
+                      <td className="px-6 py-4">{res.discPercent1}</td>
+                      <td className="px-6 py-4">{res.discPercent2}</td>
+                      <td className="px-6 py-4">{res.discPercent3}</td>
+                      <td className="px-6 py-4">{res.discValue}</td>
+                      <td className="px-6 py-4">{res.discNominal}</td>
+                      <td className="px-6 py-4">{res.netto}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div className="text-xl font-bold mb-4">Change Data</div>
+            <table className="border-separate border-spacing-2">
+              <tr>
+                <td className="text-right">Material:</td>
+                <td>
+                  <select
+                    onChange={(e) => setChangeMaterialVal(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
+                    <option disabled selected hidden>
+                      {changeMaterialVal || "Pilih Material"}
+                    </option>
+                    {getMyMaterial.map((res, key) => {
+                      return (
+                        <option key={key} value={res.Code}>
+                          {res.Code}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </td>
+                <td className="text-right">Info:</td>
+                <td>
+                  <input
+                    onChange={(e) => setChangeInfo(e.target.value)}
+                    type="text"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    value={changeInfo}
+                  />
+                </td>
+                <td className="text-right">Quantity:</td>
+                <td>
+                  <input
+                    onChange={(e) => setChangeQuantity(e.target.value)}
+                    type="number"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    value={changeQuantity}
+                  />
+                </td>
+                <td className="text-right">Price:</td>
+                <td>
+                  <input
+                    disabled
+                    type="text"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    value={getMyMaterialDetailForChange?.DefaultPrice}
+                  />
+                </td>
+                <td className="text-right">Netto:</td>
+                <td>
+                  <input
+                    disabled
+                    type="text"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    value={nettoChange}
+                  />
+                </td>
+                <button
+                  onClick={() => {
+                    changeSalesDetailData(salesDetailKey,salesDetailDocNo)
+                  }}
+                  type="button"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+                >
+                  Change
+                </button>
+              </tr>
+            </table>
+          </div>
+          <div className="relative overflow-x-auto">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" className="px-6 py-3">
+                    Control
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Number
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Code
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Info
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Unit
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Qty
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Price
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Gross
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DiscPercent
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DiscPercent2
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DiscPercent3
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DiscValue
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DiscNominal
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Netto
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {getSalesOrderDetail.map((res, key) => {
+                  return (
+                    <tr
+                      key={key}
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                    >
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => { sendSalesDetailToInput(res, key) }}
+                          type="button"
+                          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+                        >
+                          Select
+                        </button>
+                      </td>
+                      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {res.Number}
+                      </td>
+                      <td className="px-6 py-4">{res.MaterialCode}</td>
+                      <td className="px-6 py-4">{res.Info}</td>
+                      <td className="px-6 py-4">{res.Unit}</td>
+                      <td className="px-6 py-4">{res.Qty}</td>
+                      <td className="px-6 py-4">{res.Price}</td>
+                      <td className="px-6 py-4">{res.Gross}</td>
+                      <td className="px-6 py-4">{res.DiscPercent}</td>
+                      <td className="px-6 py-4">{res.DiscPercent2}</td>
+                      <td className="px-6 py-4">{res.DiscPercent3}</td>
+                      <td className="px-6 py-4">{res.DiscValue}</td>
+                      <td className="px-6 py-4">{res.DiscNominal}</td>
+                      <td className="px-6 py-4">{res.Netto}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      // <div className='text-black bg-white w-[90%] h-[90%]'>
-
-      // </div>
       {/* <Modal show={props.openModal === 'form-elements'} size="7xl" popup onClose={() => props.setOpenModal(undefined)}>
         <Modal.Header />
         <Modal.Body>
@@ -1487,6 +2129,7 @@ export const SalesOrderHeader = () => {
           </div>
         </Modal.Body>
       </Modal > */}
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
     </div>
   );
 };

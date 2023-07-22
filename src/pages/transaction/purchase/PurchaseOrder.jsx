@@ -638,7 +638,56 @@ export const PurchaseOrder = () => {
             </tr>
           </table>
         </div>
-        <div className="relative overflow-x-auto pt-10">
+        <div className="text-xl font-bold mb-4 pt-10">Detail</div>
+        <div className="relative overflow-x-auto">
+          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" className="px-6 py-3">
+                  Number
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Code
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Info
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Unit
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Qty
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Price
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Gross
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  DiscPercent
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  DiscPercent2
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  DiscPercent3
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  DiscValue
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  DiscNominal
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Netto
+                </th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <div className="text-xl font-bold mb-4 pt-10">Header Data Table</div>
+        <div className="relative overflow-x-auto">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>

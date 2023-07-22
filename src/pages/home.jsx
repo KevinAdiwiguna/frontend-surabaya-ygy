@@ -7,7 +7,8 @@ import { SalesOrderHeader } from "./transaction/sales/SalesOrderHeader";
 import { SalesOrderDetail } from "./transaction/sales/SalesOrderDetail";
 import { PurchaseReq } from "./transaction/purchase/PurchaseReq";
 import { PurchaseOrder } from "./transaction/purchase/PurchaseOrder";
-import {GoodsReceipt} from "./transaction/purchase/GoodsReceipt"
+import { GoodsReceipt } from "./transaction/purchase/GoodsReceipt"
+import { PurchaseCost } from "./transaction/purchase/PurchaseCost"
 // master
 import { DocumentSeries } from "./master/DocumentSeries";
 import { JobOrder } from "./production/JobOrder";
@@ -31,6 +32,9 @@ import { SalesArea3 } from "./master/customer/SalesArea/SalesArea3";
 import { Customer } from "./master/customer/Customer";
 import { Salesman } from "./master/Salesman";
 import { Supplier } from "./master/Supplier";
+import { Departement } from "./master/Departement";
+import { Approval } from "./master/Approval";
+import {GoodIssue} from './transaction/sales/GoodIssue.jsx'
 
 export const Home = () => {
   const params = useParams().id;
@@ -71,6 +75,8 @@ export const Home = () => {
         return <MaterialGroup2 />;
       case "Material Group 3":
         return <MaterialGroup3 />;
+      case "Good Issue":
+        return <GoodIssue />;
       case "Unit":
         return <Unit />;
       // end of Material Master
@@ -98,6 +104,12 @@ export const Home = () => {
         return <GoodsReceipt />;
       case "Price":
         return <Price />;
+      case "Purchase Cost":
+        return <PurchaseCost />;
+      case "Departement":
+        return <Departement />;
+      case "Approval":
+        return <Approval />;
       default:
         navigate("/Dashboard");
     }

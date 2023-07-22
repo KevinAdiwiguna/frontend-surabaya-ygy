@@ -5,7 +5,7 @@ import { dateConverter } from "../../components/dateConverter";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export const Price = () => {
+export const Approval = () => {
   const { fetchMe, response } = useMe();
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
@@ -22,7 +22,7 @@ export const Price = () => {
   const dataFetching = async () => {
     try {
       const data = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/Price`
+        `${process.env.REACT_APP_API_BASE_URL}/Approval`
       );
       setGetData(data.data);
     } catch (error) {}
@@ -45,7 +45,7 @@ export const Price = () => {
   const submitClick = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/Price`, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/Approval`, {
         code: code,
         name: name,
         address: address,
@@ -76,31 +76,9 @@ export const Price = () => {
 
   return (
     <div>
-      <div className="text-2xl font-bold mb-4">Price</div>
+      <div className="text-2xl font-bold mb-4">Approval</div>
       <form onSubmit={submitClick}>
         <table className="border-separate border-spacing-2 w-1/2">
-          <tr>
-            <td className="text-right">Begin Date: </td>
-            <td>
-              <input
-                type="datetime-local"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder=""
-                required
-              />
-            </td>
-          </tr>
-          <tr>
-            <td className="text-right">End Date: </td>
-            <td>
-              <input
-                type="datetime-local"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder=""
-                required
-              />
-            </td>
-          </tr>
           <tr>
             <td className="text-right">Pricelist Type: </td>
             <td>
@@ -113,103 +91,38 @@ export const Price = () => {
             </td>
           </tr>
           <tr>
-            <td className="text-right">Material Code: </td>
-            <td>
-              <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                <option disabled selected hidden>
-                  Pilih Code
-                </option>
-                <option></option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td className="text-right">Currency: </td>
-            <td>
-              <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                <option disabled selected hidden>
-                  Pilih
-                </option>
-                <option></option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td className="text-right">Unit: </td>
-            <td>
-              <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                <option disabled selected hidden>
-                  Pilih Unit
-                </option>
-                <option></option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td className="text-right">Min Qty: </td>
+            <td className="text-right">Min Value: </td>
             <td>
             <input
             type="text"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="0.00"
-            value="0.00"
+            placeholder="0"
+            value="0"
             required
             // disabled
           />
             </td>
           </tr>
           <tr>
-            <td className="text-right">Max Qty: </td>
+            <td className="text-right">Max Value: </td>
             <td>
             <input
             type="text"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="0.00"
-            value="0.00"
+            placeholder="0"
+            value="0"
             required
             // disabled
           />
             </td>
           </tr>
           <tr>
-            <td className="text-right">Price: </td>
-            <td>
-            <input
-            type="text"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="0.00"
-            value="0.00"
-            required
-            // disabled
-          />
-            </td>
-          </tr>
-          <tr>
-            <td className="text-right">Percent Disc: </td>
-            <td>
-            <input
-            type="text"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="0.00"
-            value="0.00"
-            required
-            // disabled
-          />
-            </td>
-          </tr>
-          <tr>
-            <td className="text-right">Value Disc: </td>
-            <td>
-            <input
-            type="text"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="0.00"
-            value="0.00"
-            required
-            // disabled
-          />
-            </td>
-          </tr>
+                <td className="text-right">User: </td>
+                <td>
+                  <select> 
+                  </select>
+                </td>
+              </tr>
           <tr>
             <td></td>
             <td>

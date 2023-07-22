@@ -82,9 +82,24 @@ export const SidebarComp = () => {
                       Good Issue
                     </p>
                   </Link>
+                  <Link to="/Delivery Return">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Delivery Return
+                    </p>
+                  </Link>
+                  <Link to="/Packing List">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Packing List
+                    </p>
+                  </Link>
                   <Link to="/Sales Invoice">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Sales Invoice
+                    </p>
+                  </Link>
+                  <Link to="/Sales Return">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Sales Return
                     </p>
                   </Link>
                 </Sidebar.Collapse>
@@ -100,6 +115,11 @@ export const SidebarComp = () => {
                       Purchase Order
                     </p>
                   </Link>
+                  <Link to="/Purchase Cost">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Purchase Cost
+                    </p>
+                    </Link>
                   <Link to="/Goods Receipt">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Goods Receipt
@@ -108,6 +128,11 @@ export const SidebarComp = () => {
                   <Link to="/Purchase Invoice">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Purchase Invoice
+                    </p>
+                  </Link>
+                  <Link to="/Purchase Return">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Purchase Return
                     </p>
                   </Link>
                 </Sidebar.Collapse>
@@ -252,6 +277,12 @@ export const SidebarComp = () => {
                 <Sidebar.Item icon={HiDocumentText}>
                   Document Series
                 </Sidebar.Item>
+              </Link>
+              <Link to="/Departement">
+                <Sidebar.Item icon={HiUsers}>Deprtement</Sidebar.Item>
+              </Link>
+              <Link to="/Approval">
+                <Sidebar.Item icon={HiIdentification}>Approval</Sidebar.Item>
               </Link>
             </Sidebar.Collapse>
             {/* End of Master */}
