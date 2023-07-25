@@ -1,13 +1,15 @@
-import {useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import axios from "axios";
+
 export const GoodIssue = () => {
-  // state
   const [Series, setSeries] = useState([]);
   const [SalesOrderNo, setSalesOrderNo] = useState([]);
   const [SalesOrderNoDetail, setSalesOrderNoDetail] = useState([]);
-  const [DataFilter, setDataFilter] = useState([]);
+  const [DataFilter, setDataFilter] = useState({});
+  const [quantityData, setQuantityData] = useState({});
+  const [Location, setLocation] = useState([]);
+  const [selectedDocDate, setSelectedDocDate] = useState("");
 
-  // function
   const getSeries = async () => {
     const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/series`);
     setSeries(response.data);
@@ -18,19 +20,23 @@ export const GoodIssue = () => {
     setSalesOrderNo(salesOrderh.data);
   };
 
-  const gertSalesOrderNoDetail = async () => {
+  const getSalesOrderNoDetail = async () => {
     const salesOrderd = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesorderd/${DataFilter.DocNo}`);
     setSalesOrderNoDetail(salesOrderd.data);
   };
+  const getLocation = async () => {
+    const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location`);
+    setLocation(response.data);
+  };
 
-  // fetching
   useEffect(() => {
     getSeries();
     getSalesOrderNo();
+    getLocation();
   }, []);
 
   useEffect(() => {
-    gertSalesOrderNoDetail();
+    getSalesOrderNoDetail();
   }, [DataFilter.DocNo]);
 
   return (
@@ -58,14 +64,19 @@ export const GoodIssue = () => {
                     </select>
                   </td>
                 </tr>
-
                 <tr>
                   <td className="text-right">Doc Date :</td>
                   <td>
-                    <input type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[80%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required />
+                    <input
+                      type="date"
+                      value={selectedDocDate}
+                      onChange={(e) => setSelectedDocDate(e.target.value)} // Add this line
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[80%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Isi kode"
+                      required
+                    />
                   </td>
                 </tr>
-
                 <tr>
                   <td className="text-right">Sales Order No :</td>
                   <td>
@@ -90,7 +101,6 @@ export const GoodIssue = () => {
                     </select>
                   </td>
                 </tr>
-
                 <tr>
                   <td className="text-right">Customer :</td>
                   <td>
@@ -109,14 +119,12 @@ export const GoodIssue = () => {
                     </select>
                   </td>
                 </tr>
-
                 <tr>
                   <td className="text-right">PO No :</td>
                   <td>
                     <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[55%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required />
                   </td>
                 </tr>
-
                 <tr>
                   <td className="text-right">Vehicle No :</td>
                   <td>
@@ -125,38 +133,32 @@ export const GoodIssue = () => {
                 </tr>
               </div>
             </div>
-
-            <tr>
-              <td></td>
-              <td>
-                <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none mx-auto dark:focus:ring-blue-800">
-                  Save
-                </button>
-              </td>
-            </tr>
           </tbody>
-          <table>
+        </table>
+        <table>
+          <tbody>
             <tr>
-              <td className="text-right pr-3">Packing List No : </td>
+              <td className="text-right pr-3">Packing List No :</td>
               <td>
                 <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required />
               </td>
             </tr>
             <tr>
-              <td className="text-right pr-3">Information : </td>
+              <td className="text-right pr-3">Information :</td>
               <td>
-                <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[700px] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required />
+                <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[200px] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required />
               </td>
             </tr>
-          </table>
-          <tr>
-            <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none mx-auto dark:focus:ring-blue-800">
-              Save
-            </button>
-          </tr>
+          </tbody>
         </table>
+        <tr>
+          <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none mx-auto dark:focus:ring-blue-800">
+            Save
+          </button>
+        </tr>
       </form>
 
+      
       <div className="relative overflow-x-auto pt-10">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -193,10 +195,9 @@ export const GoodIssue = () => {
               </th>
             </tr>
           </thead>
+
           <tbody>
             {SalesOrderNoDetail.map((res, key) => {
-              console.log(res);
-              console.log(DataFilter);
               return (
                 <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <td className="px-6 py-4">{res.Number}</td>
@@ -205,14 +206,20 @@ export const GoodIssue = () => {
                   <td className="px-6 py-4">{res.Info}</td>
                   <td className="px-6 py-4">
                     <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[80%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required>
-                      <option value="">Pilih Doc No</option>
-                      <option value="">Pilih Doc No</option>
-                      <option value="">Pilih Doc No</option>
+                      <option value="" disabled selected hidden>
+                        Pilih Location
+                      </option>
+                      {Location.map((res, key) => {
+                        return (
+                          <option key={key} value={res.Code}>
+                            {res.Code}
+                          </option>
+                        );
+                      })}
                     </select>
                   </td>
                   <td className="px-6 py-4">
                     <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[80%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required>
-                      <option value="">Pilih Doc No</option>
                       <option value="">Pilih Doc No</option>
                       <option value="">Pilih Doc No</option>
                     </select>
@@ -221,7 +228,7 @@ export const GoodIssue = () => {
                   <td className="px-6 py-4">1.00</td>
                   <td className="px-6 py-4">1.00</td>
                   <td className="px-6 py-4">
-                    <input type="number" value={0} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00"  />
+                    <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00" />
                   </td>
                 </tr>
               );
