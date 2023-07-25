@@ -566,19 +566,8 @@ export const PurchaseOrder = () => {
                   />
                 </td>
               </tr>
-              
               <tr>
-                <td className="text-right">
-                  <button
-                    onClick={() => {
-                      totalHandle();
-                    }}
-                    type="button"
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-                  >
-                    Total
-                  </button>
-                </td>
+                <td></td>
                 <td>
                   <button
                     type="submit"
@@ -636,6 +625,134 @@ export const PurchaseOrder = () => {
                 />
               </td>
             </tr>
+            <tr>
+                <td className="text-right">Material:</td>
+                <td>
+                  <select
+                    onChange={(e) => setMaterialVal(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
+                    <option disabled selected hidden>
+                      Pilih Material
+                    </option>
+                    {getMyMaterial.map((res, key) => {
+                      return (
+                        <option key={key} value={res.Code}>
+                          {res.Code}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </td>
+                <td className="text-right">Info:</td>
+                <td>
+                  <input
+                    type="text"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    value=''
+                  />
+                </td>
+                <td className="text-right">Quantity:</td>
+                <td>
+                  <input
+                    type="number"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    required
+                    min="0"
+                  />
+                </td>
+                <td className="text-right">Price:</td>
+                <td>
+                  <input
+                    disabled
+                    type="text"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    value={getMyMaterialDetail?.DefaultPrice}
+                  />
+                </td>
+                <button
+                  onClick={() => {
+                  }}
+                  type="button"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+                >
+                  Add
+                </button>
+              </tr>
+              <tr>
+                <td className="text-right">Disc Percent:</td>
+                <td>
+                <input
+                    type="number"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    required
+                    min="0"
+                  />
+                </td>
+                <td className="text-right">Disc Percent 2:</td>
+                <td>
+                  <input
+                    type="text"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    value=''
+                  />
+                </td>
+                <td className="text-right">Disc Percent 3:</td>
+                <td>
+                  <input
+                    type="number"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    required
+                    min="0"
+                  />
+                </td>
+                <td className="text-right">Disc Value:</td>
+                <td>
+                  <input
+                    disabled
+                    type="text"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    value={getMyMaterialDetail?.DefaultPrice}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td className="text-right">Gross:</td>
+                <td>
+                <input
+                    type="text"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    value=''
+                  />
+                </td>
+                <td className="text-right">Netto:</td>
+                <td>
+                  <input
+                    type="text"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    value=''
+                  />
+                </td>
+                <td className="text-right">Disc Nominal:</td>
+                <td>
+                  <input
+                    type="number"
+                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    required
+                    min="0"
+                  />
+                </td>
+              </tr>
           </table>
         </div>
         <div className="text-xl font-bold mb-4 pt-10">Detail</div>

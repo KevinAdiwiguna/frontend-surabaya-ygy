@@ -1,28 +1,78 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useMe } from "../../hooks/API/useMe";
-import { dateConverter } from "../../components/dateConverter";
+import { dateConverter, dateWithTimeConverter } from "../../components/dateConverter";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export const Price = () => {
   const { fetchMe, response } = useMe();
-  const [code, setCode] = useState("");
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [phone, setPhone] = useState("");
-  const [mobile, setMobile] = useState("");
+  const currentDate = new Date().toISOString().slice(0, 16);
   const [getData, setGetData] = useState([]);
+  const [getPricelist, setGetPriceList] = useState([]);
+  const [priceListType, setPriceListType] = useState("");
+  const [materialCode, setMaterialCode] = useState("");
+  const [currency, setCurrency] = useState("");
+  const [unit, setUnit] = useState("");
+  const [getUnit, setGetUnit] = useState([]);
+  const [getCurrency, setGetCurrency] = useState([]);
+  const [getMaterial, setGetMaterial] = useState([]);
+  const [minQty, setMinQty] = useState(0);
+  const [maxQty, setMaxQty] = useState(0);
+  const [price, setPrice] = useState(0);
+  const [percentDisc, setPercentDisc] = useState(0);
+  const [valueDisc, setValueDisc] = useState(0);
+  const [begDate, setBegDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const handleBegDateChange = (e) => {
+    const selectedBegDate = e.target.value;
+    setBegDate(selectedBegDate);
+
+    setEndDate("");
+  };
 
   useEffect(() => {
     fetchMe();
   }, [!response]);
 
+  const getMyUnitByMaterial = async (params) => {
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_BASE_URL}/unitconversion/${params}`
+    )
+    setGetUnit(response.data)
+    setUnit(response.data.Unit)
+  }
+
+  useEffect(()=>{
+    getMyUnitByMaterial(materialCode)
+  },[materialCode])
+
+  const getMyCurrency = async () => {
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_BASE_URL}/currency`
+    )
+    setGetCurrency(response.data)
+  }
+
+  const getMyMaterial = async () => {
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_BASE_URL}/material`
+    )
+    setGetMaterial(response.data)
+  }
+
+  const getPriceListType = async () => {
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_BASE_URL}/pricelist`
+    )
+    setGetPriceList(response.data)
+  }
+
   const dataFetching = async () => {
     try {
       const data = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/Price`
+        `${process.env.REACT_APP_API_BASE_URL}/price`
       );
       setGetData(data.data);
     } catch (error) {}
@@ -31,7 +81,7 @@ export const Price = () => {
   const deleteData = async (params) => {
     try {
       await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/Price/${params}`
+        `${process.env.REACT_APP_API_BASE_URL}/price/${params}`
       );
       dataFetching();
       toast.success("Data Deleted", {
@@ -44,14 +94,57 @@ export const Price = () => {
 
   const submitClick = async (e) => {
     e.preventDefault();
+    if(valueDisc&&percentDisc){
+      toast.warn("Fill Either Percent Disc & Value Disc", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
+      return
+    }
+    if(minQty>=maxQty){
+      toast.warn("min Qty tidak boleh lebih dari max Qty", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
+      return
+    }
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/Price`, {
-        code: code,
-        name: name,
-        address: address,
-        city: city,
-        phone: phone,
-        mobile: mobile,
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/price`, {
+        Begda: dateConverter(begDate),
+        Endda: dateConverter(endDate),
+        PriceListType: priceListType,
+        MaterialCode: materialCode,
+        Currency: currency,
+        Unit: unit,
+        MinQty: minQty, 
+        MaxQty: maxQty,
+        Price: price,
+        PercentDisc: percentDisc,
+        ValueDisc: valueDisc,
+        CreatedBy: response.User,
+        ChangedBy: response.User
+      });
+      dataFetching();
+      toast.success("Data Saved", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    } catch (error) {
+      toast.warn("Code Sudah Digunakan", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
+    }
+  };
+
+  const updateData = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/price/${e}`, {
         createdBy: response.User,
         changedBy: response.User,
       });
@@ -72,6 +165,9 @@ export const Price = () => {
 
   useEffect(() => {
     dataFetching();
+    getPriceListType()
+    getMyMaterial()
+    getMyCurrency()
   }, []);
 
   return (
@@ -83,9 +179,12 @@ export const Price = () => {
             <td className="text-right">Begin Date: </td>
             <td>
               <input
+                onChange={(e)=>{handleBegDateChange(e)}}
                 type="datetime-local"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder=""
+                min={currentDate}
+                value={begDate}
                 required
               />
             </td>
@@ -94,9 +193,12 @@ export const Price = () => {
             <td className="text-right">End Date: </td>
             <td>
               <input
+                onChange={(e)=>{setEndDate(e.target.value)}}
                 type="datetime-local"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder=""
+                min={begDate}
+                value={endDate}
                 required
               />
             </td>
@@ -104,33 +206,47 @@ export const Price = () => {
           <tr>
             <td className="text-right">Pricelist Type: </td>
             <td>
-              <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+              <select onChange={(e)=>{setPriceListType(e.target.value)}} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option disabled selected hidden>
                   Pilih Tipe
                 </option>
-                <option></option>
+                {getPricelist.map((res,key)=>{
+                  return (
+                    <option value={res.Code} key={key}>
+                      {res.Code}
+                    </option>
+                  )
+                })}
               </select>
             </td>
           </tr>
           <tr>
             <td className="text-right">Material Code: </td>
             <td>
-              <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+              <select onChange={(e)=>{setMaterialCode(e.target.value)}} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option disabled selected hidden>
                   Pilih Code
                 </option>
-                <option></option>
+                {getMaterial.map((res,key)=>{
+                  return (
+                    <option value={res.Code} key={key}>{res.Code}</option>
+                  )
+                })}
               </select>
             </td>
           </tr>
           <tr>
             <td className="text-right">Currency: </td>
             <td>
-              <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+              <select onChange={(e)=>{setCurrency(e.target.value)}} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option disabled selected hidden>
                   Pilih
                 </option>
-                <option></option>
+                {getCurrency.map((res,key)=>{
+                  return (
+                    <option value={res.Code} key={key}>{res.Code}</option>
+                  )
+                })}
               </select>
             </td>
           </tr>
@@ -138,10 +254,9 @@ export const Price = () => {
             <td className="text-right">Unit: </td>
             <td>
               <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                <option disabled selected hidden>
-                  Pilih Unit
+                <option selected>
+                  {getUnit.Unit}
                 </option>
-                <option></option>
               </select>
             </td>
           </tr>
@@ -149,10 +264,10 @@ export const Price = () => {
             <td className="text-right">Min Qty: </td>
             <td>
             <input
+            onChange={(e)=>{setMinQty(e.target.value)}}
             type="text"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="0.00"
-            value="0.00"
             required
             // disabled
           />
@@ -162,10 +277,10 @@ export const Price = () => {
             <td className="text-right">Max Qty: </td>
             <td>
             <input
+            onChange={(e)=>{setMaxQty(e.target.value)}}
             type="text"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="0.00"
-            value="0.00"
             required
             // disabled
           />
@@ -175,10 +290,10 @@ export const Price = () => {
             <td className="text-right">Price: </td>
             <td>
             <input
+            onChange={(e)=>{setPrice(e.target.value)}}
             type="text"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="0.00"
-            value="0.00"
             required
             // disabled
           />
@@ -188,12 +303,10 @@ export const Price = () => {
             <td className="text-right">Percent Disc: </td>
             <td>
             <input
+            onChange={(e)=>{setPercentDisc(e.target.value)}}
             type="text"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="0.00"
-            value="0.00"
-            required
-            // disabled
           />
             </td>
           </tr>
@@ -201,12 +314,10 @@ export const Price = () => {
             <td className="text-right">Value Disc: </td>
             <td>
             <input
+            onChange={(e)=>{setValueDisc(e.target.value)}}
             type="text"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="0.00"
-            value="0.00"
-            required
-            // disabled
           />
             </td>
           </tr>
@@ -229,22 +340,37 @@ export const Price = () => {
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
-                Code
+                Beg Date
               </th>
               <th scope="col" className="px-6 py-3">
-                Name
+                End Date
               </th>
               <th scope="col" className="px-6 py-3">
-                Address
+                Pricelist Type
               </th>
               <th scope="col" className="px-6 py-3">
-                City
+                Material Code
               </th>
               <th scope="col" className="px-6 py-3">
-                Phone
+                Currency
               </th>
               <th scope="col" className="px-6 py-3">
-                Mobile
+                Unit
+              </th>
+              <th scope="col" className="px-6 py-3">
+                MinQty
+              </th>
+              <th scope="col" className="px-6 py-3">
+                MaxQty
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Price
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Percent Disc
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Value Disc
               </th>
               <th scope="col" className="px-6 py-3">
                 Created By
@@ -265,7 +391,6 @@ export const Price = () => {
           </thead>
           <tbody>
             {getData.map((res, key) => {
-              console.log(getData);
               return (
                 <tr
                   key={key}
@@ -275,20 +400,25 @@ export const Price = () => {
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   >
-                    {res.Code}
+                    {res.Begda}
                   </th>
-                  <td className="px-6 py-4">{res.Name}</td>
-                  <td className="px-6 py-4">{res.Address}</td>
-                  <td className="px-6 py-4">{res.City}</td>
-                  <td className="px-6 py-4">{res.Phone}</td>
-                  <td className="px-6 py-4">{res.Mobile}</td>
+                  <td className="px-6 py-4">{res.Endda}</td>
+                  <td className="px-6 py-4">{res.PriceListType}</td>
+                  <td className="px-6 py-4">{res.MaterialCode}</td>
+                  <td className="px-6 py-4">{res.Currency}</td>
+                  <td className="px-6 py-4">{res.Unit}</td>
+                  <td className="px-6 py-4">{res.MinQty}</td>
+                  <td className="px-6 py-4">{res.MaxQty}</td>
+                  <td className="px-6 py-4">{res.Price}</td>
+                  <td className="px-6 py-4">{res.PercentDisc}</td>
+                  <td className="px-6 py-4">{res.ValueDisc}</td>
                   <td className="px-6 py-4">{res.CreatedBy}</td>
                   <td className="px-6 py-4">
-                    {dateConverter(res.CreatedDate)}
+                    {dateWithTimeConverter(res.CreatedDate)}
                   </td>
                   <td className="px-6 py-4">{res.ChangedBy}</td>
                   <td className="px-6 py-4">
-                    {dateConverter(res.ChangedDate)}
+                    {dateWithTimeConverter(res.ChangedDate)}
                   </td>
                   <td className="px-6 py-4">
                     <button
