@@ -6,23 +6,29 @@ export const GoodIssue = () => {
 	const [SalesOrderNo, setSalesOrderNo] = useState([])
 	const [SalesOrderNoDetail, setSalesOrderNoDetail] = useState([])
 	const [DataFilter, setDataFilter] = useState([])
-	const [Location, setLocation] = useState([])
 	const [AddData, setAddData] = useState([{}])
 	const [ThisData, setThisData] = useState([])
 
-  const handleInputChange = (e, index) => {
-    const { name, value } = e.target;
-    const newData = [...AddData];
-    newData[index][name] = value;
-    setAddData(newData);
-  };
+	const [Location, setLocation] = useState([])
+	const [BatchNo, setBatchNo] = useState([])
 
-  const handleDropdownChange = (e, index) => {
-    const { name, value } = e.target;
-    const newData = [...AddData];
-    newData[index][name] = value;
-    setAddData(newData);
-  };
+	// handle
+	const handleDeleteData = (key) => {
+		setAddData((prevData) => prevData.filter((data, index) => index !== key))
+	}
+
+	const handleAddData = (e) => {
+		e.preventDefault()
+		setAddData([...AddData, ThisData])
+	}
+
+	const handleSave = (e) => {
+		e.preventDefault();
+		const combine = [...AddData, ...SalesOrderNoDetail];
+		console.log(combine);
+		setAddData([]);
+		setSalesOrderNoDetail([]);
+	  };
 
 	// function
 	const getSeries = async () => {
@@ -45,6 +51,33 @@ export const GoodIssue = () => {
 		setLocation(response.data)
 	}
 
+	const handleChangeData = (key, field, value) => {
+		setAddData((prevData) =>
+			prevData.map((data, index) => {
+				if (index === key) {
+					return {
+						...data,
+						[field]: value,
+					}
+				}
+				return data
+			})
+		)
+	}
+	const handleChangeDataAPI = (key, field, value) => {
+		setSalesOrderNoDetail((prevData) =>
+			prevData.map((data, index) => {
+				if (index === key) {
+					return {
+						...data,
+						[field]: value,
+					}
+				}
+				return data
+			})
+		)
+	}
+
 	// fetching
 	useEffect(() => {
 		getSeries()
@@ -57,22 +90,15 @@ export const GoodIssue = () => {
 	}, [DataFilter.DocNo])
 
 	useEffect(() => {
-		setAddData(SalesOrderNoDetail)
-	}, [SalesOrderNoDetail])
-
-	const handleAddData = (e) => {
-		e.preventDefault()
-		if (ThisData) {
-			setAddData([...AddData, ThisData])
-		}
-	}
+		setAddData([])
+	}, [])
 
 	return (
 		<div>
 			<div className="text-2xl font-bold mb-4">Goods Issue</div>
-			<form>
-				<table className="border-separate border-spacing-2 w-full">
-					<tbody>
+			<form onSubmit={handleSave}>
+			<table className="border-separate border-spacing-2 w-full">
+			<tbody>
 						<div className="flex w-[100%] justify-around">
 							<div>
 								<tr>
@@ -163,7 +189,7 @@ export const GoodIssue = () => {
 						<tr>
 							<td className="text-right pr-3">Packing List No : </td>
 							<td>
-								<input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required />
+							<input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required />
 							</td>
 						</tr>
 						<tr>
@@ -179,12 +205,12 @@ export const GoodIssue = () => {
 						</button>
 					</tr>
 				</table>
-			</form>
+				</form>
 
 			<form onSubmit={handleAddData}>
 				<div className="text-xl font-bold mb-4">Add New detail</div>
 				<div>
-					<select
+				<select
 						onChange={(e) => {
 							setThisData(SalesOrderNoDetail.find((data) => data.MaterialCode === e.target.value))
 						}}
@@ -200,7 +226,7 @@ export const GoodIssue = () => {
 							)
 						})}
 					</select>
-					<button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none mx-auto dark:focus:ring-blue-800">
+					<button type="submit" className="mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none mx-auto dark:focus:ring-blue-800">
 						Add
 					</button>
 				</div>
@@ -210,6 +236,9 @@ export const GoodIssue = () => {
 				<table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
 					<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
 						<tr>
+							<th scope="col" className="px-6 py-3">
+								Control
+							</th>
 							<th scope="col" className="px-6 py-3">
 								Number
 							</th>
@@ -246,24 +275,32 @@ export const GoodIssue = () => {
 					<tbody>
 						{AddData.map((res, key) => {
 							return (
-								<tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+								<tr key={res.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+									<td className="px-12 py-4">
+										<button type="button" onClick={() => handleDeleteData(key)} className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+											Delete
+										</button>
+									</td>
 									<td className="px-6 py-4">{res.Number}</td>
 									<td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{res.MaterialCode}</td>
 									<td className="px-6 py-4"></td>
-									<td className="px-6 py-4">{res.Info}</td>
 									<td className="px-6 py-4">
-										<select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[80%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required>
-											{Location.map((res, key) => {
+										<input type="text" onChange={(e) => handleChangeData(key, 'Info', e.target.value)} className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.Info} />
+									</td>
+									<td className="px-6 py-4">
+										<select onChange={(e) => handleChangeData(key, 'Location', e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[80%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required>
+											<option value="">Pilih Detail</option>
+											{Location.map((loc, locKey) => {
 												return (
-													<option key={key} value={res.Code}>
-														{res.Code}
+													<option key={locKey} value={loc.Code}>
+														{loc.Code}
 													</option>
 												)
 											})}
 										</select>
 									</td>
 									<td className="px-6 py-4">
-										<select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[80%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required>
+										<select onChange={(e) => handleChangeData(key, 'BatchNo', e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[80%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required>
 											<option value="">Pilih Doc No</option>
 											<option value="">Pilih Doc No</option>
 											<option value="">Pilih Doc No</option>
@@ -274,7 +311,52 @@ export const GoodIssue = () => {
 									<td className="px-6 py-4">1.00</td>
 									<td className="px-6 py-4">1.00</td>
 									<td className="px-6 py-4">
-										<input type="number" value={0} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00" />
+										<input type="number" onChange={(e) => handleChangeData(key, 'Qty', e.target.value)} className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00" />
+									</td>
+								</tr>
+							)
+						})}
+						{SalesOrderNoDetail.map((res, key) => {
+							return (
+								<tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+									<td className="px-6 py-4">
+										<td className="px-6 py-4">
+											<button type="button" className="focus:outline-none text-white bg-red-900 hover:bg-red-900 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+												Delete
+											</button>
+										</td>
+									</td>
+									<td className="px-6 py-4">{res.Number}</td>
+									<td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{res.MaterialCode}</td>
+									<td className="px-6 py-4"></td>
+									<td className="px-6 py-4">
+										<input type="text" onChange={(e) => handleChangeDataAPI(key, 'Info', e.target.value)} className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.Info} />
+									</td>
+									<td className="px-6 py-4">
+										<select onChange={(e) => handleChangeDataAPI(key, 'Location', e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[80%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required>
+										<option value="">Pilih Doc No</option>
+										{Location.map((loc, locKey) => {
+												return (
+													<option key={locKey} value={loc.Code}>
+														{loc.Code}
+													</option>
+												)
+											})}
+										</select>
+									</td>
+									<td className="px-6 py-4">
+										<select onChange={(e) => handleChangeDataAPI(key, 'BatchNo', e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[80%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required>
+											<option value="">Pilih Doc No</option>
+											<option value="">Pilih Doc No</option>
+											<option value="">Pilih Doc No</option>
+											<option value="">Pilih Doc No</option>
+										</select>
+									</td>
+									<td className="px-6 py-4">{res.Unit}</td>
+									<td className="px-6 py-4">1.00</td>
+									<td className="px-6 py-4">1.00</td>
+									<td className="px-6 py-4">
+										<input type="number" onChange={(e) => handleChangeDataAPI(key, 'Qty', e.target.value)} className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00" />
 									</td>
 								</tr>
 							)
