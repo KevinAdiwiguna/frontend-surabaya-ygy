@@ -10,6 +10,7 @@ import { PurchaseOrder } from "./transaction/purchase/PurchaseOrder";
 import { GoodsReceipt } from "./transaction/purchase/GoodsReceipt"
 import { PurchaseCost } from "./transaction/purchase/PurchaseCost"
 import { PurchaseInvoice } from "./transaction/purchase/PurchaseInvoice"
+import { PurchaseReturn } from "./transaction/purchase/PurchaseReturn"
 // master
 import { DocumentSeries } from "./master/DocumentSeries";
 import { JobOrder } from "./production/JobOrder";
@@ -109,6 +110,8 @@ export const Home = () => {
         return <Price />;
       case "Purchase Cost":
         return <PurchaseCost />;
+        case "Purchase Return":
+        return <PurchaseReturn />;
       case "Departement":
         return <Departement />;
       case "Approval":
