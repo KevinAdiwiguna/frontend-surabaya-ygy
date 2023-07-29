@@ -95,7 +95,7 @@ export const SalesOrderHeader = () => {
 
 	const getSeries = async () => {
 		try {
-			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/series`)
+			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/seriescode/SALES ORDER`)
 			setGetSeries(response.data)
 		} catch (error) {
 			console.log(error)

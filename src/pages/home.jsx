@@ -112,7 +112,7 @@ export const Home = () => {
         return <PurchaseCost />;
         case "Purchase Return":
         return <PurchaseReturn />;
-      case "Departement":
+      case "Department":
         return <Departement />;
       case "Approval":
         return <Approval />;

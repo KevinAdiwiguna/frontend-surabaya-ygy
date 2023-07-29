@@ -18,7 +18,7 @@ export const Departement = () => {
   const dataFetching = async () => {
     try {
       const data = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/materialtype`
+        `${process.env.REACT_APP_API_BASE_URL}/department`
       );
       setGetData(data.data);
     } catch (error) {}
@@ -27,7 +27,7 @@ export const Departement = () => {
   const deleteData = async (params) => {
     try {
       await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/materialtype/${params}`
+        `${process.env.REACT_APP_API_BASE_URL}/department/${params}`
       );
       dataFetching();
       toast.success("Data Deleted", {
@@ -41,10 +41,9 @@ export const Departement = () => {
   const updateData = async (params) => {
     try {
       await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/materialtype/${params}`,
+        `${process.env.REACT_APP_API_BASE_URL}/department/${params}`,
         {
           name: name,
-          isWaste: waste,
           changedBy: response.User,
         }
       );
@@ -62,10 +61,9 @@ export const Departement = () => {
   const submitClick = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/materialtype`, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/department`, {
         code: code,
         name: name,
-        isWaste: waste,
         createdBy: response.User,
         changedBy: response.User,
       });
@@ -90,13 +88,14 @@ export const Departement = () => {
 
   return (
     <div>
-      <div className="text-2xl font-bold mb-4">Supplier</div>
+      <div className="text-2xl font-bold mb-4">Department</div>
       <form onSubmit={submitClick}>
         <table className="border-separate border-spacing-2 w-1/2">
           <tr>
             <td className="text-right">Code: </td>
             <td>
               <input
+                onChange={(e) => {setCode(e.target.value)}}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[20%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Isi kode"
                 required
@@ -107,21 +106,12 @@ export const Departement = () => {
             <td className="text-right">Name: </td>
             <td>
               <input
+                onChange={(e) => {setName(e.target.value)}}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Isi nama"
                 required
               />
             </td>
-          </tr>
-          <tr>
-            <td className="float-right">
-              <input
-                type={"checkbox"}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue -500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder=""
-              />
-            </td>
-            <td className="">We cut PPh on behalf of thid Supplier</td>
           </tr>
           <tr>
             <td></td>
@@ -146,9 +136,6 @@ export const Departement = () => {
               </th>
               <th scope="col" className="px-6 py-3">
                 Name
-              </th>
-              <th scope="col" className="px-6 py-3">
-                IsWaste
               </th>
               <th scope="col" className="px-6 py-3">
                 Created By
@@ -181,9 +168,6 @@ export const Departement = () => {
                     {res.Code}
                   </th>
                   <td className="px-6 py-4">{res.Name}</td>
-                  <td className="px-6 py-4">
-                    {res.IsWaste === true ? "True" : "False"}
-                  </td>
                   <td className="px-6 py-4">{res.CreatedBy}</td>
                   <td className="px-6 py-4">
                     {dateConverter(res.CreatedDate)}

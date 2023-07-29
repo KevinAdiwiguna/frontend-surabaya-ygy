@@ -278,8 +278,8 @@ export const SidebarComp = () => {
                   Document Series
                 </Sidebar.Item>
               </Link>
-              <Link to="/Departement">
-                <Sidebar.Item icon={HiUsers}>Deprtement</Sidebar.Item>
+              <Link to="/Department">
+                <Sidebar.Item icon={HiUsers}>Department</Sidebar.Item>
               </Link>
               <Link to="/Approval">
                 <Sidebar.Item icon={HiIdentification}>Approval</Sidebar.Item>

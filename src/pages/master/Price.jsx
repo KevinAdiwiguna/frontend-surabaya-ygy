@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useMe } from "../../hooks/API/useMe";
-import { dateConverter, dateWithTimeConverter } from "../../components/dateConverter";
+import { dateConverter } from "../../components/dateConverter";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -78,10 +78,10 @@ export const Price = () => {
     } catch (error) {}
   };
 
-  const deleteData = async (params) => {
+  const deleteData = async (a,b,c,d,e,f) => {
     try {
       await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/price/${params}`
+        `${process.env.REACT_APP_API_BASE_URL}/price/${a}/${b}/${c}/${d}/${e}/${f}/`
       );
       dataFetching();
       toast.success("Data Deleted", {
@@ -112,19 +112,19 @@ export const Price = () => {
     }
     try {
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/price`, {
-        Begda: dateConverter(begDate),
-        Endda: dateConverter(endDate),
-        PriceListType: priceListType,
-        MaterialCode: materialCode,
-        Currency: currency,
-        Unit: unit,
-        MinQty: minQty, 
-        MaxQty: maxQty,
-        Price: price,
-        PercentDisc: percentDisc,
-        ValueDisc: valueDisc,
-        CreatedBy: response.User,
-        ChangedBy: response.User
+        begDa: dateConverter(begDate),
+        endDa: dateConverter(endDate),
+        priceListType: priceListType,
+        materialCode: materialCode,
+        currency: currency,
+        unit: unit,
+        minQty: minQty, 
+        maxQty: maxQty,
+        price: price,
+        percentDisc: percentDisc,
+        valueDisc: valueDisc,
+        createdBy: response.User,
+        changedBy: response.User
       });
       dataFetching();
       toast.success("Data Saved", {
@@ -141,11 +141,31 @@ export const Price = () => {
     }
   };
 
-  const updateData = async (e) => {
+  const updateData = async (a,b,c,d,e,f) => {
     e.preventDefault();
+    if(valueDisc&&percentDisc){
+      toast.warn("Fill Either Percent Disc & Value Disc", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
+      return
+    }
+    if(minQty>=maxQty){
+      toast.warn("min Qty tidak boleh lebih dari max Qty", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
+      return
+    }
     try {
-      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/price/${e}`, {
-        createdBy: response.User,
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/price/${a}/${b}/${c}/${d}/${e}/${f}/`, {
+        endDa: dateConverter(endDate),
+        maxQty: maxQty,
+        price: price,
+        percentDisc: percentDisc,
+        valueDisc: valueDisc,
         changedBy: response.User,
       });
       dataFetching();
@@ -265,7 +285,8 @@ export const Price = () => {
             <td>
             <input
             onChange={(e)=>{setMinQty(e.target.value)}}
-            type="text"
+            type="number"
+            min={0}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="0.00"
             required
@@ -278,7 +299,8 @@ export const Price = () => {
             <td>
             <input
             onChange={(e)=>{setMaxQty(e.target.value)}}
-            type="text"
+            type="number"
+            min={0}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="0.00"
             required
@@ -291,7 +313,7 @@ export const Price = () => {
             <td>
             <input
             onChange={(e)=>{setPrice(e.target.value)}}
-            type="text"
+            type="number"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="0.00"
             required
@@ -304,7 +326,8 @@ export const Price = () => {
             <td>
             <input
             onChange={(e)=>{setPercentDisc(e.target.value)}}
-            type="text"
+            type="number"
+            min={0}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="0.00"
           />
@@ -315,7 +338,8 @@ export const Price = () => {
             <td>
             <input
             onChange={(e)=>{setValueDisc(e.target.value)}}
-            type="text"
+            type="number"
+            min={0}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="0.00"
           />
@@ -414,21 +438,22 @@ export const Price = () => {
                   <td className="px-6 py-4">{res.ValueDisc}</td>
                   <td className="px-6 py-4">{res.CreatedBy}</td>
                   <td className="px-6 py-4">
-                    {dateWithTimeConverter(res.CreatedDate)}
+                    {dateConverter(res.CreatedDate)}
                   </td>
                   <td className="px-6 py-4">{res.ChangedBy}</td>
                   <td className="px-6 py-4">
-                    {dateWithTimeConverter(res.ChangedDate)}
+                    {dateConverter(res.ChangedDate)}
                   </td>
                   <td className="px-6 py-4">
                     <button
-                      onClick={() => deleteData(res.Code)}
+                      onClick={() => deleteData(res.Begda,res.PriceListType,res.MaterialCode,res.Currency,res.Unit,res.MinQty)}
                       type="button"
                       className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                     >
                       Delete
                     </button>
                     <button
+                      onClick={() => updateData(res.Begda,res.PriceListType,res.MaterialCode,res.Currency,res.Unit,res.MinQty)}
                       type="button"
                       className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                     >
