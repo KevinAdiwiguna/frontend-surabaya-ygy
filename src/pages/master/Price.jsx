@@ -95,20 +95,18 @@ export const Price = () => {
   const submitClick = async (e) => {
     e.preventDefault();
     if(!valueDisc&&!percentDisc){
-      toast.warn("Fill Either Percent Disc & Value Disc", {
+      return toast.warn("Fill Either Percent Disc & Value Disc", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
       });
-      return
     }
     if(minQty>=maxQty){
-      toast.warn("min Qty tidak boleh lebih dari max Qty", {
+      return toast.warn("min Qty tidak boleh lebih dari max Qty", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
       });
-      return
     }
     try {
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/price`, {
