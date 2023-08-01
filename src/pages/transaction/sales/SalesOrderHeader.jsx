@@ -436,6 +436,7 @@ export const SalesOrderHeader = () => {
 			...salesDetail,
 			{
 				number: salesDetailUpdate.length + 1,
+				number: salesDetail.length + 1,
 				materialCode: materialVal,
 				info: info2 || getMyMaterialDetail?.Info ? info2 || getMyMaterialDetail?.Info : '-',
 				unit: getMyMaterialDetail?.SmallestUnit,
@@ -467,7 +468,7 @@ export const SalesOrderHeader = () => {
 		setSalesDetailUpdate([
 			...salesDetailUpdate,
 			{
-				number: salesDetailUpdate.length + 1,
+				number: salesDetail.length + 1,
 				materialCode: materialValUpdate,
 				info: infoUpdate || getMyMaterialDetailForUpdate?.Info ? infoUpdate || getMyMaterialDetailForUpdate?.Info : '-',
 				unit: getMyMaterialDetailForUpdate?.SmallestUnit,
