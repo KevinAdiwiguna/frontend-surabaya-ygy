@@ -17,23 +17,27 @@ export const GoodIssue = () => {
 		setAddData((prevData) => prevData.filter((data, index) => index !== key))
 	}
 
-	const handleAddData = (e) => {
-		e.preventDefault()
-		setAddData([...AddData, ThisData])
-	}
+	// const handleAddData = (e) => {
+	// 	e.preventDefault()
+	// 	setAddData([...AddData, ThisData])
+	// }
 
 	const handleSave = (e) => {
-		e.preventDefault();
-		const combine = [...AddData, ...SalesOrderNoDetail];
-		console.log(combine);
-		setAddData([]);
-		setSalesOrderNoDetail([]);
-	  };
+		e.preventDefault()
+		// const combine = [...AddData, ...SalesOrderNoDetail]
+		// console.log(combine)
+		setAddData([])
+		setSalesOrderNoDetail([])
+	}
 
 	// function
 	const getSeries = async () => {
-		const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/seriescode/GOODS ISSUE`)
-		setSeries(response.data)
+		try {
+			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/seriescode/GOODS ISSUE`)
+			setSeries(response.data)
+		} catch (error) {
+			console.log(error)
+		}
 	}
 
 	const getSalesOrderNo = async () => {
@@ -97,8 +101,8 @@ export const GoodIssue = () => {
 		<div>
 			<div className="text-2xl font-bold mb-4">Goods Issue</div>
 			<form onSubmit={handleSave}>
-			<table className="border-separate border-spacing-2 w-full">
-			<tbody>
+				<table className="border-separate border-spacing-2 w-full">
+					<tbody>
 						<div className="flex w-[100%] justify-around">
 							<div>
 								<tr>
@@ -189,7 +193,7 @@ export const GoodIssue = () => {
 						<tr>
 							<td className="text-right pr-3">Packing List No : </td>
 							<td>
-							<input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required />
+								<input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required />
 							</td>
 						</tr>
 						<tr>
@@ -205,12 +209,12 @@ export const GoodIssue = () => {
 						</button>
 					</tr>
 				</table>
-				</form>
+			</form>
 
-			<form onSubmit={handleAddData}>
+			{/* <form onSubmit={handleAddData}>
 				<div className="text-xl font-bold mb-4">Add New detail</div>
 				<div>
-				<select
+					<select
 						onChange={(e) => {
 							setThisData(SalesOrderNoDetail.find((data) => data.MaterialCode === e.target.value))
 						}}
@@ -230,7 +234,7 @@ export const GoodIssue = () => {
 						Add
 					</button>
 				</div>
-			</form>
+			</form> */}
 
 			<div className="relative overflow-x-auto pt-10">
 				<table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -334,8 +338,8 @@ export const GoodIssue = () => {
 									</td>
 									<td className="px-6 py-4">
 										<select onChange={(e) => handleChangeDataAPI(key, 'Location', e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[80%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required>
-										<option value="">Pilih Doc No</option>
-										{Location.map((loc, locKey) => {
+											<option value="">Pilih Doc No</option>
+											{Location.map((loc, locKey) => {
 												return (
 													<option key={locKey} value={loc.Code}>
 														{loc.Code}

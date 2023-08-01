@@ -94,7 +94,7 @@ export const Price = () => {
 
   const submitClick = async (e) => {
     e.preventDefault();
-    if(!valueDisc&&!percentDisc){
+    if(valueDisc&&percentDisc){
       return toast.warn("Fill Either Percent Disc & Value Disc", {
         position: "top-center",
         autoClose: 3000,
