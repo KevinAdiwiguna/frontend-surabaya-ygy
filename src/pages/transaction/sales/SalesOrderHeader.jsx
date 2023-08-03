@@ -435,7 +435,6 @@ export const SalesOrderHeader = () => {
 		setSalesDetail([
 			...salesDetail,
 			{
-				number: salesDetailUpdate.length + 1,
 				number: salesDetail.length + 1,
 				materialCode: materialVal,
 				info: info2 || getMyMaterialDetail?.Info ? info2 || getMyMaterialDetail?.Info : '-',

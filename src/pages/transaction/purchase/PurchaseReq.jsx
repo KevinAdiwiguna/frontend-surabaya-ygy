@@ -162,15 +162,18 @@ export const PurchaseReq = () => {
 
   const changePurchaseDetailData = async (e, key) => {
     try{
-      axios.patch(`${process.env.REACT_APP_API_BASE_URL}/purchaserequestd/${e}/${key}`, {
-				MaterialCode: materialValChange,
-				Info: infoChange,
-				Unit: getPurchaseDetail[key].Unit,
-				Qty: qtyChange,
-				RequiredDate: dateConverter(requiredDateChange),
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/purchaserequestd/${e}/${key}`, {
+				info: infoChange,
+				qty: qtyChange,
+				requiredDate: dateConverter(requiredDateChange),
 				qtyWO: 0,
 			})
       getPurchaseDetailByDocNo(e)
+      toast.success('Data Changed', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+      })
     } catch(error){
 
     }
@@ -254,15 +257,15 @@ export const PurchaseReq = () => {
 				changedBy: response.User,
 			})
 			if (detailDataUpdate) {
-				await axios.patch(
+				await axios.post(
 					`${process.env.REACT_APP_API_BASE_URL}/purchaserequestd/${params}`,
 					detailDataUpdate.map((detail) => ({
 						...detail,
-						materialCode: detail.MaterialCode,
-						info: detail.Info,
-						unit: detail.Unit,
-						qty: detail.Qty,
-						tequiredDate: detail.RequiredDate,
+						materialCode: detail.materialCode,
+						info: detail.info,
+						unit: detail.unit,
+						qty: detail.qty,
+						tequiredDate: detail.requiredDate,
 						qtyPO: 0,
 					}))
 				)
@@ -634,7 +637,7 @@ export const PurchaseReq = () => {
             </div>
             <div className='w-[75%] flex gap-3 items-center'>
               <label>Information:</label>
-              <input placeholder={modalData.Information} onChange={(e) => { setInformationUpdate(e.target.value) }} type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+              <input placeholder={modalData.Information} onChange={(e) => { setInformationUpdate(e.target.value) }} type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required value={informationUpdate}/>
             </div>
             <div className='pl-[100px] my-2'>
               <button onClick={()=>{updateData(modalData.DocNo)}} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">Update</button>
@@ -744,21 +747,6 @@ export const PurchaseReq = () => {
           <div>
               <table className='border-separate border-spacing-2'>
                 <tr>
-                  <td className="text-right">Material:</td>
-                  <td>
-                    <select onChange={(e) => setMaterialValChange(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                      <option disabled selected hidden>
-                        {materialValChange || "Pilih Material"}
-                      </option>
-                      {getMyMaterial.map((res, key) => {
-                        return (
-                          <option key={key} value={res.Code}>
-                            {res.Code}
-                          </option>
-                        )
-                      })}
-                    </select>
-                  </td>
                   <td className="text-right">Info:</td>
                   <td>
                     <input onChange={(e) => { setInfoChange(e.target.value) }} type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={infoChange} />
@@ -772,7 +760,7 @@ export const PurchaseReq = () => {
                     <input min={currentDate} onChange={(e) => { setRequiredDateChange(e.target.value) }} type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
                   </td>
                   <button
-                    onClick={()=>{changePurchaseDetailData(docNoChange,detailKey)}}
+                    onClick={()=>{changePurchaseDetailData(docNoChange,materialValChange)}}
                     type="button"
                     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
                     Change
@@ -822,7 +810,7 @@ export const PurchaseReq = () => {
 													Select
 												</button>
 											</td>
-											<td className="px-6 py-4">{res.MaterialCode} - {key}</td>
+											<td className="px-6 py-4">{res.MaterialCode}</td>
 											<td className="px-6 py-4">{res.Info}</td>
 											<td className="px-6 py-4">{res.Unit}</td>
 											<td className="px-6 py-4">{res.Qty}</td>
