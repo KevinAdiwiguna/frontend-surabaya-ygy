@@ -142,6 +142,7 @@ export const SalesOrderHeader = () => {
 		try {
 			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesorderd/${params}`)
 			setGetSalesOrderDetail(response.data)
+			return response.data
 		} catch (error) {
 			console.log(error)
 		}
@@ -346,16 +347,6 @@ export const SalesOrderHeader = () => {
 	}, [changeQuantity, changedPrice, getMyMaterialDetailForChange?.DefaultPrice])
 
 	const changeSalesDetailData = async (key, doc) => {
-		// getSalesOrderDetail[key].Netto = nettoChange
-		// setGetSalesOrderDetail((prevDataArr) => {
-		//   const newDataArr = prevDataArr.map((obj, id) => {
-		//     if (id === key) {
-		//       return { ...obj, Price: changedPrice, MaterialCode: changeMaterialVal, Info: changeInfo, Qty: changeQuantity, Netto: nettoChange };
-		//     }
-		//     return obj;
-		//   });
-		//   return newDataArr;
-		// });
 		try {
 			await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/salesorderd/${doc}/${key}`, {
 				materialCode: changeMaterialVal,
@@ -373,7 +364,29 @@ export const SalesOrderHeader = () => {
 				qtyDelivered: 0,
 				qtyWO: 0,
 			})
-			getSalesOrderDetailByDocNo(doc)
+
+			await getSalesOrderDetailByDocNo(doc)
+			let salesDetail = await getSalesOrderDetailByDocNo(doc)
+
+			let gross = 0
+			for (let i = 0; i < salesDetail.length; i++) {
+				let obj = salesDetail[i]
+				let nettoAsInteger = parseInt(obj.Netto)
+				gross += nettoAsInteger
+			}
+			let nettoDiscount = (gross * discountUpdate) / 100
+			let totalNetto = gross - nettoDiscount
+			let tax = calculateTaxUpdate(totalNetto)
+			if (taxUpdate === 'Exclude') {
+				totalNetto = totalNetto + tax
+			}
+			console.log(gross);
+			await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/salesorderh/${doc}`, {
+				totalGross: gross,
+				totalDisc: nettoDiscount,
+				taxValue: tax,
+				totalNetto: totalNetto,
+			})
 			toast.success('Data Changed', {
 				position: 'top-center',
 				autoClose: 3000,
@@ -400,7 +413,7 @@ export const SalesOrderHeader = () => {
 		try {
 			const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesorderh`)
 			setGetData(data.data)
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	useEffect(() => {
@@ -416,7 +429,7 @@ export const SalesOrderHeader = () => {
 				autoClose: 3000,
 				hideProgressBar: true,
 			})
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	const addSalesDetail = () => {
@@ -561,10 +574,10 @@ export const SalesOrderHeader = () => {
 				taxPercent: taxValUpdate,
 				currency: currencyVal,
 				exchangeRate: exchangeRate,
-				totalGross: grossUpdate,
+				totalGross: totalGrossUpdate,
 				totalDisc: discountOutputUpdate,
 				taxValue: taxOutputUpdate,
-				totalNetto: NettoUpdate,
+				totalNetto: totalNettoUpdate,
 				information: infoUpdate,
 				status: 'OPEN',
 				isPurchaseReturn: false,
@@ -595,6 +608,7 @@ export const SalesOrderHeader = () => {
 
 			dataFetching()
 			getSalesOrderDetailByDocNo(params)
+			setSalesDetailUpdate([])
 			toast.success('Data Updated', {
 				position: 'top-center',
 				autoClose: 3000,
@@ -763,7 +777,7 @@ export const SalesOrderHeader = () => {
 										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 										placeholder="0.00"
 										required
-										// disabled
+									// disabled
 									/>
 								</td>
 							</tr>
@@ -1238,7 +1252,7 @@ export const SalesOrderHeader = () => {
 										type="text"
 										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 										placeholder={modalData.ExchangeRate}
-										// disabled
+									// disabled
 									/>
 								</td>
 							</tr>

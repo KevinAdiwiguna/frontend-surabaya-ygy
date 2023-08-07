@@ -347,10 +347,10 @@ export const PurchaseOrder = () => {
   const changePurchaseDetailData = async (doc, key) => {
 		try {
 			await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderd/${doc}/${key}`, {
-				materialCode: materialVal,
-				info: info,
+				materialCode: materialValChange,
+				info: infoChange,
 				unit: getPurchaseDetail[key - 1].Unit,
-				qty: quantity,
+				qty: quantityChange,
 				price: priceChange,
 				gross: grossChange,
 				discPercent: detailDiscChange,
@@ -362,10 +362,23 @@ export const PurchaseOrder = () => {
 				qtyReceived: 0,
 			})
 			await getPurchaseDetailByDocNo(doc)
+      let purchaseDetail = await getPurchaseDetailByDocNo(doc)
+      let gross = 0
+      for (let i = 0; i < purchaseDetail.length; i++) {
+        let obj = purchaseDetail[i]
+        let nettoAsInteger = parseFloat(obj.Netto)
+        gross += nettoAsInteger
+      }
+      let nettoDiscount = (gross * discountUpdate) / 100
+      let totalNetto = totalGrossUpdate - nettoDiscount
+      let tax = calculateTaxUpdate(totalNetto)
+      if (taxUpdate === 'Exclude') {
+        totalNetto = totalNetto + tax
+      }
       await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${doc}`, {
-        totalGross: totalGross,
-        totalDisc: discountOutput,
-        taxValue: taxOutput,
+        totalGross: gross,
+        totalDisc: nettoDiscount,
+        taxValue: tax,
         totalNetto: totalNetto,
 			})
       dataFetching()
@@ -614,6 +627,7 @@ export const PurchaseOrder = () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderd/${params}`)
       setGetPurchaseDetail(response.data)
+      return response.data
     } catch (error) {
       console.log(error)
     }
@@ -654,7 +668,7 @@ export const PurchaseOrder = () => {
         }
       );
 			if (detailDataUpdate) {
-				await axios.patch(
+				await axios.post(
 					`${process.env.REACT_APP_API_BASE_URL}/purchaseorderd/${params}`,
 					detailDataUpdate.map((detail) => ({
 						...detail,
@@ -664,7 +678,7 @@ export const PurchaseOrder = () => {
 						qty: detail.qty,
 						price: detail.price,
 						gross: detail.gross,
-						discPercent: detail.discPercent1,
+						discPercent: detail.discPercent,
 						discPercent2: detail.discPercent2,
 						discPercent3: detail.discPercent3,
 						discValue: detail.discValue,
@@ -677,6 +691,7 @@ export const PurchaseOrder = () => {
 			}
       dataFetching();
       getPurchaseDetailByDocNo(params)
+      detailDataUpdate([])
       toast.success("Data Updated", {
         position: "top-center",
         autoClose: 3000,
