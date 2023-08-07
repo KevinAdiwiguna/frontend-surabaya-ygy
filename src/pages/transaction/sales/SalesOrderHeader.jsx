@@ -272,16 +272,15 @@ export const SalesOrderHeader = () => {
 			let nettoAsInteger = parseInt(obj.Netto)
 			total += nettoAsInteger
 		}
-		console.log(total)
 		setTotalGrossUpdate(total)
 	}
 
 	const calculateTotalNettoUpdate = () => {
 		let nettoDiscount = (totalGrossUpdate * discountUpdate) / 100
 		let totalNetto = totalGrossUpdate - nettoDiscount
-		let tax = calculateTaxUpdate(nettoDiscount)
+		let tax = calculateTaxUpdate(totalNetto)
 		if (taxUpdate === 'Exclude') {
-			totalNetto = nettoDiscount + tax
+			totalNetto = totalNetto + tax
 		}
 		setDiscountOutputUpdate(nettoDiscount)
 		setTaxOutputUpdate(tax)
@@ -435,7 +434,6 @@ export const SalesOrderHeader = () => {
 		setSalesDetail([
 			...salesDetail,
 			{
-				number: salesDetailUpdate.length + 1,
 				number: salesDetail.length + 1,
 				materialCode: materialVal,
 				info: info2 || getMyMaterialDetail?.Info ? info2 || getMyMaterialDetail?.Info : '-',
@@ -1293,7 +1291,7 @@ export const SalesOrderHeader = () => {
 											setDiscountUpdate(e.target.value)
 										}}
 										type="number"
-										placeholder={modalData.DiscountPercent}
+										placeholder={modalData.DiscPercent}
 										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 										value={discountUpdate}
 									/>

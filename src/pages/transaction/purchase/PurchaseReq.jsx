@@ -107,7 +107,6 @@ export const PurchaseReq = () => {
     setModal(false)
     setDetailDataUpdate([])
     setInformationUpdate("")
-    // setDeliveryDateUpdate('')
   }
 
   const addPurchaseReqDetail = (e) => {
@@ -822,7 +821,7 @@ export const PurchaseReq = () => {
 													Select
 												</button>
 											</td>
-											<td className="px-6 py-4">{res.MaterialCode} - {key}</td>
+											<td className="px-6 py-4">{res.MaterialCode}</td>
 											<td className="px-6 py-4">{res.Info}</td>
 											<td className="px-6 py-4">{res.Unit}</td>
 											<td className="px-6 py-4">{res.Qty}</td>
