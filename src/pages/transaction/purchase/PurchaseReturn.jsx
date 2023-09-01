@@ -1,9 +1,134 @@
-import React from "react";
+import React, { useEffect, useState } from 'react'
+import axios from 'axios';
+import { useMe } from "../../../hooks/API/useMe";
+import { dateConverter } from '../../../components/dateConverter';
+import { toast, ToastContainer } from 'react-toastify'
 
 export const PurchaseReturn = () => {
+
+  const { fetchMe, response } = useMe();
+  const currentDate = new Date().toISOString().slice(0, 16)
+  const [getData, setGetData] = useState([]);
+  const [getMySeries, setGetSeries] = useState([]);
+  const [series, setSeries] = useState("");
+  const [getMyMaterial, setGetMaterial] = useState([]);
+  const [getMyMaterialDetail, setGetMyMaterialDetail] = useState([])
+  const [materialVal, setMaterialVal] = useState("");
+  const [info, setInfo] = useState("")
+  const [qty, setQty] = useState("");
+  const [requiredDate, setRequiredDate] = useState("")
+  const [detailData, setDetailData] = useState([])
+  const [GetMyjobOrder, setGetJobOrder] = useState([])
+  const [getMyDepartment, setGetDepartment] = useState([])
+  const [docDate, setDocDate] = useState("")
+  const [JODocNo, setJODocNo] = useState("")
+  const [department, setDepartment] = useState("")
+  const [information, setInformation] = useState("")
+  const [modalData, setModalData] = useState([])
+  const [modal, setModal] = useState(false)
+  const [getPurchaseDetail, setGetPurchaseDetail] = useState([])
+  const [getPurchaseDetailwew, setGetPurchaseDetailwew] = useState([])
+  const [detailKey, setDetailKey] = useState(0);
+  const [docNoChange, setDocNoChange] = useState(0);
+  
+  // Newly added state variables
+  const [JODocNoUpdate, setJODocNoUpdate] = useState("");
+  const [departmentUpdate, setDepartmentUpdate] = useState("");
+  const [informationUpdate, setInformationUpdate] = useState("");
+
+  const [seriesVal, setSeriesVal] = useState("");
+
+  const [materialValUpdate, setMaterialValUpdate] = useState("");
+  const [infoUpdate, setInfoUpdate] = useState("");
+  const [qtyUpdate, setQtyUpdate] = useState("");
+  const [requiredDateUpdate, setRequiredDateUpdate] = useState("");
+  const [detailDataUpdate, setDetailDataUpdate] = useState([])
+  const [materialValChange, setMaterialValChange] = useState("");
+  const [infoChange, setInfoChange] = useState("");
+  const [qtyChange, setQtyChange] = useState("");
+  const [requiredDateChange, setRequiredDateChange] = useState("");
+
+  const generateDocDate = () => {
+    const today = new Date(docDate)
+    const year = today.getFullYear().toString().substring(2)
+    const month = (today.getMonth() + 1).toString().padStart(2, '0')
+    const day = today.getDate().toString().padStart(2, '0')
+    return year + month + day
+  }
+
+  const dataFetching = async () => {
+    try {
+      const data = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/purchasereturnh`
+      );
+      setGetData(data.data);
+    } catch (error) { }
+  };
+
+  useEffect(() => {
+    dataFetching();
+  }, []);
+
+  const deleteData = async (params) => {
+    try {
+      await axios.delete(
+        `${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${params}`
+      );
+      dataFetching();
+      toast.success("Data Deleted", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    } catch (error) {}
+  };
+
+  const [crrntDate, setCrrntDate] = useState("");
+  const [currentQueueNumber, setCurrentQueueNumber] = useState(1);
+  const [currentDocumentSeries, setCurrentDocumentSeries] = useState(`${seriesVal}`);
+
+  useEffect(() => {
+    setCurrentQueueNumber(1);
+  }, [currentDocumentSeries]);
+
+  const submitClick = async (e) => {
+    e.preventDefault();
+    if (!detailData) {
+      return
+    }
+    try {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/purchasereturnh`, {
+        generateDocDate: generateDocDate(),
+        series: series,
+        docDate: dateConverter(docDate),
+        JODoNo: JODocNo,
+        trip: "",
+        department: department,
+        information: information,
+        status: "OPEN",
+        createdBy: response.User,
+        changedBy: response.User,
+        PurchaseRequestd: detailData
+      })
+      dataFetching()
+      toast.success('Data Created', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+      })
+    } catch (error) {
+      toast.warn('Data Sudah Ada', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+      })
+    }
+  }
+
   return (
     <div>
       <div className="text-2xl font-bold mb-4">Purchase Return</div>
+      <form onSubmit={submitClick}></form>
       <div className="w-full">
         <div className="flex justify-start items-center">
           <table className="border-separate border-spacing-2 ">
@@ -14,35 +139,39 @@ export const PurchaseReturn = () => {
                   <option value="" disabled selected hidden>
                     Pilih series
                   </option>
-                  <option value="US">United States</option>
-                  <option value="CA">Canada</option>
-                  <option value="FR">France</option>
-                  <option value="DE">Germany</option>
+                  {getMySeries.map((res, key) => {
+                      return (
+                        <option value={res.Series} key={key}>
+                          {res.Series}
+                        </option>
+                      )
+                    })}
                 </select>
               </td>
             </tr>
             <tr>
               <td className="text-right font-bold">Doc No: </td>
               <td>
-                <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option value="" disabled selected hidden>
-                    Pilih document number
-                  </option>
-                  <option value="US">United States</option>
-                  <option value="CA">Canada</option>
-                  <option value="FR">France</option>
-                  <option value="DE">Germany</option>
-                </select>
+              <select
+                    onChange={(e) => setSeriesVal(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
+                    <option value="" disabled selected hidden>
+                      Pilih nomor dokumen
+                    </option>
+                    {getMySeries.map((res, key) => {
+                      return (
+                        <option value={res.Series} key={key}>
+                          {res.Series}
+                        </option>
+                      );
+                    })}
+                  </select>
               </td>
               <td></td>
               <td className="text-right">Doc Date: </td>
               <td>
-                <input
-                  type="datetime-local"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder=""
-                  required
-                />
+              <input onChange={(e) => { setDocDate(e.target.value) }} min={currentDate} type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
               </td>
             </tr>
             <tr>

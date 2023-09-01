@@ -11,14 +11,18 @@ import {
   HiDocumentText,
   HiUsers,
   HiUser,
-  HiCurrencyDollar
+  HiCurrencyDollar,
 } from "react-icons/hi";
 import {
+  BiArchiveOut,
+  BiArchiveIn,
   BiPackage,
-  BiSolidBackpack,
   BiSolidNotepad,
   BiMoney,
+  BiBook
 } from "react-icons/bi";
+import { TbPackages } from "react-icons/tb";
+import { GrAccessibility } from "react-icons/gr";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
@@ -61,6 +65,11 @@ export const SidebarComp = () => {
             {/* Transaction */}
             <Sidebar.Collapse icon={HiSwitchHorizontal} label="Transaction">
               <div className="pl-4">
+                <Link to="/dashboard">
+                  <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    Quality Control
+                  </p>
+                </Link>
                 <Sidebar.Collapse icon={BiSolidNotepad} label="Sales">
                   {/* <div className="pl-6">
                     <Sidebar.Collapse label="Sales Order">
@@ -119,7 +128,7 @@ export const SidebarComp = () => {
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Purchase Cost
                     </p>
-                    </Link>
+                  </Link>
                   <Link to="/Goods Receipt">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Goods Receipt
@@ -155,7 +164,11 @@ export const SidebarComp = () => {
                   </Link>
                 </Sidebar.Collapse>
 
-                <Sidebar.Collapse icon={BiSolidBackpack} label="Inventory">
+                <Sidebar.Collapse
+                  icon={HiSwitchHorizontal}
+                  label="Internal Transaction"
+                  className="text-sm"
+                >
                   <Link to="/Stock Transfer Request">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Stock Transfer Request
@@ -166,9 +179,179 @@ export const SidebarComp = () => {
                       Stock Transfer
                     </p>
                   </Link>
+                  <Link to="/QC Transfer">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      QC Transfer
+                    </p>
+                  </Link>
+                  <Link to="/Adjustment In">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Adjustment In
+                    </p>
+                  </Link>
+                  <Link to="/Adjustment Out">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Adjustment Out
+                    </p>
+                  </Link>
+                  <Link to="/Stock Price Adjustment">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Stock Price Adjustment
+                    </p>
+                  </Link>
+                </Sidebar.Collapse>
+
+                <Sidebar.Collapse
+                  icon={GrAccessibility}
+                  label="Account Receivable"
+                  className="text-sm"
+                >
+                  <Link to="/AR Customer Debet Note">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      AR Customer Debet Note
+                    </p>
+                  </Link>
+                  <Link to="/AR Customer Credit Note">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      AR Customer Credit Note
+                    </p>
+                  </Link>
+                  <Link to="/AR Request List">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      AR Request List
+                    </p>
+                  </Link>
+                  <Link to="/Customer Payment">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Customer Payment
+                    </p>
+                  </Link>
+                  <Link to="/AR Settlement">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      AR Settlement
+                    </p>
+                  </Link>
+                  <Link to="/AR Clearing Giro">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      AR Clearing Giro
+                    </p>
+                  </Link>
+                  <Link to="/AR Reject Giro">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      AR Reject Giro
+                    </p>
+                  </Link>
+                </Sidebar.Collapse>
+
+                <Sidebar.Collapse
+                  icon={BiMoney}
+                  label="Account Payable"
+                  className="text-sm"
+                >
+                  <Link to="/AR Supplier Debt Note">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      AP Supplier Debet Note
+                    </p>
+                  </Link>
+                  <Link to="/AP Supplier Credit">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      AP Supplier Credit
+                    </p>
+                  </Link>
+                  <Link to="/AP Receipt List">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      AP Receipt List
+                    </p>
+                  </Link>
+                  <Link to="/Debt Payment">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Debt Payment
+                    </p>
+                  </Link>
+                  <Link to="/AP Settlement">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      AP Settlement
+                    </p>
+                  </Link>
+                  <Link to="/AP Clearing Giro">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      AP Clearing Giro
+                    </p>
+                  </Link>
+                  <Link to="/AP Reject Giro">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      AP Reject Giro
+                    </p>
+                  </Link>
+                </Sidebar.Collapse>
+
+                <Sidebar.Collapse
+                  icon={BiArchiveIn}
+                  label="Bukti Kas Masuk"
+                  className="text-sm"
+                >
+                  <Link to="/Cashier Receipt">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Cashier Receipt
+                    </p>
+                  </Link>
+                  <Link to="/Cashier Cash Bank In">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Cashier Cash Bank In
+                    </p>
+                  </Link>
+                </Sidebar.Collapse>
+
+                <Sidebar.Collapse
+                  icon={BiArchiveOut}
+                  label="Bukti Kas Keluar"
+                  className="text-sm"
+                >
+                  <Link to="/Cashier Payment">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Cashier Payment
+                    </p>
+                  </Link>
+                  <Link to="/Cashier Cash Bank Out">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Cashier Cash Bank Out
+                    </p>
+                  </Link>
+                </Sidebar.Collapse>
+
+                <Sidebar.Collapse icon={TbPackages} label="Asset">
+                  <Link to="/Asset">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Asset
+                    </p>
+                  </Link>
+                  <Link to="/AUC Settlement">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      AUC Settlement
+                    </p>
+                  </Link>
+                </Sidebar.Collapse>
+
+                <Sidebar.Collapse icon={BiBook} label="General Ledger">
+                  <Link to="/General Journal Posting">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      General Journal Posting
+                    </p>
+                  </Link>
+                  <Link to="/Scheduled Journal">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Scheduled Journal
+                    </p>
+                  </Link>
+                  <Link to="/Special Journal Posting">
+                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      Special Journal Posting
+                    </p>
+                  </Link>
                 </Sidebar.Collapse>
               </div>
             </Sidebar.Collapse>
+
             {/* End of Transaction  */}
             {/* Master */}
             <Sidebar.Collapse icon={HiKey} label="Master">
