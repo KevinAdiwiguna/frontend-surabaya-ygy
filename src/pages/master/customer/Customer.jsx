@@ -33,15 +33,76 @@ export const Customer = () => {
   const [transactionType, setTransactionType] = useState();
   const [transactionType2, setTransactionType2] = useState();
   const [cutPph, setCutPph] = useState(false);
-  const [isBlackList, setIsBlackList] = useState();
-  const [isDeleted, setIsDeleted] = useState();
+  const [isBlackList, setIsBlackList] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
   const [information, setInformation] = useState();
   const [getData, setGetData] = useState([]);
   const [getCountry, setGetCountry] = useState([]);
   const [getCurrency, setGetCurrency] = useState([]);
   const [getPricelist, setGetPricelist] = useState([]);
   const [getCustomerGroup, setGetCustomerGroup] = useState([]);
+  const [modalData, setModalData] = useState([])
+  const [modal, setModal] = useState(false)
+  const [nameUpdate, setNameUpdate] = useState("");
+  const [addressUpdate, setAddressUpdate] = useState();
+  const [address2Update, setAddress2Update] = useState();
+  const [cityUpdate, setCityUpdate] = useState();
+  const [countryUpdate, setCountryUpdate] = useState();
+  const [phoneUpdate, setPhoneUpdate] = useState();
+  const [faxUpdate, setFaxUpdate] = useState();
+  const [emailUpdate, setEmailUpdate] = useState();
+  const [contactUpdate, setContactUpdate] = useState();
+  const [mobileUpdate, setMobileUpdate] = useState();
+  const [taxNumberUpdate, setTaxNumberUpdate] = useState();
+  const [customerGroupUpdate, setCustomerGroupUpdate] = useState();
+  const [priceListTypeUpdate, setPriceListTypeUpdate] = useState();
+  const [sales1Update, setSales1Update] = useState([]);
+  const [sales2Update, setSales2Update] = useState([]);
+  const [sales3Update, setSales3Update] = useState([]);
+  const [sales1valUpdate, setSales1valUpdate] = useState("");
+  const [sales2valUpdate, setSales2valUpdate] = useState("");
+  const [sales3valUpdate, setSales3valUpdate] = useState("");
+  const [topUpdate, setTopUpdate] = useState();
+  const [currencyUpdate, setCurrencyUpdate] = useState();
+  const [limitUpdate, setLimitUpdate] = useState();
+  const [transactionTypeUpdate, setTransactionTypeUpdate] = useState();
+  const [transactionType2Update, setTransactionType2Update] = useState();
+  const [cutPphUpdate, setCutPphUpdate] = useState(false);
+  const [isBlackListUpdate, setIsBlackListUpdate] = useState();
+  const [isDeletedUpdate, setIsDeletedUpdate] = useState();
+  const [informationUpdate, setInformationUpdate] = useState();
 
+  const closeModal = () => {
+    setModal(false)
+    setNameUpdate("")
+    setAddressUpdate("")
+    setAddress2Update("")
+    setCityUpdate("")
+    setCountryUpdate("")
+    setPhoneUpdate("")
+    setFaxUpdate("")
+    setEmailUpdate("")
+    setContactUpdate("")
+    setMobileUpdate("")
+    setTaxNumberUpdate("")
+    setCustomerGroupUpdate("")
+    setPriceListTypeUpdate("")
+    setSales1Update([])
+    setSales2Update([])
+    setSales3Update([])
+    setSales1valUpdate("")
+    setSales2valUpdate("")
+    setSales3valUpdate("")
+    setTopUpdate("")
+    setCurrencyUpdate("")
+    setLimitUpdate("")
+    setTransactionTypeUpdate("")
+    setTransactionType2Update("")
+    setCutPphUpdate(false)
+    setIsBlackListUpdate("")
+    setIsDeletedUpdate("")
+    setInformationUpdate("")
+  }
 
   useEffect(() => {
     fetchMe();
@@ -77,7 +138,7 @@ export const Customer = () => {
   const fetchSales3 = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/SalesArea3Code/${sales2val}`
+        `${process.env.REACT_APP_API_BASE_URL}/SalesArea3Code/${sales1val}/${sales2val}`
       );
       setSales3(response.data);
     } catch (error) { }
@@ -88,6 +149,39 @@ export const Customer = () => {
     fetchSales2();
     fetchSales3();
   }, [sales1val, sales2val, sales3val]);
+
+  const fetchSales1Update = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/salesarea1`
+      );
+      setSales1Update(response.data);
+    } catch (error) { }
+  };
+
+  const fetchSales2Update = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/salesArea2Code/${sales1valUpdate}`
+      );
+      setSales2Update(response.data);
+    } catch (error) { }
+  };
+
+  const fetchSales3Update = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/SalesArea3Code/${sales1valUpdate}/${sales2valUpdate}`
+      );
+      setSales3Update(response.data);
+    } catch (error) { }
+  };
+
+  useEffect(() => {
+    fetchSales1Update();
+    fetchSales2Update();
+    fetchSales3Update();
+  }, [sales1valUpdate, sales2valUpdate, sales3valUpdate]);
 
   const deleteData = async (params) => {
     try {
@@ -105,36 +199,36 @@ export const Customer = () => {
   };
 
   const updateData = async (params) => {
+
     try {
       await axios.patch(
         `${process.env.REACT_APP_API_BASE_URL}/customer/${params}`,
         {
-          code: code,
-          name: name,
-          address: address,
-          address2: address2,
-          city: city,
-          country: country,
-          phone: phone,
-          fax: fax,
-          email: email,
-          contact: contact,
-          mobile: mobile,
-          taxNumber: taxNumber,
-          customerGroup: customerGroup,
-          priceListType: priceListType,
-          salesArea1: sales1val,
-          salesArea2: sales2val,
-          salesArea3: sales3val,
-          top: top,
-          currency: currency,
-          limit: limit,
-          transactionType: transactionType,
-          transactionType2: transactionType2,
-          cutPph: cutPph,
-          isBlackList: isBlackList,
-          isDeleted: isDeleted,
-          information: information,
+          name: nameUpdate,
+          address: addressUpdate,
+          address2: address2Update,
+          city: cityUpdate,
+          country: countryUpdate,
+          phone: phoneUpdate,
+          fax: faxUpdate,
+          email: emailUpdate,
+          contact: contactUpdate,
+          mobile: mobileUpdate,
+          taxNumber: taxNumberUpdate,
+          customerGroup: customerGroupUpdate,
+          priceListType: priceListTypeUpdate,
+          salesArea1: sales1valUpdate,
+          salesArea2: sales2valUpdate,
+          salesArea3: sales3valUpdate,
+          top: topUpdate,
+          currency: currencyUpdate,
+          limit: limitUpdate,
+          transactionType: transactionTypeUpdate,
+          transactionType2: transactionType2Update,
+          cutPph: cutPphUpdate,
+          isBlackList: isBlackListUpdate,
+          isDeleted: isDeletedUpdate,
+          information: informationUpdate,
           changedBy: response.User,
         }
       );
@@ -723,7 +817,7 @@ export const Customer = () => {
               <td className="px-6 py-4">{res.Limit}</td>
               <td className="px-6 py-4">{res.TransactionType}</td>
               <td className="px-6 py-4">{res.TransactionType2}</td>
-              <td className="px-6 py-4">{res.CutPph === true ? "true" : "false"}</td>
+              <td className="px-6 py-4">{res.CutPPh === true ? "true" : "false"}</td>
               <td className="px-6 py-4">{res.IsBlackList === true ? "true" : "false"}</td>
               <td className="px-6 py-4">{res.IsDeleted === true ? "true" : "false"}</td>
               <td className="px-6 py-4">{res.Information}</td>
@@ -741,7 +835,14 @@ export const Customer = () => {
                   Delete
                 </button>
                 <button
-                  onClick={() => updateData(res.Code)}
+                  onClick={() => {
+                    setModalData(res)
+                    setModal(true)
+                    setCutPphUpdate(res.CutPPh)
+                    setIsBlackListUpdate(res.IsBlackList)
+                    setIsDeletedUpdate(res.IsDeleted)
+                    fetchSales1Update()
+                  }}
                   type="button"
                   className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                 >
@@ -754,6 +855,338 @@ export const Customer = () => {
       </tbody>
     </table>
     <div></div>
+    <div className={`flex justify-center top-0 left-0 fixed items-center w-screen h-screen z-[5] ${modal ? 'block' : 'hidden'}`}>
+        <div className={`bg-slate-50 w-[90%] h-[90vh] fixed rounded-lg border border-black overflow-y-scroll p-5`}>
+          <div className="space-y-6">
+            <div className="text-2xl font-bold mb-4 ">Code: {modalData.Code}</div>
+            <button
+              onClick={() => {
+                closeModal()
+              }}
+              className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <div className="w-[75%] flex">
+            <table className="border-separate border-spacing-2 w-1/2">
+            <tr>
+              <td className="text-right">Name: </td>
+              <td>
+                <input
+                  onChange={(e) => { setNameUpdate(e.target.value) }}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={modalData.Name}
+                  required
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Address: </td>
+              <td>
+                <input
+                  onChange={(e) => { setAddressUpdate(e.target.value) }}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={modalData.Address}
+                  required
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Address 2: </td>
+              <td>
+                <input
+                  onChange={(e) => { setAddress2Update(e.target.value) }}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={modalData.Address2}
+                  required
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">City: </td>
+              <td>
+                <input
+                  onChange={(e) => { setCityUpdate(e.target.value) }}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={modalData.City}
+                  required
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Country:</td>
+              <td>
+                <select onChange={(e) => { setCountryUpdate(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option disabled selected hidden>{modalData.Country}</option>
+                  {getCountry.map((res, key) => {
+                    return (
+                      <option key={key} value={res.Code}>{res.Code}</option>
+                    )
+                  })}
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Phone: </td>
+              <td>
+                <input
+                  onChange={(e) => { setPhoneUpdate(e.target.value) }}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={modalData.Phone}
+                  required
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Fax: </td>
+              <td>
+                <input
+                  onChange={(e) => { setFaxUpdate(e.target.value) }}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={modalData.Fax}
+                  required
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Email: </td>
+              <td>
+                <input
+                  onChange={(e) => { setEmailUpdate(e.target.value) }}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={modalData.Email}
+                  required
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Contact: </td>
+              <td>
+                <input
+                  onChange={(e) => { setContactUpdate(e.target.value) }}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={modalData.Contact}
+                  required
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Mobile: </td>
+              <td>
+                <input
+                  onChange={(e) => { setMobileUpdate(e.target.value) }}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={modalData.Mobile}
+                  required
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Information: </td>
+              <td>
+                <input
+                  onChange={(e) => { setInformationUpdate(e.target.value) }}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={modalData.Information}
+                  required
+                />
+              </td>
+            </tr>
+          </table>
+          <table className="border-separate border-spacing-2 w-[60%6]">
+            <tr>
+              <td className="text-right">Tax Number: </td>
+              <td>
+                <input
+                  onChange={(e) => { setTaxNumberUpdate(e.target.value) }}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={modalData.TaxNumber}
+                  required
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Sales Area 1:</td>
+              <td>
+                <select onChange={(e) => { setSales1valUpdate(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option disabled selected hidden>{modalData.SalesArea1}</option>
+                  {sales1Update.map((res, key) => {
+                    return (
+                      <option key={key} value={res.Code}>
+                        {res.Code}
+                      </option>
+                    )
+                  })}
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Sales Area 2:</td>
+              <td>
+                <select key={sales2} onChange={(e) => { setSales2valUpdate(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option disabled selected hidden></option>
+                  {sales2Update.map((res, key) => {
+                    return (
+                      <option key={key} value={res.Code}>
+                        {res.Code}
+                      </option>
+                    )
+                  })}
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Sales Area 3:</td>
+              <td>
+                <select key={sales3} onChange={(e) => { setSales3valUpdate(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option disabled selected hidden></option>
+                  {sales3Update.map((res, key) => {
+                    return (
+                        <option key={key} value={res.Code}>{res.Code}</option> 
+                    )
+                  })}
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Customer Group:</td>
+              <td>
+                <select onChange={(e) => { setCustomerGroupUpdate(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option disabled selected hidden>{modalData.CustomerGroup}</option>
+                  {getCustomerGroup.map((res, key) => {
+                    return (
+                      <option value={res.Code} key={key}>{res.Code}</option>
+                    )
+                  })}
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">PriceList Type:</td>
+              <td>
+                <select onChange={(e) => { setPriceListTypeUpdate(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option disabled selected hidden>{modalData.PricelistType}</option>
+                  {getPricelist.map((res, key) => {
+                    return (
+                      <option value={res.Code} key={key}>{res.Code}</option>
+                    )
+                  })}
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Term of Payment: </td>
+              <td className="flex items-center gap-2">
+                <input
+                  onChange={(e) => { setTopUpdate(e.target.value) }}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[50%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={modalData.TOP}
+                  required
+                />
+                Days
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Currency: </td>
+              <td>
+                <select onChange={(e) => { setCurrencyUpdate(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[50%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option disabled selected hidden>{modalData.Currency}</option>
+                  {getCurrency.map((res, key) => {
+                    return (
+                      <option value={res.Code} key={key}>{res.Code}</option>
+                    )
+                  })}
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Limit: </td>
+              <td>
+                <input
+                  onChange={(e) => { setLimitUpdate(e.target.value) }}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={modalData.Limit}
+                  required
+                />
+              </td>
+              <div className="flex items-center gap-2">
+                <td className="float-right">
+                  <input
+                    onChange={(e) => { setCutPphUpdate(e.target.checked) }}
+                    type="checkbox"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    checked={cutPphUpdate}
+                  />
+                </td>
+                <td className="">We cut PPh on behalf of this customer</td>
+              </div>
+            </tr>
+            <tr>
+              <td className="text-right">Account Receivable: </td>
+              <td>
+                <select onChange={(e) => { setTransactionTypeUpdate(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  {/* // {transactionType.map((res, key) => {
+                  //   return (
+                  //     <option key={key} value={res.Code}>{res.Code}</option>
+                  //   )
+                  // })} */}
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Down Payment: </td>
+              <td>
+                <select onChange={(e) => { setTransactionType2Update(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  {/* // {transactionType2.map((res, key) => {
+                  //   return (
+                  //     <option key={key} value={res.Code}>{res.Code}</option>
+                  //   )
+                  // })} */}
+                </select>
+              </td>
+            </tr>
+            <tr>
+            <td className="float-right">
+                  <input
+                    onChange={(e) => { setIsBlackListUpdate(e.target.checked) }}
+                    type="checkbox"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    checked={isBlackListUpdate}
+                  />
+                </td>
+                <td className="">Is Blacklisted</td>
+            </tr>
+            <tr>
+            <td className="float-right">
+                  <input
+                    onChange={(e) => { setIsDeletedUpdate(e.target.checked) }}
+                    type="checkbox"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    checked={isDeletedUpdate}
+                  />
+                </td>
+                <td className="">Is Deleted</td>
+            </tr>
+          </table>  
+            </div>
+              <button onClick={() => { updateData(modalData.Code) }} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">Update</button>
+          </div>
+        </div>
+      </div>
   </div>
   <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
     </div >

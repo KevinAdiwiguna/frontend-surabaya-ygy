@@ -6,13 +6,20 @@ import { dateConverter } from "../../../components/dateConverter";
 
 export const UnitConversion = () => {
   const { fetchMe, response } = useMe();
-  const [name, setName] = useState("");
   const [unit, setUnit] = useState([]);
   const [content, setContent] = useState([]);
+  const [contentUpdate, setContentUpdate] = useState([]);
   const [materialCode, setMaterialCode] = useState([]);
   const [myMaterialCode, getMaterialCode] = useState([]);
   const [getUnit, setGetUnit] = useState([]);
   const [getData, setGetData] = useState([]);
+  const [modalData, setModalData] = useState([])
+  const [modal, setModal] = useState(false)
+
+  const closeModal = () => {
+    setModal(false)
+    setContentUpdate(0)
+  }
 
   useEffect(() => {
     fetchMe();
@@ -47,7 +54,7 @@ export const UnitConversion = () => {
       await axios.patch(
         `${process.env.REACT_APP_API_BASE_URL}/unitconversion/${params}`,
         {
-          content: content,
+          content: contentUpdate,
           changedBy: response.User,
         }
       );
@@ -196,9 +203,6 @@ export const UnitConversion = () => {
                 Content
               </th>
               <th scope="col" className="px-6 py-3">
-                Smallest Unit
-              </th>
-              <th scope="col" className="px-6 py-3">
                 Created By
               </th>
               <th scope="col" className="px-6 py-3">
@@ -227,7 +231,6 @@ export const UnitConversion = () => {
               </th>
               <td className="px-6 py-4">{res.Unit}</td>
               <td className="px-6 py-4">{res.Content}</td>
-              <td className="px-6 py-4">{res.Unit}</td>
               <td className="px-6 py-4">{res.CreatedBy}</td>
               <td className="px-6 py-4">{dateConverter(res.CreatedDate)}</td>
               <td className="px-6 py-4">{res.ChangedBy}</td>
@@ -241,7 +244,10 @@ export const UnitConversion = () => {
                   Delete
                 </button>
                 <button
-                onClick={() => {updateData(res.MaterialCode)}}
+                      onClick={() => {
+                        setModalData(res)
+                        setModal(true)
+                      }}
                   type="button"
                   className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                 >
@@ -254,6 +260,39 @@ export const UnitConversion = () => {
           </tbody>
         </table>
         <div></div>
+      </div>
+      <div className={`flex justify-center top-0 left-0 fixed items-center w-screen h-screen z-[5] ${modal ? 'block' : 'hidden'}`}>
+        <div className={`bg-slate-50 fixed rounded-lg border border-black overflow-y-scroll p-5`}>
+          <div className="space-y-6">
+            <div className="text-2xl font-bold mb-4 ">Code: {modalData.MaterialCode}</div>
+            <button
+              onClick={() => {
+                closeModal()
+              }}
+              className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <div className="w-[75%]">
+              <table className='border-separate border-spacing-2'>
+                <tr>
+                  <td className='text-right'>Unit: </td>
+                  <td>
+                    <input value={modalData.Unit} disabled type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+                  </td>
+                </tr>
+                <tr>
+                  <td className='text-right'>1 Unit: </td>
+                  <td>
+                    <input placeholder={modalData.Content} onChange={(e)=>{setContentUpdate(e.target.value)}} min={0} type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+                  </td>
+                </tr>
+              </table>
+              <button onClick={() => { updateData(modalData.MaterialCode) }} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">Update</button>
+            </div>
+          </div>
+        </div>
       </div>
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
     </div>

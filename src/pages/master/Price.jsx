@@ -15,6 +15,7 @@ export const Price = () => {
   const [currency, setCurrency] = useState("");
   const [unit, setUnit] = useState("");
   const [getUnit, setGetUnit] = useState([]);
+  const [getUnitUpdate, setGetUnitUpdate] = useState([]);
   const [getCurrency, setGetCurrency] = useState([]);
   const [getMaterial, setGetMaterial] = useState([]);
   const [minQty, setMinQty] = useState(0);
@@ -24,6 +25,18 @@ export const Price = () => {
   const [valueDisc, setValueDisc] = useState(0);
   const [begDate, setBegDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [maxQtyUpdate, setMaxQtyUpdate] = useState(0);
+  const [priceUpdate, setPriceUpdate] = useState(0);
+  const [percentDiscUpdate, setPercentDiscUpdate] = useState(0);
+  const [valueDiscUpdate, setValueDiscUpdate] = useState(0);
+  const [endDateUpdate, setEndDateUpdate] = useState("");
+
+  const [modalData, setModalData] = useState([])
+  const [modal, setModal] = useState(false)
+
+  const closeModal = () => {
+    setModal(false)
+  }
 
   const handleBegDateChange = (e) => {
     const selectedBegDate = e.target.value;
@@ -31,6 +44,14 @@ export const Price = () => {
 
     setEndDate("");
   };
+
+  useEffect(()=>{
+    setEndDateUpdate(modalData.Endda)
+    setMaxQtyUpdate(modalData.MaxQty)
+    setPriceUpdate(modalData.Price)
+    setPercentDiscUpdate(modalData.PercentDisc)
+    setValueDiscUpdate(modalData.ValueDisc)
+  },[modalData])
 
   useEffect(() => {
     fetchMe();
@@ -44,9 +65,9 @@ export const Price = () => {
     setUnit(response.data.Unit)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getMyUnitByMaterial(materialCode)
-  },[materialCode])
+  }, [materialCode])
 
   const getMyCurrency = async () => {
     const response = await axios.get(
@@ -75,10 +96,10 @@ export const Price = () => {
         `${process.env.REACT_APP_API_BASE_URL}/price`
       );
       setGetData(data.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
-  const deleteData = async (a,b,c,d,e,f) => {
+  const deleteData = async (a, b, c, d, e, f) => {
     try {
       await axios.delete(
         `${process.env.REACT_APP_API_BASE_URL}/price/${a}/${b}/${c}/${d}/${e}/${f}/`
@@ -89,19 +110,19 @@ export const Price = () => {
         autoClose: 3000,
         hideProgressBar: true,
       });
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const submitClick = async (e) => {
     e.preventDefault();
-    if(valueDisc&&percentDisc){
+    if (valueDisc && percentDisc) {
       return toast.warn("Fill Either Percent Disc & Value Disc", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
       });
     }
-    if(minQty>=maxQty){
+    if (minQty >= maxQty) {
       return toast.warn("min Qty tidak boleh lebih dari max Qty", {
         position: "top-center",
         autoClose: 3000,
@@ -116,7 +137,7 @@ export const Price = () => {
         materialCode: materialCode,
         currency: currency,
         unit: unit,
-        minQty: minQty, 
+        minQty: minQty,
         maxQty: maxQty,
         price: price,
         percentDisc: percentDisc,
@@ -139,9 +160,8 @@ export const Price = () => {
     }
   };
 
-  const updateData = async (a,b,c,d,e,f) => {
-    e.preventDefault();
-    if(valueDisc&&percentDisc){
+  const updateData = async (a, b, c, d, e, f) => {
+    if (valueDiscUpdate > 0 && percentDiscUpdate > 0) {
       toast.warn("Fill Either Percent Disc & Value Disc", {
         position: "top-center",
         autoClose: 3000,
@@ -149,7 +169,7 @@ export const Price = () => {
       });
       return
     }
-    if(minQty>=maxQty){
+    if (modalData.MinQty >= maxQtyUpdate) {
       toast.warn("min Qty tidak boleh lebih dari max Qty", {
         position: "top-center",
         autoClose: 3000,
@@ -159,11 +179,11 @@ export const Price = () => {
     }
     try {
       await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/price/${a}/${b}/${c}/${d}/${e}/${f}/`, {
-        endDa: dateConverter(endDate),
-        maxQty: maxQty,
-        price: price,
-        percentDisc: percentDisc,
-        valueDisc: valueDisc,
+        endDa: dateConverter(endDateUpdate),
+        maxQty: maxQtyUpdate,
+        price: priceUpdate,
+        percentDisc: percentDiscUpdate,
+        valueDisc: valueDiscUpdate,
         changedBy: response.User,
       });
       dataFetching();
@@ -197,7 +217,7 @@ export const Price = () => {
             <td className="text-right">Begin Date: </td>
             <td>
               <input
-                onChange={(e)=>{handleBegDateChange(e)}}
+                onChange={(e) => { handleBegDateChange(e) }}
                 type="datetime-local"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder=""
@@ -211,7 +231,7 @@ export const Price = () => {
             <td className="text-right">End Date: </td>
             <td>
               <input
-                onChange={(e)=>{setEndDate(e.target.value)}}
+                onChange={(e) => { setEndDate(e.target.value) }}
                 type="datetime-local"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder=""
@@ -224,11 +244,11 @@ export const Price = () => {
           <tr>
             <td className="text-right">Pricelist Type: </td>
             <td>
-              <select onChange={(e)=>{setPriceListType(e.target.value)}} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+              <select onChange={(e) => { setPriceListType(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option disabled selected hidden>
                   Pilih Tipe
                 </option>
-                {getPricelist.map((res,key)=>{
+                {getPricelist.map((res, key) => {
                   return (
                     <option value={res.Code} key={key}>
                       {res.Code}
@@ -241,11 +261,11 @@ export const Price = () => {
           <tr>
             <td className="text-right">Material Code: </td>
             <td>
-              <select onChange={(e)=>{setMaterialCode(e.target.value)}} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+              <select onChange={(e) => { setMaterialCode(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option disabled selected hidden>
                   Pilih Code
                 </option>
-                {getMaterial.map((res,key)=>{
+                {getMaterial.map((res, key) => {
                   return (
                     <option value={res.Code} key={key}>{res.Code}</option>
                   )
@@ -256,11 +276,11 @@ export const Price = () => {
           <tr>
             <td className="text-right">Currency: </td>
             <td>
-              <select onChange={(e)=>{setCurrency(e.target.value)}} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+              <select onChange={(e) => { setCurrency(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option disabled selected hidden>
                   Pilih
                 </option>
-                {getCurrency.map((res,key)=>{
+                {getCurrency.map((res, key) => {
                   return (
                     <option value={res.Code} key={key}>{res.Code}</option>
                   )
@@ -281,66 +301,66 @@ export const Price = () => {
           <tr>
             <td className="text-right">Min Qty: </td>
             <td>
-            <input
-            onChange={(e)=>{setMinQty(e.target.value)}}
-            type="number"
-            min={0}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="0.00"
-            required
-            // disabled
-          />
+              <input
+                onChange={(e) => { setMinQty(e.target.value) }}
+                type="number"
+                min={0}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="0.00"
+                required
+              // disabled
+              />
             </td>
           </tr>
           <tr>
             <td className="text-right">Max Qty: </td>
             <td>
-            <input
-            onChange={(e)=>{setMaxQty(e.target.value)}}
-            type="number"
-            min={0}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="0.00"
-            required
-            // disabled
-          />
+              <input
+                onChange={(e) => { setMaxQty(e.target.value) }}
+                type="number"
+                min={0}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="0.00"
+                required
+              // disabled
+              />
             </td>
           </tr>
           <tr>
             <td className="text-right">Price: </td>
             <td>
-            <input
-            onChange={(e)=>{setPrice(e.target.value)}}
-            type="number"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="0.00"
-            required
-            // disabled
-          />
+              <input
+                onChange={(e) => { setPrice(e.target.value) }}
+                type="number"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="0.00"
+                required
+              // disabled
+              />
             </td>
           </tr>
           <tr>
             <td className="text-right">Percent Disc: </td>
             <td>
-            <input
-            onChange={(e)=>{setPercentDisc(e.target.value)}}
-            type="number"
-            min={0}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="0.00"
-          />
+              <input
+                onChange={(e) => { setPercentDisc(e.target.value) }}
+                type="number"
+                min={0}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="0.00"
+              />
             </td>
           </tr>
           <tr>
             <td className="text-right">Value Disc: </td>
             <td>
-            <input
-            onChange={(e)=>{setValueDisc(e.target.value)}}
-            type="number"
-            min={0}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="0.00"
-          />
+              <input
+                onChange={(e) => { setValueDisc(e.target.value) }}
+                type="number"
+                min={0}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="0.00"
+              />
             </td>
           </tr>
           <tr>
@@ -444,14 +464,17 @@ export const Price = () => {
                   </td>
                   <td className="px-6 py-4">
                     <button
-                      onClick={() => deleteData(res.Begda,res.PriceListType,res.MaterialCode,res.Currency,res.Unit,res.MinQty)}
+                      onClick={() => deleteData(res.Begda, res.PriceListType, res.MaterialCode, res.Currency, res.Unit, res.MinQty)}
                       type="button"
                       className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                     >
                       Delete
                     </button>
                     <button
-                      onClick={() => updateData(res.Begda,res.PriceListType,res.MaterialCode,res.Currency,res.Unit,res.MinQty)}
+                      onClick={() => {
+                        setModal(true)
+                        setModalData(res)
+                      }}
                       type="button"
                       className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                     >
@@ -464,6 +487,164 @@ export const Price = () => {
           </tbody>
         </table>
         <div></div>
+        <div className={`flex justify-center top-0 left-0 fixed items-center w-screen h-screen z-[5] ${modal ? 'block' : 'hidden'}`}>
+          <div className={`bg-slate-50 w-[90%] h-[90vh] fixed rounded-lg border border-black overflow-y-scroll p-5`}>
+            <div className="space-y-6">
+              <div className="text-2xl font-bold mb-4 ">Code: {modalData.Code}</div>
+              <button
+                onClick={() => {
+                  closeModal()
+                }}
+                className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <div className="w-[75%] flex">
+                <table className="border-separate border-spacing-2 w-1/2">
+                  <tr>
+                    <td className="text-right">Begin Date: </td>
+                    <td>
+                      <input
+                        type="datetime-local"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder=""
+                        min={currentDate}
+                        value={modalData.Begda + "T00:00"}
+                        disabled
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">End Date: </td>
+                    <td>
+                      <input
+                        onChange={(e) => { setEndDateUpdate(e.target.value) }}
+                        type="datetime-local"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder=""
+                        min={modalData.begDa}
+                        value={endDateUpdate + "T00:00" || modalData.Endda + "T00:00"}
+                        required
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Pricelist Type: </td>
+                    <td>
+                      <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option disabled selected hidden>
+                          {modalData.PriceListType}
+                        </option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Material Code: </td>
+                    <td>
+                      <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option disabled selected hidden>
+                          {modalData.MaterialCode}
+                        </option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Currency: </td>
+                    <td>
+                      <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option disabled selected hidden>
+                          {modalData.Currency}
+                        </option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Unit: </td>
+                    <td>
+                      <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option disabled hidden selected>
+                          {modalData.Unit}
+                        </option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Min Qty: </td>
+                    <td>
+                      <input
+                        type="number"
+                        min={0}
+                        value={modalData.MinQty}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="0.00"
+                        required
+                        disabled
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Max Qty: </td>
+                    <td>
+                      <input
+                        onChange={(e) => { setMaxQtyUpdate(e.target.value) }}
+                        type="number"
+                        min={0}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        value={maxQtyUpdate || modalData.MaxQty}
+                        required
+                      // disabled
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Price: </td>
+                    <td>
+                      <input
+                        onChange={(e) => { setPriceUpdate(e.target.value) }}
+                        type="number"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder={modalData.Price}
+                        required
+                      // disabled
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Percent Disc: </td>
+                    <td>
+                      <input
+                        onChange={(e) => { setPercentDiscUpdate(e.target.value) }}
+                        type="number"
+                        min={0}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder={modalData.PercentDisc}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Value Disc: </td>
+                    <td>
+                      <input
+                        onChange={(e) => { setValueDiscUpdate(e.target.value) }}
+                        type="number"
+                        min={0}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder={modalData.ValueDisc}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>
+                      <button onClick={() => { updateData(modalData.Begda,modalData.PriceListType,modalData.MaterialCode,modalData.Currency,modalData.Unit,modalData.MinQty) }} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">Update</button>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
     </div>
