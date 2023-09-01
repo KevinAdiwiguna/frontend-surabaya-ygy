@@ -36,7 +36,8 @@ import { Salesman } from "./master/Salesman";
 import { Supplier } from "./master/Supplier";
 import { Departement } from "./master/Departement";
 import { Approval } from "./master/Approval";
-import {GoodIssue} from './transaction/sales/GoodIssue.jsx'
+import { GoodIssue } from './transaction/sales/GoodIssue.jsx'
+import { SalesInvoice } from "./transaction/sales/SalesInvoice";
 
 export const Home = () => {
   const params = useParams().id;
@@ -63,6 +64,10 @@ export const Home = () => {
         return <SalesArea2 />;
       case "Sales Area 3":
         return <SalesArea3 />;
+      case "Sales Invoice":
+        return <SalesInvoice />;
+      case "Good Issue":
+        return <GoodIssue />;
       // End Of Customer Master
       // Material Master
       case "Unit Conversion":
@@ -77,8 +82,6 @@ export const Home = () => {
         return <MaterialGroup2 />;
       case "Material Group 3":
         return <MaterialGroup3 />;
-      case "Good Issue":
-        return <GoodIssue />;
       case "Unit":
         return <Unit />;
       // end of Material Master
@@ -110,7 +113,7 @@ export const Home = () => {
         return <Price />;
       case "Purchase Cost":
         return <PurchaseCost />;
-        case "Purchase Return":
+      case "Purchase Return":
         return <PurchaseReturn />;
       case "Department":
         return <Departement />;

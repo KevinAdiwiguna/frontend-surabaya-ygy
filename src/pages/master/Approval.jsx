@@ -21,10 +21,10 @@ export const Approval = () => {
 
   const dataFetching = async () => {
     try {
-      const data = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/Approval`
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/approval`
       );
-      setGetData(data.data);
+      setGetData(res.data);
     } catch (error) {}
   };
 
@@ -45,7 +45,7 @@ export const Approval = () => {
   const submitClick = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/Approval`, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/approval`, {
         code: code,
         name: name,
         address: address,
@@ -72,6 +72,7 @@ export const Approval = () => {
 
   useEffect(() => {
     dataFetching();
+    console.log(getData);
   }, []);
 
   return (
@@ -178,7 +179,6 @@ export const Approval = () => {
           </thead>
           <tbody>
             {getData.map((res, key) => {
-              console.log(getData);
               return (
                 <tr
                   key={key}
