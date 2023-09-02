@@ -36,8 +36,13 @@ import { Salesman } from "./master/Salesman";
 import { Supplier } from "./master/Supplier";
 import { Departement } from "./master/Departement";
 import { Approval } from "./master/Approval";
-import { GoodIssue } from './transaction/sales/GoodIssue.jsx'
+import { GoodIssue } from './transaction/sales/GoodIssue.jsx';
 import { SalesInvoice } from "./transaction/sales/SalesInvoice";
+import { GenerateTaxNo } from "./master/GenerateTaxNo";
+import { Periode } from "./master/Periode";
+import { TransactionType } from "./master/AccountReceiveable_AccountPayable/TransactionType";
+
+
 
 export const Home = () => {
   const params = useParams().id;
@@ -119,6 +124,13 @@ export const Home = () => {
         return <Departement />;
       case "Approval":
         return <Approval />;
+      case "GenerateTaxNo":
+        return <GenerateTaxNo />;
+      case "Periode":
+        return <Periode />;
+      case "TransactionType":
+        return <TransactionType />;
+ 
       default:
         navigate("/Dashboard");
     }

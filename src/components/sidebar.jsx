@@ -467,6 +467,28 @@ export const SidebarComp = () => {
               <Link to="/Approval">
                 <Sidebar.Item icon={HiIdentification}>Approval</Sidebar.Item>
               </Link>
+              <Link to="/GenerateTaxNo">
+                <Sidebar.Item icon={HiIdentification}>GenerateTaxNo</Sidebar.Item>
+              </Link>
+              <Link to="/Periode">
+                <Sidebar.Item icon={HiUsers}>Periode</Sidebar.Item>
+              </Link>
+              <div className="pl-6 !mt-0">
+                    <Sidebar.Collapse label="Account Receiveable/Payable">
+                      <Link to="/Transaction Type">
+                        <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        Transaction Type
+                        </p>
+                      </Link>
+                      <Link to="/Collector">
+                        <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        Collector
+                        </p>
+                      </Link>
+                    </Sidebar.Collapse>
+                  </div>
+            
+              
             </Sidebar.Collapse>
             {/* End of Master */}
             {/* Account  */}
