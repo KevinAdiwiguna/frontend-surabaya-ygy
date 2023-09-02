@@ -15,6 +15,7 @@ export const SalesInvoice = () => {
   const [getMyCustomer, setGetMyCustomer] = useState([])
   const [getMySelesman, setGetMySelesman] = useState([])
   const [getMyGoodsIssue, setGetMyGoodsIssue] = useState([])
+  const [getMyGoodsIssueDetail, setGetMyGoodsIssueDetail] = useState([])
   const [getMyCurrency, setGetMyCurrency] = useState([])
   const [getMyMaterial, setGetMyMaterial] = useState([])
   const [getMyMaterialDetail, setGetMyMaterialDetail] = useState([])
@@ -51,6 +52,8 @@ export const SalesInvoice = () => {
   const [totalNetto, setTotalNetto] = useState(0)
   const [totalGross, setTotalGross] = useState(0)
   const [totalGrossUpdate, setTotalGrossUpdate] = useState(0)
+  const [salesOrderNo, setSalesOrderNo] = useState()
+
 
   const [nettoChange, setNettoChange] = useState('')
   const [grossChange, setGrossChange] = useState('')
@@ -77,6 +80,7 @@ export const SalesInvoice = () => {
   const [NettoUpdate, setNettoUpdate] = useState(0)
   const [infoUpdate, setInfoUpdate] = useState('')
   const [priceUpdate, setPriceUpdate] = useState(0)
+  const [getSalesOrderHeader, setGetSalesOrderHeader] = useState([])
   const [getSalesOrderDetail, setGetSalesOrderDetail] = useState([])
   const [changeTax, setChangeTax] = useState('')
   const [changeTaxVal, setChangeTaxVal] = useState('')
@@ -98,7 +102,7 @@ export const SalesInvoice = () => {
 
   const getSeries = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/seriescode/PRINTED`)
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/seriescode/SALES INVOICE`)
       setGetSeries(response.data)
     } catch (error) {
       console.log(error)
@@ -140,15 +144,32 @@ export const SalesInvoice = () => {
       console.log(error)
     }
   }
-  const getGoodsIssue = async (params) => {
+  const getGoodsIssue = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/goodsissuestatus/SALES INVOICE`)
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/goodsissuestatus/PRINTED`)
       setGetMyGoodsIssue(response.data)
     } catch (error) {
       console.log(error)
     }
   }
+  const getGoodsIssueDetail = async (params) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/goodsissuedetail/${params}`)
+      setGetMyGoodsIssueDetail(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
   
+  const getSalesOrderHeaderByDocNo = async (params) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesorderh/${params}`)
+      setGetSalesOrderHeader(response.data)
+      return response.data
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const getSalesOrderDetailByDocNo = async (params) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesorderd/${params}`)
@@ -158,6 +179,7 @@ export const SalesInvoice = () => {
       console.log(error)
     }
   }
+
 
   const sendSalesDetailToInput = (e, key) => {
     setChangeMaterialVal(e.MaterialCode)
@@ -212,16 +234,28 @@ export const SalesInvoice = () => {
   const getCurrencyByCustomer = async (params) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/customer/${params}`)
-      setGetFCurrency(response.data)
+      setGetFCurrency(response.data.Currency)
     } catch (error) {
       console.log(error)
     }
   }
 
-  useEffect(() => {
-    getCurrencyByCustomer(customerVal)
-    getCurrencyByCustomer(customerValUpdate)
-  }, [customerVal, customerValUpdate])
+  useEffect(()=>{
+    getGoodsIssueDetail(goodsIssue)
+  },[goodsIssue])
+  useEffect(()=>{
+    setExchangeRate(getSalesOrderHeader.ExchangeRate)
+    setTop(getSalesOrderHeader.TOP)
+    setPoNo(getSalesOrderDetail.PONo)
+  },[getSalesOrderHeader])
+
+  useEffect(()=>{
+    getSalesOrderHeaderByDocNo(getMyGoodsIssueDetail?.goodsissueh?.SODocNo)
+    getSalesOrderDetailByDocNo(getMyGoodsIssueDetail?.goodsissueh?.SODocNo)
+    setCustomerVal(getMyGoodsIssueDetail?.goodsissueh?.CustomerCode)
+    getCurrencyByCustomer(getMyGoodsIssueDetail?.goodsissueh?.CustomerCode)
+    console.log(getMyGoodsIssueDetail);
+  },[getMyGoodsIssueDetail])
 
   const calculateTotalGross = () => {
     return quantity * price
@@ -416,11 +450,10 @@ export const SalesInvoice = () => {
     getMaterial()
     getGoodsIssue()
   }, [])
-
   useEffect(() => {
     fetchMe()
   }, [!response])
-
+  
   const dataFetching = async () => {
     try {
       const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesorderh`)
@@ -431,6 +464,8 @@ export const SalesInvoice = () => {
   useEffect(() => {
     dataFetching()
   }, [])
+  
+
 
   const deleteData = async (params) => {
     try {
@@ -682,14 +717,16 @@ export const SalesInvoice = () => {
               <tr>
                 <td className="text-right">Goods Issue No: </td>
                 <td>
-                  <select onChange={(e) => setGoodsIssue(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <select onChange={(e) => {
+                    setGoodsIssue(e.target.value)
+                    }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="" disabled selected hidden>
                       Pilih Customer
                     </option>
                     {getMyGoodsIssue.map((res, key) => {
                       return (
-                        <option value={res.Code} key={key}>
-                          {res.Code}
+                        <option value={res.DocNo} key={key}>
+                          {res.DocNo}
                         </option>
                       )
                     })}
@@ -697,19 +734,13 @@ export const SalesInvoice = () => {
                 </td>
                 <td className="text-right">Sales Order No: </td>
                 <td>
-                  <select onChange={(e) => setCustomerVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[200%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="" disabled selected hidden>
-                      Pilih Customer
+                      {getMyGoodsIssueDetail?.goodsissueh?.SODocNo}
                     </option>
-                    {getMyCustomer.map((res, key) => {
-                      return (
-                        <option value={res.Code} key={key}>
-                          {res.Code}
-                        </option>
-                      )
-                    })}
                   </select>
                 </td>
+                <td></td>
                 <td className="text-right">PO No: </td>
                 <td>
                   <input
@@ -718,7 +749,7 @@ export const SalesInvoice = () => {
                     }}
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="PO No"
+                    value={poNo}
                     required
                     min="0"
                   />
@@ -729,15 +760,8 @@ export const SalesInvoice = () => {
                 <td>
                   <select onChange={(e) => setCustomerVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="" disabled selected hidden>
-                      Pilih Customer
+                      {getSalesOrderHeader.CustomerCode}
                     </option>
-                    {getMyCustomer.map((res, key) => {
-                      return (
-                        <option value={res.Code} key={key}>
-                          {res.Code}
-                        </option>
-                      )
-                    })}
                   </select>
                 </td>
               </tr>
@@ -748,8 +772,8 @@ export const SalesInvoice = () => {
                     <option value="" disabled selected hidden>
                       Pilih salesman
                     </option>
-                    <option selected value={customerVal}>
-                      {customerVal}
+                    <option selected value={getSalesOrderHeader.CustomerCode}>
+                      {getSalesOrderHeader.CustomerCode}
                     </option>
                   </select>
                 </td>
@@ -759,15 +783,8 @@ export const SalesInvoice = () => {
                 <td>
                   <select onChange={(e) => setSalesmanVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="" disabled selected hidden>
-                      Pilih salesman
+                      {getSalesOrderHeader.SalesCode}
                     </option>
-                    {getMySelesman.map((res, key) => {
-                      return (
-                        <option value={res.Code} key={key}>
-                          {res.Code}
-                        </option>
-                      )
-                    })}
                   </select>
                 </td>
               </tr>
@@ -775,7 +792,7 @@ export const SalesInvoice = () => {
                 <td className="text-right">Currency: </td>
                 <td>
                   <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option>{getFCurrency.Currency}</option>
+                    <option>{getFCurrency}</option>
                   </select>
                 </td>
                 <td className="text-right">Exchange Rate: </td>
@@ -788,6 +805,7 @@ export const SalesInvoice = () => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="0.00"
                     required
+                    value={exchangeRate}
                   // disabled
                   />
                 </td>
@@ -804,6 +822,7 @@ export const SalesInvoice = () => {
                     placeholder="0"
                     required
                     min="0"
+                    value={top}
                   />
                 </td>
                 <td>Days</td>
@@ -1292,7 +1311,7 @@ export const SalesInvoice = () => {
                 <td className="text-right">Currency: </td>
                 <td>
                   <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option>{getFCurrency.Currency}</option>
+                    {/* <option>{getFCurrency.Currency}</option> */}
                   </select>
                 </td>
                 <td className="text-right">Exchange Rate: </td>

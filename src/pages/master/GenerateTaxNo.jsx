@@ -5,7 +5,7 @@ import { dateConverter } from "../../components/dateConverter";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export const Approval = () => {
+export const GenerateTaxNo = () => {
   const { fetchMe, response } = useMe();
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
@@ -70,29 +70,15 @@ export const Approval = () => {
     }
   };
 
-  useEffect(() => {
-    dataFetching();
-    console.log(getData);
-  }, []);
+
 
   return (
     <div>
-      <div className="text-2xl font-bold mb-4">Approval</div>
+      <div className="text-2xl font-bold mb-4">GenerateTaxNo</div>
       <form onSubmit={submitClick}>
         <table className="border-separate border-spacing-2 w-1/2">
           <tr>
-            <td className="text-right">Pricelist Type: </td>
-            <td>
-              <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                <option disabled selected hidden>
-                  Pilih Tipe
-                </option>
-                <option></option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td className="text-right">Min Value: </td>
+            <td className="text-right">Tax No: </td>
             <td>
             <input
             type="text"
@@ -103,9 +89,7 @@ export const Approval = () => {
             // disabled
           />
             </td>
-          </tr>
-          <tr>
-            <td className="text-right">Max Value: </td>
+            <td className="text-right">To </td>
             <td>
             <input
             type="text"
@@ -116,26 +100,22 @@ export const Approval = () => {
             // disabled
           />
             </td>
-          </tr>
-          <tr>
-                <td className="text-right">User: </td>
-                <td>
-                  <select> 
-                  </select>
-                </td>
-              </tr>
-          <tr>
-            <td></td>
-            <td>
-              <button
+            <td> <button
                 type="submit"
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
               >
                 Save
-              </button>
-            </td>
+              </button></td>
+              
           </tr>
+          <td> <button
+                type="submit"
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+              >
+                Show
+              </button></td>
         </table>
+        
       </form>
 
       <div className="relative overflow-x-auto pt-10">
