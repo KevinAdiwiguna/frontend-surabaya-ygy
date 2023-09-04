@@ -41,7 +41,10 @@ import { SalesInvoice } from "./transaction/sales/SalesInvoice";
 import { GenerateTaxNo } from "./master/GenerateTaxNo";
 import { Periode } from "./master/Periode";
 import { TransactionType } from "./master/AccountReceiveable_AccountPayable/TransactionType";
-
+import { ReportSalesOrder } from "./reports/ReportSalesOrder"
+import { Collector } from "./master/AccountReceiveable_AccountPayable/Collector";
+import { Bank } from "./master/AccountReceiveable_AccountPayable/Bank";
+import { ExchangeRate } from "./master/AccountReceiveable_AccountPayable/ExchangeRate";
 
 
 export const Home = () => {
@@ -50,6 +53,8 @@ export const Home = () => {
 
   const paramsHandler = () => {
     switch (params) {
+      case "Report Sales Order":
+        return <ReportSalesOrder/>;
       // Customer Master
       case "Salesman":
         return <Salesman />;
@@ -128,9 +133,14 @@ export const Home = () => {
         return <GenerateTaxNo />;
       case "Periode":
         return <Periode />;
-      case "TransactionType":
+      case "Transaction Type":
         return <TransactionType />;
- 
+      case "Collector":
+        return <Collector />;
+      case "Bank":
+        return <Bank />;
+      case "ExchangeRate":
+        return <ExchangeRate/>;
       default:
         navigate("/Dashboard");
     }
