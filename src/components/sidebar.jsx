@@ -25,6 +25,7 @@ import { TbPackages } from "react-icons/tb";
 import { GrAccessibility } from "react-icons/gr";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { SidebarCollapse } from "flowbite-react/lib/esm/components/Sidebar/SidebarCollapse";
 
 export const SidebarComp = () => {
   const [open, setOpen] = useState();
@@ -353,6 +354,16 @@ export const SidebarComp = () => {
             </Sidebar.Collapse>
 
             {/* End of Transaction  */}
+            {/* Reports */}
+            <Sidebar.Collapse label="Reports">
+              <div className="pl-6 !mt-0">
+              <Sidebar.Collapse label="Sales">
+                <Link to="/Report Sales Order"><Sidebar.Item>Sales Order</Sidebar.Item></Link>
+              </Sidebar.Collapse>
+              </div>
+              <Link to="/"></Link>
+            </Sidebar.Collapse>
+            {/* End of Reports */}
             {/* Master */}
             <Sidebar.Collapse icon={HiKey} label="Master">
               <Link to="/Currency">
@@ -483,6 +494,16 @@ export const SidebarComp = () => {
                       <Link to="/Collector">
                         <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                         Collector
+                        </p>
+                      </Link>
+                      <Link to="/Bank">
+                        <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        Bank
+                        </p>
+                      </Link>
+                      <Link to="/ExchangeRate">
+                        <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        ExchangeRate
                         </p>
                       </Link>
                     </Sidebar.Collapse>
