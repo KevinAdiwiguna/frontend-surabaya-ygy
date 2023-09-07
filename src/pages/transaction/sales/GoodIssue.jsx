@@ -1,10 +1,10 @@
-import {useState, useEffect} from "react"
+import { useState, useEffect } from "react"
 import axios from "axios"
-import {toast, ToastContainer} from "react-toastify"
-import {useMe} from "../../../hooks/API/useMe"
+import { toast, ToastContainer } from "react-toastify"
+import { useMe } from "../../../hooks/API/useMe"
 
 export const ModalComp = (params) => {
-	const {Modal, setModal, Location, AllDocNo, getSeries, getSalesOrderNo, getAllDocNo, response} = params
+	const { Modal, setModal, Location, AllDocNo, getSeries, getSalesOrderNo, getAllDocNo, response } = params
 	const [DetailDocNo, setDetailDocNo] = useState([])
 	const [ModifiedSalesOrderNoDetail, setModifiedSalesOrderNoDetail] = useState([])
 
@@ -14,7 +14,7 @@ export const ModalComp = (params) => {
 	const [VehicleNo, setVehicleNo] = useState("")
 	const [Information, setInformation] = useState("")
 	const [TotalQty, setTotalQty] = useState();
-	
+
 
 	const getDetailDocNo = async (params) => {
 		const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/goodsissuedetail/${params}`)
@@ -282,7 +282,7 @@ export const ModalComp = (params) => {
 }
 
 export const GoodIssue = () => {
-	const {fetchMe, response} = useMe()
+	const { fetchMe, response } = useMe()
 	// state
 	const currentDate = new Date().toISOString().slice(0, 10)
 
@@ -397,7 +397,7 @@ export const GoodIssue = () => {
 			if (!DataFilter) return null
 			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/goodsissue/${DataFilter?.DocNo}`)
 			setQtyRemain(response.data)
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	const getSalesOrderNo = async () => {
@@ -579,18 +579,9 @@ export const GoodIssue = () => {
 							</td>
 						</tr>
 					</table>
-					<tr>
-						<button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none mx-auto dark:focus:ring-blue-800">
-							Save
-						</button>
-						<button type="button" onClick={() => setModal(!Modal)} className="text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 focus:outline-none mx-auto dark:focus:ring-yellow-800">
-							Update
-						</button>
-					</tr>
 				</table>
-			</form>
 
-			<div className="relative overflow-x-auto pt-10">
+			<div className="relative overflow-x-auto pt-2">
 				<table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
 					<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
 						<tr>
@@ -680,7 +671,15 @@ export const GoodIssue = () => {
 					</tbody>
 				</table>
 			</div>
-
+			<div className="pl-4 pt-2">
+				<button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none mx-auto dark:focus:ring-blue-800">
+					Save
+				</button>
+				<button type="button" onClick={() => setModal(!Modal)} className="text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 focus:outline-none mx-auto dark:focus:ring-yellow-800">
+					Update
+				</button>
+			</div>
+			</form>
 			<ToastContainer position="top-center" autoClose={3000} hideProgressBar />
 		</div>
 	)
