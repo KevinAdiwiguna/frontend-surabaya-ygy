@@ -283,9 +283,9 @@ export const SalesOrderHeader = () => {
 				<div className="text-2xl font-bold mb-4">Sales Order</div>
 			</div>
 
+					<form onSubmit={submitClick}>
 			<div className="w-full">
 				<div className="flex justify-start items-center">
-					<form onSubmit={submitClick}>
 						<table className="border-separate border-spacing-2 ">
 							<tr>
 								<td className="text-right">Series: </td>
@@ -523,7 +523,6 @@ export const SalesOrderHeader = () => {
 								</button>
 							</tr>
 						</table>
-					</form>
 				</div>
 				<div className="text-xl font-bold mb-4">Detail</div>
 				<div className="relative overflow-x-auto">
@@ -634,6 +633,7 @@ export const SalesOrderHeader = () => {
 					</table>
 				</div>
 			</div>
+			</form>
 			<ToastContainer position="top-center" autoClose={3000} hideProgressBar />
 		</div>
 	)
