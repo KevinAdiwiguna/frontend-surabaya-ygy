@@ -22,7 +22,7 @@ export const GoodsReceipt = () => {
 
   const dataFetching = async () => {
     try {
-      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchaserequesth`);
+      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh`);
       setGetData(data.data);
     } catch (error) {}
   };
@@ -33,6 +33,8 @@ export const GoodsReceipt = () => {
     setInformationUpdate("");
     // setDeliveryDateUpdate('')
   };
+
+
 
   console.log(dataFilter);
 
@@ -64,17 +66,6 @@ export const GoodsReceipt = () => {
       series: getMySeriesVal,
       docDate: getDocDate,
       supplierCode: dataFilter.SupplierCode,
-      poDocNo: PODocNo,
-      batchNo: batchNo,
-      supplierDlvDocNo: supplierDlvDocNo,
-      vehicleNo: vehicleNo,
-      information: information,
-      printCounter: printCounter,
-      printedBy: printedBy,
-      printedDate: printedDate,
-      status: "OPEN",
-      createdBy: createdBy,
-      changedBy: changedBy,
     });
   };
 
