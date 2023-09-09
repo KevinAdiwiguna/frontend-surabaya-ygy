@@ -8,19 +8,21 @@ export const GoodsReceipt = () => {
   const { fetchMe, response } = useMe();
   const currentDate = new Date().toISOString().slice(0, 16);
   const [getData, setGetData] = useState([]);
-  const [getMySeries, setGetSeries] = useState([]);
-  const [series, setSeries] = useState("");
 
   const [informationUpdate, setInformationUpdate] = useState("");
   const [detailDataUpdate, setDetailDataUpdate] = useState([]);
   const [modalData, setModalData] = useState([]);
   const [modal, setModal] = useState(false);
 
+  const [getMySeries, setGetSeries] = useState([]);
+  const [getMySeriesVal, setGetSeriesVal] = useState("");
+  const [getDocDate, setGetDocDate] = useState("");
+  const [getPurchaseDocNo, setGetPurchaseDocNo] = useState([]);
+  const [dataFilter, setDataFilter] = useState([]);
+
   const dataFetching = async () => {
     try {
-      const data = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/purchaserequesth`
-      );
+      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh`);
       setGetData(data.data);
     } catch (error) {}
   };
@@ -32,59 +34,94 @@ export const GoodsReceipt = () => {
     // setDeliveryDateUpdate('')
   };
 
+
+
+  console.log(dataFilter);
+
+  const getSeries = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/seriesCode/GOODS RECEIPT`);
+      setGetSeries(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getPurchaseOrderNo = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/PRINTED`);
+      setGetPurchaseDocNo(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getSeries();
+    getPurchaseOrderNo();
+  }, []);
+
+  const onCreate = async () => {
+    await axios.post(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh`, {
+      series: getMySeriesVal,
+      docDate: getDocDate,
+      supplierCode: dataFilter.SupplierCode,
+    });
+  };
+
   return (
     <div>
       <div className="text-2xl font-bold mb-4">Goods Receipt</div>
-
       <div className="w-[75%]">
         <div className="flex justify-start items-center">
           <table className="border-separate border-spacing-2 w-1/2">
             <tr>
               <td className="text-right">Series: </td>
               <td>
-                <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <select onChange={(e) => setGetSeriesVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option value="" disabled selected hidden>
                     Pilih series
                   </option>
-                  <option value="US">United States</option>
-                  <option value="CA">Canada</option>
-                  <option value="FR">France</option>
-                  <option value="DE">Germany</option>
-                </select>
-              </td>
-            </tr>
-            <tr>
-              <td className="text-right font-bold">Doc No: </td>
-              <td>
-                <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option value="" disabled selected hidden>
-                    Pilih document number
-                  </option>
-                  <option value="US">United States</option>
-                  <option value="CA">Canada</option>
-                  <option value="FR">France</option>
-                  <option value="DE">Germany</option>
+                  {getMySeries.map((res, key) => {
+                    return (
+                      <option key={key} value={res.Series}>
+                        {res.Series}
+                      </option>
+                    );
+                  })}
                 </select>
               </td>
             </tr>
             <tr>
               <td className="text-right">Doc Date: </td>
               <td>
-                <input
-                  type="datetime-local"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder=""
-                  required
-                />
+                <input onChange={(e) => setGetDocDate(e.target.value)} min={currentDate} type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
               </td>
             </tr>
             <tr>
               <td className="text-right">Purchase Order No: </td>
               <td>
-                <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <select
+                  onChange={(e) => {
+                    setDataFilter(
+                      getPurchaseDocNo.find((data) => {
+                        if (!data) return null;
+                        return data?.DocNo === e.target.value;
+                      })
+                    );
+                  }}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                >
                   <option value="" disabled selected hidden>
                     Pilih nomor purchase order
                   </option>
+                  {getPurchaseDocNo.map((res, key) => {
+                    return (
+                      <option key={key} value={res.DocNo}>
+                        {res.DocNo}
+                      </option>
+                    );
+                  })}
                 </select>
               </td>
             </tr>
@@ -96,7 +133,7 @@ export const GoodsReceipt = () => {
               <td>
                 <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option value="" disabled selected hidden>
-                    Pilih supplier
+                    {dataFilter.SupplierCode}
                   </option>
                 </select>
               </td>
@@ -104,34 +141,19 @@ export const GoodsReceipt = () => {
             <tr>
               <td className="text-right">Supply Delivery No: </td>
               <td>
-                <input
-                  type="number"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="0"
-                  required
-                />
+                <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
               </td>
             </tr>
             <tr>
               <td className="text-right">Vehicle No: </td>
               <td>
-                <input
-                  type="number"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="0"
-                  required
-                />
+                <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
               </td>
             </tr>
             <tr>
               <td className="text-right">Batch No: </td>
               <td>
-                <input
-                  type="number"
-                  className="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="0"
-                  required
-                />
+                <input type="number" className="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
               </td>
             </tr>
           </table>
@@ -139,16 +161,8 @@ export const GoodsReceipt = () => {
 
         <div className="w-full  flex gap-3 justify-center items-center mx-auto mt-10">
           <label>Information:</label>
-          <input
-            type="text"
-            className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder=""
-            required
-          />
-          <button
-            type="button"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-          >
+          <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+          <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
             Save
           </button>
         </div>
@@ -217,10 +231,7 @@ export const GoodsReceipt = () => {
           </thead>
           <tbody>
             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-              >
+              <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                 1
               </th>
               <td className="px-6 py-4">Belum tau mau isi apa</td>
@@ -258,10 +269,7 @@ export const GoodsReceipt = () => {
                 <p>Siapa hayo</p>
               </td>
               <td className="px-6 py-4">
-                <button
-                  type="button"
-                  className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                >
+                <button type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
                   Delete
                 </button>
                 <button
@@ -279,34 +287,17 @@ export const GoodsReceipt = () => {
         </table>
         <div></div>
       </div>
-      <div
-        className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${
-          modal ? "block" : "hidden"
-        }`}
-      >
+      <div className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${modal ? "block" : "hidden"}`}>
         <div className="space-y-6">
-          <div className="text-2xl font-bold mb-4 ">
-            DocNo: {modalData.DocNo}
-          </div>
+          <div className="text-2xl font-bold mb-4 ">DocNo: {modalData.DocNo}</div>
           <button
             onClick={() => {
               closeModal();
             }}
             className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
           <form onSubmit="">
@@ -336,14 +327,7 @@ export const GoodsReceipt = () => {
                   <tr>
                     <td className="text-right">Doc Date: </td>
                     <td>
-                      <input
-                        value={modalData.DocDate + "T00:00"}
-                        min={currentDate}
-                        type="datetime-local"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder=""
-                        required
-                      />
+                      <input value={modalData.DocDate + "T00:00"} min={currentDate} type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
                     </td>
                   </tr>
                   <tr>
@@ -358,50 +342,35 @@ export const GoodsReceipt = () => {
                   </tr>
                 </table>
                 <table className="border-separate border-spacing-2">
-                <tr>
-                  <td className="text-right">Supplier: </td>
-                  <td>
-                    <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                      <option value="" disabled selected hidden>
-                        Pilih supplier
-                      </option>
-                    </select>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="text-right">Supply Delivery No: </td>
-                  <td>
-                    <input
-                      type="number"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="0"
-                      required
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td className="text-right">Vehicle No: </td>
-                  <td>
-                    <input
-                      type="number"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="0"
-                      required
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td className="text-right">Batch No: </td>
-                  <td>
-                    <input
-                      type="number"
-                      className="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="0"
-                      required
-                    />
-                  </td>
-                </tr>
-              </table>
+                  <tr>
+                    <td className="text-right">Supplier: </td>
+                    <td>
+                      <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option value="" disabled selected hidden>
+                          Pilih supplier
+                        </option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Supply Delivery No: </td>
+                    <td>
+                      <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Vehicle No: </td>
+                    <td>
+                      <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Batch No: </td>
+                    <td>
+                      <input type="number" className="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
+                    </td>
+                  </tr>
+                </table>
               </div>
             </div>
             <div className="w-[75%] flex gap-3 items-center">
@@ -418,11 +387,7 @@ export const GoodsReceipt = () => {
               />
             </div>
             <div className="pl-[100px] my-2">
-              <button
-                onClick=""
-                type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-              >
+              <button onClick="" type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
                 Update
               </button>
             </div>
@@ -458,14 +423,8 @@ export const GoodsReceipt = () => {
               <tbody>
                 {detailDataUpdate.map((res, key) => {
                   return (
-                    <tr
-                      key={key}
-                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                    >
-                      <th
-                        scope="row"
-                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                      >
+                    <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                      <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {res.materialCode}
                       </th>
                       <td className="px-6 py-4">{res.info}</td>
@@ -474,11 +433,7 @@ export const GoodsReceipt = () => {
                       <td className="px-6 py-4">{res.requiredDate}</td>
                       <td className="px-6 py-4">{res.qtyPO}</td>
                       <td className="px-6 py-4">
-                        <button
-                          onClick=""
-                          type="button"
-                          className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                        >
+                        <button onClick="" type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
                           delete
                         </button>
                       </td>
@@ -494,39 +449,17 @@ export const GoodsReceipt = () => {
               <tr>
                 <td className="text-right">Info:</td>
                 <td>
-                  <input
-                    type="text"
-                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    value=""
-                  />
+                  <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value="" />
                 </td>
                 <td className="text-right">Quantity:</td>
                 <td>
-                  <input
-                    value=""
-                    type="number"
-                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    required
-                    min="0"
-                  />
+                  <input value="" type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min="0" />
                 </td>
                 <td className="text-right">Required Date:</td>
                 <td>
-                  <input
-                    min={currentDate}
-                    type="datetime-local"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    required
-                  />
+                  <input min={currentDate} type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
                 </td>
-                <button
-                  onClick=""
-                  type="button"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-                >
+                <button onClick="" type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
                   Change
                 </button>
               </tr>
@@ -563,11 +496,7 @@ export const GoodsReceipt = () => {
               <tbody>
                 <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <td className="px-6 py-4">
-                    <button
-                      onClick=""
-                      type="button"
-                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-                    >
+                    <button onClick="" type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
                       Select
                     </button>
                   </td>
