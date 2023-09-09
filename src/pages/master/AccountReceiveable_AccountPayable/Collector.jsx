@@ -29,7 +29,7 @@ export const Collector = () => {
     try {
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/collector`, {
         code: code,
-        name: name,
+        // name: name,
         address: address,
         city: city,
         phone: phone,

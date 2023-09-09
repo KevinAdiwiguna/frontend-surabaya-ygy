@@ -27,6 +27,8 @@ export const SalesInvoice = () => {
   const [discount, setDiscount] = useState(0)
   const [discountOutput, setDiscountOutput] = useState()
   const [tax, setTax] = useState()
+  const [taxNo, setTaxNo] = useState()
+  const [taxNo2, setTaxNo2] = useState()
   const [taxVal, setTaxVal] = useState(0)
   const [taxOutput, setTaxOutput] = useState(0)
   const [gross, setGross] = useState(0)
@@ -53,6 +55,7 @@ export const SalesInvoice = () => {
   const [totalGross, setTotalGross] = useState(0)
   const [totalGrossUpdate, setTotalGrossUpdate] = useState(0)
   const [salesOrderNo, setSalesOrderNo] = useState()
+  const [salesInvoiceDetail, setSalesInvoiceDetail] = useState([])
 
 
   const [nettoChange, setNettoChange] = useState('')
@@ -160,7 +163,7 @@ export const SalesInvoice = () => {
       console.log(error)
     }
   }
-  
+
   const getSalesOrderHeaderByDocNo = async (params) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesorderh/${params}`)
@@ -170,6 +173,7 @@ export const SalesInvoice = () => {
       console.log(error)
     }
   }
+
   const getSalesOrderDetailByDocNo = async (params) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesorderd/${params}`)
@@ -240,26 +244,46 @@ export const SalesInvoice = () => {
     }
   }
 
-  useEffect(()=>{
+  const getSalesInvoiceDetail = async (params) => {
+    try{
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesinvoiced/${params}`)
+      setSalesInvoiceDetail(response.data)
+    } catch (error) {
+      console.log();
+    }
+  }
+
+  useEffect(() => {
     getGoodsIssueDetail(goodsIssue)
-  },[goodsIssue])
-  useEffect(()=>{
+    getSalesInvoiceDetail(goodsIssue)
+  }, [goodsIssue])
+
+  useEffect(() => {
     setExchangeRate(getSalesOrderHeader.ExchangeRate)
     setTop(getSalesOrderHeader.TOP)
     setPoNo(getSalesOrderDetail.PONo)
-  },[getSalesOrderHeader])
+  }, [getSalesOrderHeader])
 
-  useEffect(()=>{
+  useEffect(() => {
     getSalesOrderHeaderByDocNo(getMyGoodsIssueDetail?.goodsissueh?.SODocNo)
     getSalesOrderDetailByDocNo(getMyGoodsIssueDetail?.goodsissueh?.SODocNo)
     setCustomerVal(getMyGoodsIssueDetail?.goodsissueh?.CustomerCode)
     getCurrencyByCustomer(getMyGoodsIssueDetail?.goodsissueh?.CustomerCode)
-    console.log(getMyGoodsIssueDetail);
-  },[getMyGoodsIssueDetail])
+  }, [getMyGoodsIssueDetail])
 
   const calculateTotalGross = () => {
-    return quantity * price
+    let total = 0
+    for (let i = 0; i < salesInvoiceDetail.length; i++) {
+      let obj = salesInvoiceDetail[i]
+      let nettoAsInteger = parseInt(obj.Gross)
+      total += nettoAsInteger
+    }
+    setTotalGross(total)
   }
+  
+  useEffect(() => {
+    calculateTotalGross()
+  }, [salesInvoiceDetail])
 
   const calculateDiscount = () => {
     let total = (totalGross * discount) / 100
@@ -302,9 +326,6 @@ export const SalesInvoice = () => {
     setNetto(totalNetto)
   }
 
-  useEffect(() => {
-    totalHandle()
-  }, [quantity, getMyMaterialDetail?.DefaultPrice])
 
   const calculateTotalGrossUpdate = () => {
     let total = 0
@@ -453,10 +474,10 @@ export const SalesInvoice = () => {
   useEffect(() => {
     fetchMe()
   }, [!response])
-  
+
   const dataFetching = async () => {
     try {
-      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesorderh`)
+      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesinvoice`)
       setGetData(data.data)
     } catch (error) { }
   }
@@ -464,7 +485,7 @@ export const SalesInvoice = () => {
   useEffect(() => {
     dataFetching()
   }, [])
-  
+
 
 
   const deleteData = async (params) => {
@@ -556,32 +577,39 @@ export const SalesInvoice = () => {
   const submitClick = async (e) => {
     e.preventDefault()
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/salesorderh`, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/salesinvoice`, {
         series: seriesVal,
         generateDocDate: generateDocDate(),
         docDate: docDate,
         customerCode: customerVal,
-        shipToCode: shipToVal,
-        taxToCode: taxToVal,
         salesCode: salesmanVal,
-        deliveryDate: deliveryDate,
+        sODocNo: getMyGoodsIssueDetail?.goodsissueh?.SODocNo,
+        giDocNo: goodsIssue,
         poNo: poNo,
         top: top,
-        discPercent: discount,
-        taxStatus: tax,
-        taxPercent: taxVal,
         currency: currencyVal,
         exchangeRate: exchangeRate,
+        taxStatus: tax,
+        taxPercent: taxVal,
+        taxPrefix: taxNo,
+        taxNo: taxNo2,
+        discPercent: discount,
         totalGross: totalGross,
         totalDisc: discountOutput,
         taxValue: taxOutput,
+        taxValueInTaxCurrency: taxOutput,
         totalNetto: totalNetto,
+        totalCost: totalNetto,
+        cutPPh: "",
+        pPhPercent: "",
+        PPhValue: "",
         information: info,
         status: 'OPEN',
-        isPurchaseReturn: false,
+        printCounter: "",
+        printedBy: "",
         createdBy: response.User,
         changedBy: response.User,
-        salesOrderDetail: salesDetail,
+        detail: salesInvoiceDetail,
       })
       dataFetching()
       toast.success('Data Saved', {
@@ -686,9 +714,9 @@ export const SalesInvoice = () => {
         <div className="text-2xl font-bold mb-4">Sales Invoice</div>
       </div>
 
+          <form onSubmit={submitClick}>
       <div className="w-full">
         <div className="flex justify-start items-center">
-          <form onSubmit={submitClick}>
             <table className="border-separate border-spacing-2 ">
               <tr>
                 <td className="text-right">Series: </td>
@@ -719,7 +747,7 @@ export const SalesInvoice = () => {
                 <td>
                   <select onChange={(e) => {
                     setGoodsIssue(e.target.value)
-                    }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="" disabled selected hidden>
                       Pilih Customer
                     </option>
@@ -734,7 +762,7 @@ export const SalesInvoice = () => {
                 </td>
                 <td className="text-right">Sales Order No: </td>
                 <td>
-                  <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[200%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="" disabled selected hidden>
                       {getMyGoodsIssueDetail?.goodsissueh?.SODocNo}
                     </option>
@@ -837,7 +865,6 @@ export const SalesInvoice = () => {
                     type="text"
                     className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder=""
-                    required
                   />
                 </td>
               </tr>
@@ -874,11 +901,10 @@ export const SalesInvoice = () => {
                 <td>
                   <input
                     onChange={(e) => {
-                      setTaxVal(e.target.value)
+                      setTaxNo(e.target.value)
                     }}
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
                     min="0"
                     max="999"
                   />
@@ -886,13 +912,11 @@ export const SalesInvoice = () => {
                 <td>
                   <input
                     onChange={(e) => {
-                      setTaxVal(e.target.value)
+                      setTaxNo2(e.target.value)
                     }}
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[200%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
                     min="0"
-                    max="999"
                   />
                 </td>
               </tr>
@@ -912,53 +936,7 @@ export const SalesInvoice = () => {
                 </td>
                 <td> %</td>
               </tr>
-              <tr>
-                <td className="text-right">Material:</td>
-                <td>
-                  <select onChange={(e) => setMaterialVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option disabled selected hidden>
-                      Pilih Material
-                    </option>
-                    {getMyMaterial.map((res, key) => {
-                      return (
-                        <option key={key} value={res.Code}>
-                          {res.Code}
-                        </option>
-                      )
-                    })}
-                  </select>
-                </td>
-                <td className="text-right">Info:</td>
-                <td>
-                  <input onChange={(e) => setInfo2(e.target.value)} type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={info2 || getMyMaterialDetail?.Info} />
-                </td>
-                <td className="text-right">Quantity:</td>
-                <td>
-                  <input onChange={(e) => setQuantity(e.target.value)} type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min="0" />
-                </td>
-                <td className="text-right">Price:</td>
-                <td>
-                  <input disabled type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={getMyMaterialDetail?.DefaultPrice} />
-                </td>
-                <button
-                  onClick={() => {
-                    addSalesDetail()
-                  }}
-                  type="button"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
-                  Add
-                </button>
-              </tr>
-              <tr>
-                <td className="text-right"></td>
-                <td>
-                  <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
-                    Save
-                  </button>
-                </td>
-              </tr>
             </table>
-          </form>
         </div>
         <div className="flex justify-between items-start">
           <table className="border-separate border-spacing-2 ">
@@ -975,12 +953,6 @@ export const SalesInvoice = () => {
               <td>
                 <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={taxOutput} />
               </td>
-              <td className="text-right font-bold">Netto: </td>
-              <td>
-                <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={Netto} />
-              </td>
-            </tr>
-            <tr>
               <td className="text-right font-bold">Total Netto: </td>
               <td>
                 <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={totalNetto} />
@@ -1000,7 +972,13 @@ export const SalesInvoice = () => {
                   Code
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Info
+                  Information
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Location
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  BatchNo
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Unit
@@ -1032,34 +1010,41 @@ export const SalesInvoice = () => {
                 <th scope="col" className="px-6 py-3">
                   Netto
                 </th>
-                <th scope="col" className="px-6 py-3">
-                  Control
-                </th>
               </tr>
             </thead>
             <tbody>
-              {salesDetail.map((res, key) => {
+              {salesInvoiceDetail.map((res, key) => {
                 return (
                   <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{res.number}</td>
-                    <td className="px-6 py-4">{res.materialCode}</td>
-                    <td className="px-6 py-4">{res.info}</td>
-                    <td className="px-6 py-4">{res.unit}</td>
-                    <td className="px-6 py-4">{res.qty}</td>
-                    <td className="px-6 py-4">{res.price}</td>
-                    <td className="px-6 py-4">{res.gross}</td>
-                    <td className="px-6 py-4">{res.discPercent1}</td>
-                    <td className="px-6 py-4">{res.discPercent2}</td>
-                    <td className="px-6 py-4">{res.discPercent3}</td>
-                    <td className="px-6 py-4">{res.discValue}</td>
-                    <td className="px-6 py-4">{res.discNominal}</td>
-                    <td className="px-6 py-4">{res.netto}</td>
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{res.Number}</td>
+                    <td className="px-6 py-4">{res.Code}</td>
+                    <td className="px-6 py-4">{res.Info}</td>
+                    <td className="px-6 py-4">{res.Location}</td>
+                    <td className="px-6 py-4">{res.BatchNo}</td>
+                    <td className="px-6 py-4">{res.Unit}</td>
+                    <td className="px-6 py-4">{res.Qty}</td>
+                    <td className="px-6 py-4">{res.Price}</td>
+                    <td className="px-6 py-4">{res.Gross}</td>
+                    <td className="px-6 py-4">{res.DiscPercent}</td>
+                    <td className="px-6 py-4">{res.DiscPercent2}</td>
+                    <td className="px-6 py-4">{res.DiscPercent3}</td>
+                    <td className="px-6 py-4">{res.DiscValue}</td>
+                    <td className="px-6 py-4">{res.DiscNominal}</td>
+                    <td className="px-6 py-4">{res.Netto}</td>
                   </tr>
                 )
               })}
             </tbody>
           </table>
         </div>
+          <div className="pt-2 pl-4">
+            <td className="text-right"></td>
+            <td>
+              <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
+                Save
+              </button>
+            </td>
+          </div>
         <div className="text-xl font-bold mb-4 pt-10">Header Data Table</div>
         <div className="relative overflow-x-auto">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -1200,6 +1185,8 @@ export const SalesInvoice = () => {
           </table>
         </div>
       </div>
+      </form>
+
 
       <div className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${modal ? 'block' : 'hidden'}`}>
         <div className="space-y-6">
