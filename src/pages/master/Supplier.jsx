@@ -28,82 +28,133 @@ export const Supplier = () => {
   const [getCountry, setGetCountry] = useState([]);
   const [getCurrency, setGetCurrency] = useState([]);
 
-
-
   useEffect(() => {
     fetchMe();
   }, [!response]);
 
   const getCountryData = async () => {
     try {
-      const countryData = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/country`
-      );
+      const countryData = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/country`);
       setGetCountry(countryData.data);
     } catch (error) {
-      console.log(error);
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 
   const getCurrencyData = async () => {
     try {
-      const currencyData = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/currency`
-      );
+      const currencyData = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/currency`);
       setGetCurrency(currencyData.data);
     } catch (error) {
-      console.log(error);
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 
   const dataFetching = async () => {
     try {
-      const data = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/supplier`
-      );
+      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/supplier`);
       setGetData(data.data);
-    } catch (error) {}
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
 
   const deleteData = async (params) => {
     try {
-      await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/supplier/${params}`
-      );
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/supplier/${params}`);
       dataFetching();
       toast.success("Data Deleted", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
       });
-    } catch (error) {}
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
 
   const updateData = async (params) => {
     try {
-      await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/supplier/${params}`,
-        {
-          name: name,
-          address: address,
-          address2: address2,
-          city: city,
-          country: country,
-          phone: phone,
-          fax: fax,
-          email: email,
-          contact: contact,
-          mobile: mobile,
-          taxNumber: taxNumber,
-          top: top,
-          currency: currency,
-          limit: limit,
-          transactionType: accountPayable,
-          transactionType2: downPayment,
-          cuPph: cutPph,
-          changedBy: response.User,
-        }
-      );
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/supplier/${params}`, {
+        name: name,
+        address: address,
+        address2: address2,
+        city: city,
+        country: country,
+        phone: phone,
+        fax: fax,
+        email: email,
+        contact: contact,
+        mobile: mobile,
+        taxNumber: taxNumber,
+        top: top,
+        currency: currency,
+        limit: limit,
+        transactionType: accountPayable,
+        transactionType2: downPayment,
+        cuPph: cutPph,
+        changedBy: response.User,
+      });
       dataFetching();
       toast.success("Data Updated", {
         position: "top-center",
@@ -111,7 +162,22 @@ export const Supplier = () => {
         hideProgressBar: true,
       });
     } catch (error) {
-      console.log(error);
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 
@@ -138,7 +204,7 @@ export const Supplier = () => {
         transactionType2: downPayment,
         cutPph: cutPph,
         createdBy: response.User,
-        changedBy: response.User
+        changedBy: response.User,
       });
       dataFetching();
       toast.success("Data Saved", {
@@ -147,11 +213,22 @@ export const Supplier = () => {
         hideProgressBar: true,
       });
     } catch (error) {
-      toast.warn("Code Sudah Digunakan", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-      });
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 
@@ -170,7 +247,9 @@ export const Supplier = () => {
             <td className="text-right">Code: </td>
             <td>
               <input
-                onChange={(e=>{setCode(e.target.value)})}
+                onChange={(e) => {
+                  setCode(e.target.value);
+                }}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[20%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Isi kode"
                 required
@@ -181,7 +260,9 @@ export const Supplier = () => {
             <td className="text-right">Name: </td>
             <td>
               <input
-                onChange={(e=>{setName(e.target.value)})}
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Isi nama"
                 required
@@ -192,7 +273,9 @@ export const Supplier = () => {
             <td className="text-right">Address: </td>
             <td>
               <input
-                onChange={(e=>{setAddress(e.target.value)})}
+                onChange={(e) => {
+                  setAddress(e.target.value);
+                }}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Alamat"
                 required
@@ -203,7 +286,9 @@ export const Supplier = () => {
             <td className="text-right">Address 2: </td>
             <td>
               <input
-                onChange={(e=>{setAddress2(e.target.value)})}
+                onChange={(e) => {
+                  setAddress2(e.target.value);
+                }}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Alamat"
                 required
@@ -214,7 +299,9 @@ export const Supplier = () => {
             <td className="text-right">City: </td>
             <td>
               <input
-                onChange={(e=>{setCity(e.target.value)})}
+                onChange={(e) => {
+                  setCity(e.target.value);
+                }}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Kota"
                 required
@@ -224,14 +311,21 @@ export const Supplier = () => {
           <tr>
             <td className="text-right">Country: </td>
             <td>
-              <select onChange={(e=>{setCountry(e.target.value)})} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+              <select
+                onChange={(e) => {
+                  setCountry(e.target.value);
+                }}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
                 <option disabled selected hidden>
                   Select Country
                 </option>
-                {getCountry.map((res,key)=>{
+                {getCountry.map((res, key) => {
                   return (
-                    <option value={res.Code} key={key}>{res.Code}</option>
-                  )
+                    <option value={res.Code} key={key}>
+                      {res.Code}
+                    </option>
+                  );
                 })}
               </select>
             </td>
@@ -239,7 +333,9 @@ export const Supplier = () => {
           <td className="text-right">Phone: </td>
           <td>
             <input
-              onChange={(e=>{setPhone(e.target.value)})}
+              onChange={(e) => {
+                setPhone(e.target.value);
+              }}
               type="text"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder=""
@@ -250,7 +346,9 @@ export const Supplier = () => {
             <td className="text-right"> Fax: </td>
             <td>
               <input
-                onChange={(e=>{setFax(e.target.value)})}
+                onChange={(e) => {
+                  setFax(e.target.value);
+                }}
                 type="text"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder=""
@@ -262,7 +360,9 @@ export const Supplier = () => {
             <td className="text-right">Email: </td>
             <td>
               <input
-                onChange={(e=>{setEmail(e.target.value)})}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder=""
                 required
@@ -273,7 +373,9 @@ export const Supplier = () => {
             <td className="text-right">Contact: </td>
             <td>
               <input
-                onChange={(e=>{setContact(e.target.value)})}
+                onChange={(e) => {
+                  setContact(e.target.value);
+                }}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder=""
                 required
@@ -284,7 +386,9 @@ export const Supplier = () => {
             <td className="text-right">Mobile: </td>
             <td>
               <input
-                onChange={(e=>{setMobile(e.target.value)})}
+                onChange={(e) => {
+                  setMobile(e.target.value);
+                }}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder=""
                 required
@@ -295,7 +399,9 @@ export const Supplier = () => {
             <td className="text-right">Tax Number: </td>
             <td>
               <input
-                onChange={(e=>{setTaxNumber(e.target.value)})}
+                onChange={(e) => {
+                  setTaxNumber(e.target.value);
+                }}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder=""
                 required
@@ -305,29 +411,37 @@ export const Supplier = () => {
           <tr>
             <td className="text-right">TOP: </td>
             <td>
-            <input
-            onChange={(e=>{setTOP(e.target.value)})}
-            type="number"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="0"
-            value={0 || top}
-            required
-            // disabled
-          />
+              <input
+                onChange={(e) => {
+                  setTOP(e.target.value);
+                }}
+                type="number"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="0"
+                value={0 || top}
+                required
+                // disabled
+              />
             </td>
           </tr>
           <tr>
             <td className="text-right">Currency: </td>
             <td>
-              <select onChange={(e=>{setCurrency(e.target.value)})} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+              <select
+                onChange={(e) => {
+                  setCurrency(e.target.value);
+                }}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
                 <option disabled selected hidden>
                   Pilih group 1
                 </option>
-                {getCurrency.map((res,key)=>{
-                  return(
-                    <option value={res.Code} key={key}>{res.Code}</option>
-                  )
-                
+                {getCurrency.map((res, key) => {
+                  return (
+                    <option value={res.Code} key={key}>
+                      {res.Code}
+                    </option>
+                  );
                 })}
               </select>
             </td>
@@ -336,11 +450,13 @@ export const Supplier = () => {
             <td className="text-right">Limit: </td>
             <td>
               <input
-                onChange={(e=>{setLimit(e.target.value)})}
+                onChange={(e) => {
+                  setLimit(e.target.value);
+                }}
                 type="number"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="0.00"
-                value={0.00 || limit}
+                value={0.0 || limit}
                 required
                 // disabled
               />
@@ -349,10 +465,13 @@ export const Supplier = () => {
           <tr>
             <td className="text-right">Account Payable: </td>
             <td>
-              <select onChange={(e=>{setAccountPayable(e.target.value)})} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                <option disabled selected hidden>
-                  
-                </option>
+              <select
+                onChange={(e) => {
+                  setAccountPayable(e.target.value);
+                }}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                <option disabled selected hidden></option>
                 <option></option>
               </select>
             </td>
@@ -360,10 +479,13 @@ export const Supplier = () => {
           <tr>
             <td className="text-right">Down Payment: </td>
             <td>
-              <select onChange={(e=>{setDownPayment(e.target.value)})} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                <option disabled selected hidden>
-                  
-                </option>
+              <select
+                onChange={(e) => {
+                  setDownPayment(e.target.value);
+                }}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                <option disabled selected hidden></option>
                 <option></option>
               </select>
             </td>
@@ -371,7 +493,9 @@ export const Supplier = () => {
           <tr>
             <td className="float-right">
               <input
-                onChange={(e=>{setCutPph(e.target.checked)})}
+                onChange={(e) => {
+                  setCutPph(e.target.checked);
+                }}
                 type={"checkbox"}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue -500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder=""
@@ -382,10 +506,7 @@ export const Supplier = () => {
           <tr>
             <td></td>
             <td>
-              <button
-                type="submit"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-              >
+              <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
                 Save
               </button>
             </td>
@@ -471,14 +592,8 @@ export const Supplier = () => {
           <tbody>
             {getData.map((res, key) => {
               return (
-                <tr
-                  key={key}
-                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                >
-                  <th
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                  >
+                <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     {res.Code}
                   </th>
                   <td className="px-6 py-4">{res.Name}</td>
@@ -499,13 +614,9 @@ export const Supplier = () => {
                   <td className="px-6 py-4">{res.TransactionType2}</td>
                   <td className="px-6 py-4">{res.CutPPh === true ? "true" : "false"}</td>
                   <td className="px-6 py-4">{res.CreatedBy}</td>
-                  <td className="px-6 py-4">
-                    {dateConverter(res.CreatedDate)}
-                  </td>
+                  <td className="px-6 py-4">{dateConverter(res.CreatedDate)}</td>
                   <td className="px-6 py-4">{res.ChangedBy}</td>
-                  <td className="px-6 py-4">
-                    {dateConverter(res.ChangedDate)}
-                  </td>
+                  <td className="px-6 py-4">{dateConverter(res.ChangedDate)}</td>
                   <td className="px-6 py-4">
                     <button
                       onClick={() => {
@@ -537,4 +648,3 @@ export const Supplier = () => {
     </div>
   );
 };
-

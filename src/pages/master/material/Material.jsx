@@ -69,52 +69,52 @@ export const Material = () => {
   const [materialType, setMaterialType] = useState([]);
   const [materialTypeUpdate, setMaterialTypeUpdate] = useState([]);
 
-  const [modalData, setModalData] = useState([])
-  const [modal, setModal] = useState(false)
+  const [modalData, setModalData] = useState([]);
+  const [modal, setModal] = useState(false);
 
   const closeModal = () => {
-    setModal(false)
-    setCodeUpdate("")
-    setNameUpdate("")
-    setnameInPOUpdate("")
-    setsmallestUnitUpdate("")
-    setsoldUnitUpdate("")
-    setskuUnitUpdate("")
-    setgroup1valUpdate("")
-    setgroup2valUpdate("")
-    setgroup3valUpdate("")
-    settypeUpdate("")
-    setisBatchUpdate(true)
-    setisServiceUpdate(false)
-    setisAssetUpdate(false)
-    setmassUpdate()
-    setvolumeUpdate()
-    sethsUpdate("")
-    setbarcodeUpdate("")
-    setminStockUpdate()
-    setmaxStockUpdate()
-    setcurrencyUpdate()
-    setdefaultPriceUpdate("")
-    settransactionType1Update("")
-    settransactionType2Update("")
-    settransactionType3Update("")
-    settransactionType4Update("")
-    setinfoUpdate("")
-    setMaterialTypeUpdate([])
-  }
+    setModal(false);
+    setCodeUpdate("");
+    setNameUpdate("");
+    setnameInPOUpdate("");
+    setsmallestUnitUpdate("");
+    setsoldUnitUpdate("");
+    setskuUnitUpdate("");
+    setgroup1valUpdate("");
+    setgroup2valUpdate("");
+    setgroup3valUpdate("");
+    settypeUpdate("");
+    setisBatchUpdate(true);
+    setisServiceUpdate(false);
+    setisAssetUpdate(false);
+    setmassUpdate();
+    setvolumeUpdate();
+    sethsUpdate("");
+    setbarcodeUpdate("");
+    setminStockUpdate();
+    setmaxStockUpdate();
+    setcurrencyUpdate();
+    setdefaultPriceUpdate("");
+    settransactionType1Update("");
+    settransactionType2Update("");
+    settransactionType3Update("");
+    settransactionType4Update("");
+    setinfoUpdate("");
+    setMaterialTypeUpdate([]);
+  };
 
   const handleOptionChange = (e) => {
     setSelectedOption(e.target.value);
-    setisBatch(e.target.value === "batch")
-    setisService(e.target.value === "service")
-    setisAsset(e.target.value === "asset")
+    setisBatch(e.target.value === "batch");
+    setisService(e.target.value === "service");
+    setisAsset(e.target.value === "asset");
   };
 
   const handleOptionChangeUpdate = (e) => {
     setSelectedOptionUpdate(e.target.value);
-    setisBatchUpdate(e.target.value === "batch")
-    setisServiceUpdate(e.target.value === "service")
-    setisAssetUpdate(e.target.value === "asset")
+    setisBatchUpdate(e.target.value === "batch");
+    setisServiceUpdate(e.target.value === "service");
+    setisAssetUpdate(e.target.value === "asset");
   };
 
   useEffect(() => {
@@ -123,38 +123,98 @@ export const Material = () => {
 
   const dataFetching = async () => {
     try {
-      const data = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/material`
-      );
+      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/material`);
       setGetData(data.data);
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
 
   const fetchGroup1 = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/materialgroup1`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/materialgroup1`);
       setgroup1(response.data);
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
 
   const fetchGroup2 = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/materialgroup2Code/${group1val}`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/materialgroup2Code/${group1val}`);
       setgroup2(response.data);
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
 
   const fetchGroup3 = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/materialgroup3Code/${group2val}`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/materialgroup3Code/${group2val}`);
       setgroup3(response.data);
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
 
   useEffect(() => {
@@ -165,51 +225,63 @@ export const Material = () => {
 
   const deleteData = async (params) => {
     try {
-      await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/material/${params}`
-      );
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/material/${params}`);
       dataFetching();
       toast.success("Data Deleted", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
       });
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
 
   const updateData = async (params) => {
     try {
-      await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/material/${params}`,
-        {
-          name: nameUpdate,
-          nameInPO: nameInPOUpdate,
-          smallestUnit: smallestUnitUpdate,
-          soldUnit: soldUnitUpdate,
-          skuUnit: skuUnitUpdate,
-          group1: group1valUpdate,
-          group2: group2valUpdate,
-          group3: group3valUpdate,
-          gype: typeUpdate,
-          isBatch: isBatchUpdate,
-          isService: isServiceUpdate,
-          isAsset: isAssetUpdate,
-          mass: massUpdate,
-          volume: volumeUpdate,
-          hs: hsUpdate,
-          barcode: barcodeUpdate,
-          minStock: minStockUpdate,
-          maxStock: maxStockUpdate,
-          currency: currencyUpdate,
-          defaultPrice: defaultPriceUpdate,
-          transactionType1: transactionType1Update,
-          transactionType2: transactionType2Update,
-          transactionType3: transactionType3Update,
-          transactionType4: transactionType4Update,
-          info: infoUpdate,
-          changedBy: response.User
-        }
-      );
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/material/${params}`, {
+        name: nameUpdate,
+        nameInPO: nameInPOUpdate,
+        smallestUnit: smallestUnitUpdate,
+        soldUnit: soldUnitUpdate,
+        skuUnit: skuUnitUpdate,
+        group1: group1valUpdate,
+        group2: group2valUpdate,
+        group3: group3valUpdate,
+        gype: typeUpdate,
+        isBatch: isBatchUpdate,
+        isService: isServiceUpdate,
+        isAsset: isAssetUpdate,
+        mass: massUpdate,
+        volume: volumeUpdate,
+        hs: hsUpdate,
+        barcode: barcodeUpdate,
+        minStock: minStockUpdate,
+        maxStock: maxStockUpdate,
+        currency: currencyUpdate,
+        defaultPrice: defaultPriceUpdate,
+        transactionType1: transactionType1Update,
+        transactionType2: transactionType2Update,
+        transactionType3: transactionType3Update,
+        transactionType4: transactionType4Update,
+        info: infoUpdate,
+        changedBy: response.User,
+      });
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/unitconversion`, {
         materialCode: codeUpdate,
         unit: soldUnitUpdate,
@@ -223,13 +295,12 @@ export const Material = () => {
         autoClose: 3000,
         hideProgressBar: true,
       });
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
-  const handleSelectedOptionUpdate = (batch,service,asset) => {
+  const handleSelectedOptionUpdate = (batch, service, asset) => {
     switch (true) {
       case batch:
         setSelectedOptionUpdate("batch");
@@ -243,7 +314,7 @@ export const Material = () => {
       default:
         break;
     }
-  }
+  };
 
   const submitClick = async (e) => {
     e.preventDefault();
@@ -297,15 +368,12 @@ export const Material = () => {
         autoClose: 3000,
         hideProgressBar: false,
       });
-
     }
   };
 
   const getMyUnit = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/unit`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/unit`);
       setGetUnit(response.data);
     } catch (error) {
       console.log(error);
@@ -314,9 +382,7 @@ export const Material = () => {
 
   const getMyCurrency = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/currency`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/currency`);
       setcurrencyValue(response.data);
     } catch (error) {
       console.log(error);
@@ -325,9 +391,7 @@ export const Material = () => {
 
   const getMyMaterialType = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/materialtype`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/materialtype`);
       setMaterialType(response.data);
     } catch (error) {
       console.log(error);
@@ -522,10 +586,7 @@ export const Material = () => {
           <tr>
             <td className="text-right">Material Type:</td>
             <td>
-              <select
-                onChange={(e) => settype(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              >
+              <select onChange={(e) => settype(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option disabled selected hidden>
                   Pilih Material Type
                 </option>
@@ -671,7 +732,12 @@ export const Material = () => {
                 <tr>
                   <td className="text-right">Persediaan:</td>
                   <td>
-                    <select onChange={(e) => { settransactionType1(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select
+                      onChange={(e) => {
+                        settransactionType1(e.target.value);
+                      }}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
                       <option disabled selected>
                         Pilih Transaction Type
                       </option>
@@ -681,7 +747,12 @@ export const Material = () => {
                 <tr>
                   <td className="text-right">HPP:</td>
                   <td>
-                    <select onChange={(e) => { settransactionType2(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select
+                      onChange={(e) => {
+                        settransactionType2(e.target.value);
+                      }}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
                       <option disabled selected>
                         Pilih Transaction Type
                       </option>
@@ -691,7 +762,12 @@ export const Material = () => {
                 <tr>
                   <td className="text-right">Penjualan:</td>
                   <td>
-                    <select onChange={(e) => { settransactionType3(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select
+                      onChange={(e) => {
+                        settransactionType3(e.target.value);
+                      }}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
                       <option disabled selected>
                         Pilih Transaction Type
                       </option>
@@ -705,7 +781,12 @@ export const Material = () => {
                 <tr>
                   <td className="text-right">Retur Jual:</td>
                   <td>
-                    <select onChange={(e) => { settransactionType4(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select
+                      onChange={(e) => {
+                        settransactionType4(e.target.value);
+                      }}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
                       <option disabled selected>
                         Pilih Transaction Type
                       </option>
@@ -720,7 +801,12 @@ export const Material = () => {
                 <tr>
                   <td className="text-right">Biaya:</td>
                   <td>
-                    <select onChange={(e) => { settransactionType1(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select
+                      onChange={(e) => {
+                        settransactionType1(e.target.value);
+                      }}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
                       <option disabled selected>
                         Pilih Transaction Type
                       </option>
@@ -730,7 +816,12 @@ export const Material = () => {
                 <tr>
                   <td className="text-right">Pendapatan:</td>
                   <td>
-                    <select onChange={(e) => { settransactionType2(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select
+                      onChange={(e) => {
+                        settransactionType2(e.target.value);
+                      }}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
                       <option disabled selected>
                         Pilih Transaction Type
                       </option>
@@ -749,7 +840,12 @@ export const Material = () => {
                 <tr>
                   <td className="text-right">Asset:</td>
                   <td>
-                    <select onChange={(e) => { settransactionType1(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select
+                      onChange={(e) => {
+                        settransactionType1(e.target.value);
+                      }}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
                       <option disabled selected>
                         Pilih Transaction Type
                       </option>
@@ -759,7 +855,12 @@ export const Material = () => {
                 <tr>
                   <td className="text-right">Depresiasi:</td>
                   <td>
-                    <select onChange={(e) => { settransactionType2(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select
+                      onChange={(e) => {
+                        settransactionType2(e.target.value);
+                      }}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
                       <option disabled selected>
                         Pilih Transaction Type
                       </option>
@@ -769,7 +870,12 @@ export const Material = () => {
                 <tr>
                   <td className="text-right">Ak.Depresiasi:</td>
                   <td>
-                    <select onChange={(e) => { settransactionType3(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select
+                      onChange={(e) => {
+                        settransactionType3(e.target.value);
+                      }}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
                       <option disabled selected>
                         Pilih Transaction Type
                       </option>
@@ -779,7 +885,12 @@ export const Material = () => {
                 <tr>
                   <td className="text-right">Pendapatan:</td>
                   <td>
-                    <select onChange={(e) => { settransactionType4(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select
+                      onChange={(e) => {
+                        settransactionType4(e.target.value);
+                      }}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
                       <option disabled selected>
                         Pilih Transaction Type
                       </option>
@@ -793,23 +904,14 @@ export const Material = () => {
             <tr>
               <td className="text-right">Info: </td>
               <td>
-                <input
-                  onChange={(e) => setinfo(e.target.value)}
-                  type="text"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Isi info"
-                  required
-                />
+                <input onChange={(e) => setinfo(e.target.value)} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi info" required />
               </td>
             </tr>
             <tr>
               <td className="text-right">Price/Sold Unit: </td>
               <td>
                 <div className="flex items-center gap-2">
-                  <select
-                    onChange={(e) => setcurrency(e.target.value)}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  >
+                  <select onChange={(e) => setcurrency(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option disabled selected>
                       Pilih Currency
                     </option>
@@ -821,13 +923,7 @@ export const Material = () => {
                       );
                     })}
                   </select>
-                  <input
-                    onChange={(e) => setdefaultPrice(e.target.value)}
-                    type="number"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="0"
-                    required
-                  />
+                  <input onChange={(e) => setdefaultPrice(e.target.value)} type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
                 </div>
               </td>
             </tr>
@@ -835,13 +931,7 @@ export const Material = () => {
               <td className="text-right">Max Stock: </td>
               <td>
                 <div className="flex gap-2 items-center">
-                  <input
-                    onChange={(e) => setmaxStock(e.target.value)}
-                    type="number"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[70%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="0"
-                    required
-                  />
+                  <input onChange={(e) => setmaxStock(e.target.value)} type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[70%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
                   Smallest Unit
                 </div>
               </td>
@@ -851,10 +941,7 @@ export const Material = () => {
         </div>
 
         <div className="ml-[120px]">
-          <button
-            type="submit"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-          >
+          <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
             Save
           </button>
         </div>
@@ -962,14 +1049,8 @@ export const Material = () => {
           <tbody>
             {getData.map((res, key) => {
               return (
-                <tr
-                  key={key}
-                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                >
-                  <th
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                  >
+                <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     {res.Code}
                   </th>
                   <td className="px-6 py-4">{res.Name}</td>
@@ -981,15 +1062,9 @@ export const Material = () => {
                   <td className="px-6 py-4">{res.Group2}</td>
                   <td className="px-6 py-4">{res.Group3}</td>
                   <td className="px-6 py-4">{res.Type}</td>
-                  <td className="px-6 py-4">
-                    {res.IsBatch === true ? "True" : "False"}
-                  </td>
-                  <td className="px-6 py-4">
-                    {res.IsService === true ? "True" : "False"}
-                  </td>
-                  <td className="px-6 py-4">
-                    {res.IsAsset === true ? "True" : "False"}
-                  </td>
+                  <td className="px-6 py-4">{res.IsBatch === true ? "True" : "False"}</td>
+                  <td className="px-6 py-4">{res.IsService === true ? "True" : "False"}</td>
+                  <td className="px-6 py-4">{res.IsAsset === true ? "True" : "False"}</td>
                   <td className="px-6 py-4">{res.Mass}</td>
                   <td className="px-6 py-4">{res.Volume}</td>
                   <td className="px-6 py-4">{res.HS}</td>
@@ -1004,27 +1079,19 @@ export const Material = () => {
                   <td className="px-6 py-4">{res.TransactionType4}</td>
                   <td className="px-6 py-4">{res.Info}</td>
                   <td className="px-6 py-4">{res.CreatedBy}</td>
-                  <td className="px-6 py-4">
-                    {dateConverter(res.CreatedDate)}
-                  </td>
+                  <td className="px-6 py-4">{dateConverter(res.CreatedDate)}</td>
                   <td className="px-6 py-4">{res.ChangedBy}</td>
+                  <td className="px-6 py-4">{dateConverter(res.ChangedDate)}</td>
                   <td className="px-6 py-4">
-                    {dateConverter(res.ChangedDate)}
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => deleteData(res.Code)}
-                      type="button"
-                      className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                    >
+                    <button onClick={() => deleteData(res.Code)} type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
                       Delete
                     </button>
                     <button
                       onClick={() => {
-                        setModalData(res)
-                        setModal(true)
-                        setCodeUpdate(res.Code)
-                        handleSelectedOptionUpdate(res.IsBatch,res.IsService,res.IsAsset)
+                        setModalData(res);
+                        setModal(true);
+                        setCodeUpdate(res.Code);
+                        handleSelectedOptionUpdate(res.IsBatch, res.IsService, res.IsAsset);
                       }}
                       type="button"
                       className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
@@ -1039,21 +1106,22 @@ export const Material = () => {
         </table>
         <div></div>
       </div>
-      <div className={`flex justify-center top-0 left-0 fixed items-center w-screen h-screen z-[5] ${modal ? 'block' : 'hidden'}`}>
+      <div className={`flex justify-center top-0 left-0 fixed items-center w-screen h-screen z-[5] ${modal ? "block" : "hidden"}`}>
         <div className={`bg-slate-50 h-[90vh] fixed rounded-lg border border-black overflow-y-scroll p-5`}>
           <div className="space-y-6">
             <div className="text-2xl font-bold mb-4 ">Code: {modalData.Code}</div>
             <button
               onClick={() => {
-                closeModal()
+                closeModal();
               }}
-              className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none">
+              className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none"
+            >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
             <div className="w-[75%]">
-              <table className='border-separate border-spacing-2'>
+              <table className="border-separate border-spacing-2">
                 <tr>
                   <td className="text-right">Name: </td>
                   <td>
@@ -1216,12 +1284,9 @@ export const Material = () => {
                 <tr>
                   <td className="text-right">Material Type:</td>
                   <td>
-                    <select
-                      onChange={(e) => settypeUpdate(e.target.value)}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[50%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    >
+                    <select onChange={(e) => settypeUpdate(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[50%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                       <option disabled selected hidden>
-                      {modalData.Type}
+                        {modalData.Type}
                       </option>
                       {materialType.map((res, key) => {
                         return (
@@ -1301,7 +1366,8 @@ export const Material = () => {
                       KG
                     </td>
                   </tr>
-                  <tr>Update
+                  <tr>
+                    Update
                     <td className="text-right">Volume: </td>
                     <td className="flex items-center gap-2">
                       <input
@@ -1364,7 +1430,12 @@ export const Material = () => {
                       <tr>
                         <td className="text-right">Persediaan:</td>
                         <td>
-                          <select onChange={(e) => { settransactionType1Update(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                          <select
+                            onChange={(e) => {
+                              settransactionType1Update(e.target.value);
+                            }}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
                             <option disabled selected>
                               Pilih Transaction Type
                             </option>
@@ -1374,7 +1445,12 @@ export const Material = () => {
                       <tr>
                         <td className="text-right">HPP:</td>
                         <td>
-                          <select onChange={(e) => { settransactionType2Update(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                          <select
+                            onChange={(e) => {
+                              settransactionType2Update(e.target.value);
+                            }}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
                             <option disabled selected>
                               Pilih Transaction Type
                             </option>
@@ -1384,7 +1460,12 @@ export const Material = () => {
                       <tr>
                         <td className="text-right">Penjualan:</td>
                         <td>
-                          <select onChange={(e) => { settransactionType3Update(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                          <select
+                            onChange={(e) => {
+                              settransactionType3Update(e.target.value);
+                            }}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
                             <option disabled selected>
                               Pilih Transaction Type
                             </option>
@@ -1398,7 +1479,12 @@ export const Material = () => {
                       <tr>
                         <td className="text-right">Retur Jual:</td>
                         <td>
-                          <select onChange={(e) => { settransactionType4Update(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                          <select
+                            onChange={(e) => {
+                              settransactionType4Update(e.target.value);
+                            }}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
                             <option disabled selected>
                               Pilih Transaction Type
                             </option>
@@ -1413,7 +1499,12 @@ export const Material = () => {
                       <tr>
                         <td className="text-right">Biaya:</td>
                         <td>
-                          <select onChange={(e) => { settransactionType1Update(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                          <select
+                            onChange={(e) => {
+                              settransactionType1Update(e.target.value);
+                            }}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
                             <option disabled selected>
                               Pilih Transaction Type
                             </option>
@@ -1423,7 +1514,12 @@ export const Material = () => {
                       <tr>
                         <td className="text-right">Pendapatan:</td>
                         <td>
-                          <select onChange={(e) => { settransactionType2Update(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                          <select
+                            onChange={(e) => {
+                              settransactionType2Update(e.target.value);
+                            }}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
                             <option disabled selected>
                               Pilih Transaction Type
                             </option>
@@ -1442,7 +1538,12 @@ export const Material = () => {
                       <tr>
                         <td className="text-right">Asset:</td>
                         <td>
-                          <select onChange={(e) => { settransactionType1Update(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                          <select
+                            onChange={(e) => {
+                              settransactionType1Update(e.target.value);
+                            }}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
                             <option disabled selected>
                               Pilih Transaction Type
                             </option>
@@ -1452,7 +1553,12 @@ export const Material = () => {
                       <tr>
                         <td className="text-right">Depresiasi:</td>
                         <td>
-                          <select onChange={(e) => { settransactionType2Update(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                          <select
+                            onChange={(e) => {
+                              settransactionType2Update(e.target.value);
+                            }}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
                             <option disabled selected>
                               Pilih Transaction Type
                             </option>
@@ -1462,7 +1568,12 @@ export const Material = () => {
                       <tr>
                         <td className="text-right">Ak.Depresiasi:</td>
                         <td>
-                          <select onChange={(e) => { settransactionType3Update(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                          <select
+                            onChange={(e) => {
+                              settransactionType3Update(e.target.value);
+                            }}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
                             <option disabled selected>
                               Pilih Transaction Type
                             </option>
@@ -1472,7 +1583,12 @@ export const Material = () => {
                       <tr>
                         <td className="text-right">Pendapatan:</td>
                         <td>
-                          <select onChange={(e) => { settransactionType4Update(e.target.value) }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                          <select
+                            onChange={(e) => {
+                              settransactionType4Update(e.target.value);
+                            }}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
                             <option disabled selected>
                               Pilih Transaction Type
                             </option>
@@ -1486,23 +1602,14 @@ export const Material = () => {
                   <tr>
                     <td className="text-right">Info: </td>
                     <td>
-                      <input
-                        onChange={(e) => setinfoUpdate(e.target.value)}
-                        type="text"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Isi info"
-                        required
-                      />
+                      <input onChange={(e) => setinfoUpdate(e.target.value)} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi info" required />
                     </td>
                   </tr>
                   <tr>
                     <td className="text-right">Price/Sold Unit: </td>
                     <td>
                       <div className="flex items-center gap-2">
-                        <select
-                          onChange={(e) => setcurrencyUpdate(e.target.value)}
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[50%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        >
+                        <select onChange={(e) => setcurrencyUpdate(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[50%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                           <option disabled selected>
                             Pilih Currency
                           </option>
@@ -1514,13 +1621,7 @@ export const Material = () => {
                             );
                           })}
                         </select>
-                        <input
-                          onChange={(e) => setdefaultPriceUpdate(e.target.value)}
-                          type="number"
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                          placeholder="0"
-                          required
-                        />
+                        <input onChange={(e) => setdefaultPriceUpdate(e.target.value)} type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
                       </div>
                     </td>
                   </tr>
@@ -1528,13 +1629,7 @@ export const Material = () => {
                     <td className="text-right">Max Stock: </td>
                     <td>
                       <div className="flex gap-2 items-center">
-                        <input
-                          onChange={(e) => setmaxStockUpdate(e.target.value)}
-                          type="number"
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[70%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                          placeholder="0"
-                          required
-                        />
+                        <input onChange={(e) => setmaxStockUpdate(e.target.value)} type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[70%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
                         Smallest Unit
                       </div>
                     </td>
@@ -1542,12 +1637,20 @@ export const Material = () => {
                   <tr></tr>
                 </table>
               </div>
-              <button onClick={() => { updateData(modalData.Code) }} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">Update</button>
+              <button
+                onClick={() => {
+                  updateData(modalData.Code);
+                }}
+                type="button"
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+              >
+                Update
+              </button>
             </div>
           </div>
         </div>
       </div>
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
     </div>
-  )
-}
+  );
+};

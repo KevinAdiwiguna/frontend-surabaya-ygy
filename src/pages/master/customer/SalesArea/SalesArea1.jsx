@@ -30,7 +30,24 @@ export const SalesArea1 = () => {
         `${process.env.REACT_APP_API_BASE_URL}/salesarea1`
       );
       setGetData(data.data);
-    } catch (error) {}
+    } catch (error) {
+       if (error.response) {
+         toast.error(`${error.response.data.msg}`, {
+           position: "top-center",
+           autoClose: 3000,
+           hideProgressBar: true,
+         });
+       } else if (error.request) {
+         console.error("Request Error:", error.request);
+         toast.error("Network error. Please check your internet connection.", {
+           position: "top-center",
+           autoClose: 3000,
+           hideProgressBar: true,
+         });
+       } else {
+         console.error("Error:", error.message);
+       }
+    }
   };
 
   const deleteData = async (params) => {
@@ -44,7 +61,24 @@ export const SalesArea1 = () => {
         autoClose: 3000,
         hideProgressBar: true,
       });
-    } catch (error) {}
+    } catch (error) {
+       if (error.response) {
+         toast.error(`${error.response.data.msg}`, {
+           position: "top-center",
+           autoClose: 3000,
+           hideProgressBar: true,
+         });
+       } else if (error.request) {
+         console.error("Request Error:", error.request);
+         toast.error("Network error. Please check your internet connection.", {
+           position: "top-center",
+           autoClose: 3000,
+           hideProgressBar: true,
+         });
+       } else {
+         console.error("Error:", error.message);
+       }
+    }
   };
 
   const updateData = async (params) => {
@@ -63,7 +97,22 @@ export const SalesArea1 = () => {
         hideProgressBar: true,
       });
     } catch (error) {
-      console.log(error);
+       if (error.response) {
+         toast.error(`${error.response.data.msg}`, {
+           position: "top-center",
+           autoClose: 3000,
+           hideProgressBar: true,
+         });
+       } else if (error.request) {
+         console.error("Request Error:", error.request);
+         toast.error("Network error. Please check your internet connection.", {
+           position: "top-center",
+           autoClose: 3000,
+           hideProgressBar: true,
+         });
+       } else {
+         console.error("Error:", error.message);
+       }
     }
   };
 
@@ -83,11 +132,22 @@ export const SalesArea1 = () => {
         hideProgressBar: true,
       });
     } catch (error) {
-      toast.warn("Code Sudah Digunakan", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-      });
+       if (error.response) {
+         toast.error(`${error.response.data.msg}`, {
+           position: "top-center",
+           autoClose: 3000,
+           hideProgressBar: true,
+         });
+       } else if (error.request) {
+         console.error("Request Error:", error.request);
+         toast.error("Network error. Please check your internet connection.", {
+           position: "top-center",
+           autoClose: 3000,
+           hideProgressBar: true,
+         });
+       } else {
+         console.error("Error:", error.message);
+       }
     }
   };
 

@@ -114,7 +114,24 @@ export const Customer = () => {
         `${process.env.REACT_APP_API_BASE_URL}/customer`
       );
       setGetData(data.data);
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+     }
   };
 
   const fetchSales1 = async () => {
@@ -123,7 +140,25 @@ export const Customer = () => {
         `${process.env.REACT_APP_API_BASE_URL}/salesarea1`
       );
       setSales1(response.data);
-    } catch (error) { }
+    } catch (error) { 
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
+    
   };
 
   const fetchSales2 = async () => {
@@ -132,7 +167,24 @@ export const Customer = () => {
         `${process.env.REACT_APP_API_BASE_URL}/salesArea2Code/${sales1val}`
       );
       setSales2(response.data);
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+     }
   };
 
   const fetchSales3 = async () => {
@@ -141,7 +193,24 @@ export const Customer = () => {
         `${process.env.REACT_APP_API_BASE_URL}/SalesArea3Code/${sales1val}/${sales2val}`
       );
       setSales3(response.data);
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+     }
   };
 
   useEffect(() => {
@@ -156,7 +225,24 @@ export const Customer = () => {
         `${process.env.REACT_APP_API_BASE_URL}/salesarea1`
       );
       setSales1Update(response.data);
-    } catch (error) { }
+    } catch (error) { 
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
 
   const fetchSales2Update = async () => {
@@ -165,7 +251,24 @@ export const Customer = () => {
         `${process.env.REACT_APP_API_BASE_URL}/salesArea2Code/${sales1valUpdate}`
       );
       setSales2Update(response.data);
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+     }
   };
 
   const fetchSales3Update = async () => {
@@ -174,7 +277,24 @@ export const Customer = () => {
         `${process.env.REACT_APP_API_BASE_URL}/SalesArea3Code/${sales1valUpdate}/${sales2valUpdate}`
       );
       setSales3Update(response.data);
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+     }
   };
 
   useEffect(() => {
@@ -195,7 +315,24 @@ export const Customer = () => {
         hideProgressBar: true,
     });
 
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+     }
   };
 
   const updateData = async (params) => {
@@ -239,7 +376,22 @@ export const Customer = () => {
         hideProgressBar: true,
       });
     } catch (error) {
-      console.log(error);
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 
@@ -283,11 +435,22 @@ export const Customer = () => {
         hideProgressBar: true,
       });
     } catch (error) { 
-      toast.warn("Code Sudah Digunakan", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-      });
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
 
     }
   };
@@ -299,7 +462,22 @@ export const Customer = () => {
       );
       setGetCountry(response.data);
     } catch (error) {
-      console.log(error);
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   }
 
@@ -310,7 +488,22 @@ export const Customer = () => {
       );
       setGetCurrency(response.data);
     } catch (error) {
-      console.log(error);
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 
@@ -321,7 +514,22 @@ export const Customer = () => {
       );
       setGetPricelist(response.data);
     } catch (error) {
-      console.log(error);
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 
@@ -332,7 +540,22 @@ export const Customer = () => {
       );
       setGetCustomerGroup(response.data);
     } catch (error) {
-      console.log(error);
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 

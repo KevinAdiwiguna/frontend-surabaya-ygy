@@ -41,10 +41,10 @@ export const PurchaseOrder = () => {
   const [discNominal, setDiscNominal] = useState(0);
   const [discValue, setDiscValue] = useState(0);
   const [orderDetail, setOrderDetail] = useState([]);
-  const [modalData, setModalData] = useState([])
-  const [modal, setModal] = useState(false)
-  const [GetMyjobOrder, setGetJobOrder] = useState([])
-  const [JODocNo, setJODocNo] = useState("")
+  const [modalData, setModalData] = useState([]);
+  const [modal, setModal] = useState(false);
+  const [GetMyjobOrder, setGetJobOrder] = useState([]);
+  const [JODocNo, setJODocNo] = useState("");
   const [detailDataUpdate, setDetailDataUpdate] = useState([]);
   const [supplierValUpdate, setSupplierValUpdate] = useState("");
   const [materialValUpdate, setMaterialValUpdate] = useState("");
@@ -84,7 +84,6 @@ export const PurchaseOrder = () => {
   const [purchaseDetailKey, setPurchaseDetailKey] = useState("");
   const [purchaseDetailDocNo, setPurchaseDetailDocNo] = useState("");
   const [discValueChange, setDiscValueChange] = useState("");
-  
 
   const [getPurchaseDetail, setGetPurchaseDetail] = useState([]);
   const [seriesVal, setSeriesVal] = useState("");
@@ -105,9 +104,7 @@ export const PurchaseOrder = () => {
 
   const getSeries = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/seriescode/PURCHASE ORDER`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/seriescode/PURCHASE ORDER`);
       setGetSeries(response.data);
     } catch (error) {
       console.log(error);
@@ -116,9 +113,7 @@ export const PurchaseOrder = () => {
 
   const getCustomer = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/customer`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/customer`);
       setGetMyCustomer(response.data);
     } catch (error) {
       console.log(error);
@@ -127,9 +122,7 @@ export const PurchaseOrder = () => {
 
   const getSupplier = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/supplier`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/supplier`);
       setGetMySupplier(response.data);
     } catch (error) {
       console.log(error);
@@ -138,9 +131,7 @@ export const PurchaseOrder = () => {
 
   const getSelesman = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/salesman`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesman`);
       setGetMySelesman(response.data);
     } catch (error) {
       console.log(error);
@@ -149,9 +140,7 @@ export const PurchaseOrder = () => {
 
   const getCurrency = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/currency`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/currency`);
       setGetMyCurrency(response.data);
     } catch (error) {
       console.log(error);
@@ -160,9 +149,7 @@ export const PurchaseOrder = () => {
 
   const getMaterial = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/material`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/material`);
       setGetMyMaterial(response.data);
     } catch (error) {
       console.log(error);
@@ -171,9 +158,7 @@ export const PurchaseOrder = () => {
 
   const getMaterialDetail = async (params) => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/material/${params}`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/material/${params}`);
       setGetMyMaterialDetail(response.data);
     } catch (error) {
       console.log(error);
@@ -184,9 +169,7 @@ export const PurchaseOrder = () => {
 
   const getCurrencyByCustomer = async (params) => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/supplier/${params}`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/supplier/${params}`);
       setGetFCurrency(response.data);
     } catch (error) {
       console.log(error);
@@ -202,195 +185,195 @@ export const PurchaseOrder = () => {
   }, [supplierValUpdate]);
 
   const calculateGross = () => {
-    const gross = quantity * price
-    setGross(gross)
-  }
+    const gross = quantity * price;
+    setGross(gross);
+  };
 
   useEffect(() => {
-    calculateGross()
-  }, [price, quantity])
+    calculateGross();
+  }, [price, quantity]);
 
   useEffect(() => {
-		setTaxUpdate(modalData?.TaxStatus)
-		setTaxValUpdate(modalData?.TaxPercent)
-		setDiscountUpdate(modalData?.DiscPercent)
-	}, [modalData.DiscPercent, modalData.TaxPercent, modalData.TaxStatus])
+    setTaxUpdate(modalData?.TaxStatus);
+    setTaxValUpdate(modalData?.TaxPercent);
+    setDiscountUpdate(modalData?.DiscPercent);
+  }, [modalData.DiscPercent, modalData.TaxPercent, modalData.TaxStatus]);
 
   const calculateNetto = () => {
     if (detailDisc || detailDisc2 || detailDisc3) {
-      const disc = (quantity * price) - ((quantity * price) * detailDisc / 100)
-      const disc2 = disc - (disc * detailDisc2 / 100)
-      const disc3 = disc2 - (disc2 * detailDisc3 / 100)
-      setNetto(disc3)
-      setDiscNominal(((quantity * price) * detailDisc / 100) + (disc * detailDisc2 / 100) + (disc2 * detailDisc3 / 100))
+      const disc = quantity * price - (quantity * price * detailDisc) / 100;
+      const disc2 = disc - (disc * detailDisc2) / 100;
+      const disc3 = disc2 - (disc2 * detailDisc3) / 100;
+      setNetto(disc3);
+      setDiscNominal((quantity * price * detailDisc) / 100 + (disc * detailDisc2) / 100 + (disc2 * detailDisc3) / 100);
     } else {
-      const disc = (quantity * price) - discValue
-      setDiscNominal(discValue)
-      setNetto(disc)
+      const disc = quantity * price - discValue;
+      setDiscNominal(discValue);
+      setNetto(disc);
     }
-  }
+  };
 
   useEffect(() => {
-    calculateNetto()
-  }, [price, quantity, detailDisc, detailDisc2, detailDisc3, discValue])
+    calculateNetto();
+  }, [price, quantity, detailDisc, detailDisc2, detailDisc3, discValue]);
 
   const calculateTotalGrossUpdate = () => {
-		let total = 0
-		for (let i = 0; i < detailDataUpdate.length; i++) {
-			let obj = detailDataUpdate[i]
-			let nettoAsInteger = parseFloat(obj.netto)
-			total += nettoAsInteger
-		}
-		for (let i = 0; i < getPurchaseDetail.length; i++) {
-			let obj = getPurchaseDetail[i]
-			let nettoAsInteger = parseFloat(obj.Netto)
-			total += nettoAsInteger
-		}
-		setTotalGrossUpdate(total)
-	}
-
-	const calculateTotalNettoUpdate = () => {
-		let nettoDiscount = (totalGrossUpdate * discountUpdate) / 100
-		let totalNetto = totalGrossUpdate - nettoDiscount
-		let tax = calculateTaxUpdate(totalNetto)
-		if (taxUpdate === 'Exclude') {
-			totalNetto = totalNetto + tax
-		}
-		setDiscountOutputUpdate(nettoDiscount)
-		setTaxOutputUpdate(tax)
-		setTotalNettoUpdate(totalNetto)
-	}
-
-	useEffect(() => {
-		calculateTotalNettoUpdate()
-	}, [totalGrossUpdate, taxValUpdate, taxUpdate, discountUpdate])
-
-	useEffect(() => {
-		calculateTotalGrossUpdate()
-	}, [getPurchaseDetail, detailDataUpdate])
-
-  const calculateTaxUpdate = (e) => {
-		if (taxUpdate === 'No') {
-			return 0
-		}
-		let total = (e * taxValUpdate) / 100
-		return total
-	}
-
-	const calculateNettoUpdate = () => {
-    if (detailDiscUpdate || detailDisc2Update || detailDisc3Update) {
-      const disc = (quantityUpdate * priceUpdate) - ((quantityUpdate * priceUpdate) * detailDiscUpdate / 100)
-      const disc2 = disc - (disc * detailDisc2Update / 100)
-      const disc3 = disc2 - (disc2 * detailDisc3Update / 100)
-      setNettoUpdate(disc3)
-      setDiscNominalUpdate(((quantityUpdate * priceUpdate) * detailDiscUpdate / 100) + (disc * detailDisc2Update / 100) + (disc2 * detailDisc3Update / 100))
-    } else {
-      const disc = (quantityUpdate * priceUpdate) - discValueUpdate
-      setDiscNominalUpdate(discValueUpdate)
-      setNettoUpdate(disc)
+    let total = 0;
+    for (let i = 0; i < detailDataUpdate.length; i++) {
+      let obj = detailDataUpdate[i];
+      let nettoAsInteger = parseFloat(obj.netto);
+      total += nettoAsInteger;
     }
-	}
+    for (let i = 0; i < getPurchaseDetail.length; i++) {
+      let obj = getPurchaseDetail[i];
+      let nettoAsInteger = parseFloat(obj.Netto);
+      total += nettoAsInteger;
+    }
+    setTotalGrossUpdate(total);
+  };
+
+  const calculateTotalNettoUpdate = () => {
+    let nettoDiscount = (totalGrossUpdate * discountUpdate) / 100;
+    let totalNetto = totalGrossUpdate - nettoDiscount;
+    let tax = calculateTaxUpdate(totalNetto);
+    if (taxUpdate === "Exclude") {
+      totalNetto = totalNetto + tax;
+    }
+    setDiscountOutputUpdate(nettoDiscount);
+    setTaxOutputUpdate(tax);
+    setTotalNettoUpdate(totalNetto);
+  };
 
   useEffect(() => {
-    calculateNettoUpdate()
-  }, [priceUpdate, quantityUpdate, detailDiscUpdate, detailDisc2Update, detailDisc3Update, discValueUpdate])
+    calculateTotalNettoUpdate();
+  }, [totalGrossUpdate, taxValUpdate, taxUpdate, discountUpdate]);
 
-	const calculateGrossUpdate = () => {
-		let total = quantityUpdate * priceUpdate
-		setGrossUpdate(total)
-	}
+  useEffect(() => {
+    calculateTotalGrossUpdate();
+  }, [getPurchaseDetail, detailDataUpdate]);
 
-	useEffect(() => {
-		calculateGrossUpdate()
-	}, [quantityUpdate, priceUpdate])
+  const calculateTaxUpdate = (e) => {
+    if (taxUpdate === "No") {
+      return 0;
+    }
+    let total = (e * taxValUpdate) / 100;
+    return total;
+  };
+
+  const calculateNettoUpdate = () => {
+    if (detailDiscUpdate || detailDisc2Update || detailDisc3Update) {
+      const disc = quantityUpdate * priceUpdate - (quantityUpdate * priceUpdate * detailDiscUpdate) / 100;
+      const disc2 = disc - (disc * detailDisc2Update) / 100;
+      const disc3 = disc2 - (disc2 * detailDisc3Update) / 100;
+      setNettoUpdate(disc3);
+      setDiscNominalUpdate((quantityUpdate * priceUpdate * detailDiscUpdate) / 100 + (disc * detailDisc2Update) / 100 + (disc2 * detailDisc3Update) / 100);
+    } else {
+      const disc = quantityUpdate * priceUpdate - discValueUpdate;
+      setDiscNominalUpdate(discValueUpdate);
+      setNettoUpdate(disc);
+    }
+  };
+
+  useEffect(() => {
+    calculateNettoUpdate();
+  }, [priceUpdate, quantityUpdate, detailDiscUpdate, detailDisc2Update, detailDisc3Update, discValueUpdate]);
+
+  const calculateGrossUpdate = () => {
+    let total = quantityUpdate * priceUpdate;
+    setGrossUpdate(total);
+  };
+
+  useEffect(() => {
+    calculateGrossUpdate();
+  }, [quantityUpdate, priceUpdate]);
 
   const calculateNettoChange = () => {
     if (detailDiscChange || detailDisc2Change || detailDisc3Change) {
-      const disc = (quantityChange * priceChange) - ((quantityChange * priceChange) * detailDiscChange / 100)
-      const disc2 = disc - (disc * detailDisc2Change / 100)
-      const disc3 = disc2 - (disc2 * detailDisc3Change / 100)
-      setNettoChange(disc3)
-      setDiscNominalChange(((quantityChange * priceChange) * detailDiscChange / 100) + (disc * detailDisc2Change / 100) + (disc2 * detailDisc3Change / 100))
+      const disc = quantityChange * priceChange - (quantityChange * priceChange * detailDiscChange) / 100;
+      const disc2 = disc - (disc * detailDisc2Change) / 100;
+      const disc3 = disc2 - (disc2 * detailDisc3Change) / 100;
+      setNettoChange(disc3);
+      setDiscNominalChange((quantityChange * priceChange * detailDiscChange) / 100 + (disc * detailDisc2Change) / 100 + (disc2 * detailDisc3Change) / 100);
     } else {
-      const disc = (quantityChange * priceChange) - discValueChange
-      setDiscNominalChange(discValueChange)
-      setNettoChange(disc)
+      const disc = quantityChange * priceChange - discValueChange;
+      setDiscNominalChange(discValueChange);
+      setNettoChange(disc);
     }
-	}
+  };
 
   useEffect(() => {
-    calculateNettoChange()
-  }, [priceChange, quantityChange, detailDiscChange, detailDisc2Change, detailDisc3Change, discValueChange])
+    calculateNettoChange();
+  }, [priceChange, quantityChange, detailDiscChange, detailDisc2Change, detailDisc3Change, discValueChange]);
 
-	const calculateGrossChange = () => {
-		let total = quantityChange * priceChange
-		setGrossChange(total)
-	}
+  const calculateGrossChange = () => {
+    let total = quantityChange * priceChange;
+    setGrossChange(total);
+  };
 
   useEffect(() => {
-		calculateGrossChange()
-	}, [quantityChange, priceChange])
+    calculateGrossChange();
+  }, [quantityChange, priceChange]);
 
   const sendDetailToInput = (e) => {
-		setMaterialValChange(e.MaterialCode)
-		setInfoChange(e.Info)
-		setQuantityChange(e.Qty)
-    setPriceChange(e.Price)
-    setDetailDiscChange(e.DiscPercent)
-    setDetailDisc2Change(e.DiscPercent2)
-    setDetailDisc3Change(e.DiscPercent3)
-    setDiscValueChange(e.DiscValue)
-		setPurchaseDetailKey(e.Number)
-		setPurchaseDetailDocNo(e.DocNo)
-	}
+    setMaterialValChange(e.MaterialCode);
+    setInfoChange(e.Info);
+    setQuantityChange(e.Qty);
+    setPriceChange(e.Price);
+    setDetailDiscChange(e.DiscPercent);
+    setDetailDisc2Change(e.DiscPercent2);
+    setDetailDisc3Change(e.DiscPercent3);
+    setDiscValueChange(e.DiscValue);
+    setPurchaseDetailKey(e.Number);
+    setPurchaseDetailDocNo(e.DocNo);
+  };
 
   const changePurchaseDetailData = async (doc, key) => {
-		try {
-			await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderd/${doc}/${key}`, {
-				materialCode: materialValChange,
-				info: infoChange,
-				unit: getPurchaseDetail[key - 1].Unit,
-				qty: quantityChange,
-				price: priceChange,
-				gross: grossChange,
-				discPercent: detailDiscChange,
-				discPercent2: detailDisc2Change,
-				discPercent3: detailDisc3Change,
-				discValue: discValueChange,
-				discNominal: discNominalChange,
-				netto: NettoChange,
-				qtyReceived: 0,
-			})
-			await getPurchaseDetailByDocNo(doc)
-      let purchaseDetail = await getPurchaseDetailByDocNo(doc)
-      let gross = 0
+    try {
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderd/${doc}/${key}`, {
+        materialCode: materialValChange,
+        info: infoChange,
+        unit: getPurchaseDetail[key - 1].Unit,
+        qty: quantityChange,
+        price: priceChange,
+        gross: grossChange,
+        discPercent: detailDiscChange,
+        discPercent2: detailDisc2Change,
+        discPercent3: detailDisc3Change,
+        discValue: discValueChange,
+        discNominal: discNominalChange,
+        netto: NettoChange,
+        qtyReceived: 0,
+      });
+      await getPurchaseDetailByDocNo(doc);
+      let purchaseDetail = await getPurchaseDetailByDocNo(doc);
+      let gross = 0;
       for (let i = 0; i < purchaseDetail.length; i++) {
-        let obj = purchaseDetail[i]
-        let nettoAsInteger = parseFloat(obj.Netto)
-        gross += nettoAsInteger
+        let obj = purchaseDetail[i];
+        let nettoAsInteger = parseFloat(obj.Netto);
+        gross += nettoAsInteger;
       }
-      let nettoDiscount = (gross * discountUpdate) / 100
-      let totalNetto = totalGrossUpdate - nettoDiscount
-      let tax = calculateTaxUpdate(totalNetto)
-      if (taxUpdate === 'Exclude') {
-        totalNetto = totalNetto + tax
+      let nettoDiscount = (gross * discountUpdate) / 100;
+      let totalNetto = totalGrossUpdate - nettoDiscount;
+      let tax = calculateTaxUpdate(totalNetto);
+      if (taxUpdate === "Exclude") {
+        totalNetto = totalNetto + tax;
       }
       await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${doc}`, {
         totalGross: gross,
         totalDisc: nettoDiscount,
         taxValue: tax,
         totalNetto: totalNetto,
-			})
-      dataFetching()
-			toast.success('Data Changed', {
-				position: 'top-center',
-				autoClose: 3000,
-				hideProgressBar: true,
-			})
-		} catch (error) {
-			console.log(error)
-		}
-	}
+      });
+      dataFetching();
+      toast.success("Data Changed", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getMaterialDetail(materialVal);
@@ -414,71 +397,86 @@ export const PurchaseOrder = () => {
 
   const dataFetching = async () => {
     try {
-      const data = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/purchaseorderh`
-      );
+      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh`);
       setGetData(data.data);
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
 
   const calculateDiscount = () => {
-    let total = (totalGross * discount) / 100
-    return total
-  }
+    let total = (totalGross * discount) / 100;
+    return total;
+  };
 
   const calculateTax = (e) => {
-    if (tax === 'No') {
-      return 0
+    if (tax === "No") {
+      return 0;
     }
-    let total = (e * taxVal) / 100
-    return total
-  }
+    let total = (e * taxVal) / 100;
+    return total;
+  };
 
   const calculateTotalNetto = () => {
-    let discount = calculateDiscount()
-    let total = totalGross - calculateDiscount()
-    let taks = calculateTax(total)
-    if (tax === 'Exclude') {
-      total = total + taks
+    let discount = calculateDiscount();
+    let total = totalGross - calculateDiscount();
+    let taks = calculateTax(total);
+    if (tax === "Exclude") {
+      total = total + taks;
     }
-    setDiscountOutput(discount)
-    setTaxOutput(taks)
-    setTotalNetto(total)
-  }
+    setDiscountOutput(discount);
+    setTaxOutput(taks);
+    setTotalNetto(total);
+  };
 
   useEffect(() => {
-    calculateTotalNetto()
-  }, [totalGross, taxVal, tax, discount])
+    calculateTotalNetto();
+  }, [totalGross, taxVal, tax, discount]);
 
   const addOrderDetail = () => {
     if (!materialVal || !quantity) {
-      toast.warn('Material and Quantity is required', {
-        position: 'top-center',
+      toast.warn("Material and Quantity is required", {
+        position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
-      })
-      return
+      });
+      return;
     }
 
-    const materialExists = orderDetail.some(item => item.materialCode === materialVal);
+    const materialExists = orderDetail.some((item) => item.materialCode === materialVal);
 
     if (materialExists) {
-      toast.warn('Material sudah dipakai', {
-        position: 'top-center',
+      toast.warn("Material sudah dipakai", {
+        position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
-      })
-      return
+      });
+      return;
     }
 
-    setTotalGross(totalGross + Netto)
+    setTotalGross(totalGross + Netto);
 
     setOrderDetail([
       ...orderDetail,
       {
         number: orderDetail.length + 1,
         materialCode: materialVal,
-        info: info || getMyMaterialDetail?.Info ? info || getMyMaterialDetail?.Info : '-',
+        info: info || getMyMaterialDetail?.Info ? info || getMyMaterialDetail?.Info : "-",
         unit: getMyMaterialDetail?.SmallestUnit,
         qty: quantity,
         price: price,
@@ -489,40 +487,40 @@ export const PurchaseOrder = () => {
         discValue: detailDisc || detailDisc2 || detailDisc3 ? 0 : discValue,
         discNominal: discNominal,
         netto: Netto,
-        qtyReceived: 0
+        qtyReceived: 0,
       },
-    ])
-  }
+    ]);
+  };
 
   const addOrderDetailUpdate = () => {
     if (!materialValUpdate || !quantityUpdate) {
-      toast.warn('Material and Quantity is required', {
-        position: 'top-center',
+      toast.warn("Material and Quantity is required", {
+        position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
-      })
-      return
+      });
+      return;
     }
 
-    const materialExists = detailDataUpdate.some(item => item.materialCode === materialValUpdate);
+    const materialExists = detailDataUpdate.some((item) => item.materialCode === materialValUpdate);
 
     if (materialExists) {
-      toast.warn('Material sudah dipakai', {
-        position: 'top-center',
+      toast.warn("Material sudah dipakai", {
+        position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
-      })
-      return
+      });
+      return;
     }
 
-    setTotalGrossUpdate(totalGrossUpdate + NettoUpdate)
+    setTotalGrossUpdate(totalGrossUpdate + NettoUpdate);
 
     setDetailDataUpdate([
       ...detailDataUpdate,
       {
         number: detailDataUpdate.length + 1,
         materialCode: materialValUpdate,
-        info: infoUpdate || getMyMaterialDetail?.Info ? infoUpdate || getMyMaterialDetail?.Info : '-',
+        info: infoUpdate || getMyMaterialDetail?.Info ? infoUpdate || getMyMaterialDetail?.Info : "-",
         unit: getMyMaterialDetail?.SmallestUnit,
         qty: quantityUpdate,
         price: priceUpdate,
@@ -533,11 +531,10 @@ export const PurchaseOrder = () => {
         discValue: detailDiscUpdate || detailDisc2Update || detailDisc3Update ? 0 : discValueUpdate,
         discNominal: discNominalUpdate,
         netto: NettoUpdate,
-        qtyReceived: 0
+        qtyReceived: 0,
       },
-    ])
-  }
-
+    ]);
+  };
 
   useEffect(() => {
     dataFetching();
@@ -545,31 +542,46 @@ export const PurchaseOrder = () => {
 
   const deleteData = async (params) => {
     try {
-      await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${params}`
-      );
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${params}`);
       dataFetching();
       toast.success("Data Deleted", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
       });
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
 
   const generateDocDate = () => {
-    const today = new Date(docDate)
-    const year = today.getFullYear().toString().substring(2)
-    const month = (today.getMonth() + 1).toString().padStart(2, '0')
-    const day = today.getDate().toString().padStart(2, '0')
-    return year + month + day
-  }
+    const today = new Date(docDate);
+    const year = today.getFullYear().toString().substring(2);
+    const month = (today.getMonth() + 1).toString().padStart(2, "0");
+    const day = today.getDate().toString().padStart(2, "0");
+    return year + month + day;
+  };
 
   const closeModal = () => {
-    setModal(false)
+    setModal(false);
     // setDetailDataUpdate([])
     // setInformationUpdate("")
-  }
+  };
 
   const submitClick = async (e) => {
     e.preventDefault();
@@ -606,7 +618,7 @@ export const PurchaseOrder = () => {
         isSalesReturn: false,
         createdBy: response.User,
         changedBy: response.User,
-        PurchaseOrderd: orderDetail
+        PurchaseOrderd: orderDetail,
       });
       dataFetching();
       toast.success("Data Saved", {
@@ -625,73 +637,70 @@ export const PurchaseOrder = () => {
 
   const getPurchaseDetailByDocNo = async (params) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderd/${params}`)
-      setGetPurchaseDetail(response.data)
-      return response.data
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderd/${params}`);
+      setGetPurchaseDetail(response.data);
+      return response.data;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const updateData = async (params) => {
     try {
-      await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${params}`,
-        {
-          transactionType: "",
-          supplierCode: supplierValUpdate,
-          deliveryDate: deliveryDateUpdate,
-          TOP: topUpdate,
-          discPercent: discountUpdate,
-          taxStatus: taxUpdate,
-          taxPercent: taxValUpdate,
-          currency: currencyVal,
-          exchangeRate: ExchangeRateUpdate,
-          JODocNo: JODocNoUpdate,
-          trip: "",
-          SIDocNo: "",
-          totalGross: totalGrossUpdate,
-          totalDisc: discountOutputUpdate,
-          taxValue: taxOutputUpdate,
-          totalNetto: totalNettoUpdate,
-          sendTo: sendToUpdate,
-          information: informationUpdate,
-          status: "OPEN",
-          isApproved: 0,
-          approvedBy: "",
-          approvedDate: "",
-          printCounter: 0,
-          printedBy: "",
-          printedDate: "",
-          isSalesReturn: false,
-          changedBy: response.User,
-        }
-      );
-			if (detailDataUpdate) {
-				await axios.post(
-					`${process.env.REACT_APP_API_BASE_URL}/purchaseorderd/${params}`,
-					detailDataUpdate.map((detail) => ({
-						...detail,
-						materialCode: detail.materialCode,
-						info: detail.info,
-						unit: detail.unit,
-						qty: detail.qty,
-						price: detail.price,
-						gross: detail.gross,
-						discPercent: detail.discPercent,
-						discPercent2: detail.discPercent2,
-						discPercent3: detail.discPercent3,
-						discValue: detail.discValue,
-						discNominal: detail.discNominal,
-						netto: detail.netto,
-						QtyDelivered: 0,
-						QtyWO: 0,
-					}))
-				)
-			}
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${params}`, {
+        transactionType: "",
+        supplierCode: supplierValUpdate,
+        deliveryDate: deliveryDateUpdate,
+        TOP: topUpdate,
+        discPercent: discountUpdate,
+        taxStatus: taxUpdate,
+        taxPercent: taxValUpdate,
+        currency: currencyVal,
+        exchangeRate: ExchangeRateUpdate,
+        JODocNo: JODocNoUpdate,
+        trip: "",
+        SIDocNo: "",
+        totalGross: totalGrossUpdate,
+        totalDisc: discountOutputUpdate,
+        taxValue: taxOutputUpdate,
+        totalNetto: totalNettoUpdate,
+        sendTo: sendToUpdate,
+        information: informationUpdate,
+        status: "OPEN",
+        isApproved: 0,
+        approvedBy: "",
+        approvedDate: "",
+        printCounter: 0,
+        printedBy: "",
+        printedDate: "",
+        isSalesReturn: false,
+        changedBy: response.User,
+      });
+      if (detailDataUpdate) {
+        await axios.post(
+          `${process.env.REACT_APP_API_BASE_URL}/purchaseorderd/${params}`,
+          detailDataUpdate.map((detail) => ({
+            ...detail,
+            materialCode: detail.materialCode,
+            info: detail.info,
+            unit: detail.unit,
+            qty: detail.qty,
+            price: detail.price,
+            gross: detail.gross,
+            discPercent: detail.discPercent,
+            discPercent2: detail.discPercent2,
+            discPercent3: detail.discPercent3,
+            discValue: detail.discValue,
+            discNominal: detail.discNominal,
+            netto: detail.netto,
+            QtyDelivered: 0,
+            QtyWO: 0,
+          }))
+        );
+      }
       dataFetching();
-      getPurchaseDetailByDocNo(params)
-      detailDataUpdate([])
+      getPurchaseDetailByDocNo(params);
+      detailDataUpdate([]);
       toast.success("Data Updated", {
         position: "top-center",
         autoClose: 3000,
@@ -703,9 +712,9 @@ export const PurchaseOrder = () => {
   };
 
   useEffect(() => {
-    if (getFCurrency.Currency === 'IDR') {
-      setExchangeRate(1.00);
-      setExchangeRateUpdate(1.00);
+    if (getFCurrency.Currency === "IDR") {
+      setExchangeRate(1.0);
+      setExchangeRateUpdate(1.0);
     }
   }, [getFCurrency.Currency]);
 
@@ -728,10 +737,7 @@ export const PurchaseOrder = () => {
               <tr>
                 <td className="text-right">Series: </td>
                 <td>
-                  <select
-                    onChange={(e) => setSeriesVal(e.target.value)}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  >
+                  <select onChange={(e) => setSeriesVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="" disabled selected hidden>
                       Pilih series
                     </option>
@@ -748,25 +754,14 @@ export const PurchaseOrder = () => {
               <tr>
                 <td className="text-right">Doc Date: </td>
                 <td>
-                  <input
-                    type="datetime-local"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    required
-                    min={currentDate}
-                    value={docDate}
-                    onChange={handleDocDateChange}
-                  />
+                  <input type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min={currentDate} value={docDate} onChange={handleDocDateChange} />
                 </td>
               </tr>
 
               <tr>
                 <td className="text-right">Supplier: </td>
                 <td>
-                  <select
-                    onChange={(e) => setSupplierVal(e.target.value)}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  >
+                  <select onChange={(e) => setSupplierVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="" disabled selected hidden>
                       Pilih supplier
                     </option>
@@ -784,15 +779,7 @@ export const PurchaseOrder = () => {
               <tr>
                 <td className="text-right">Delivery Date: </td>
                 <td>
-                  <input
-                    type="datetime-local"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    required
-                    min={docDate}
-                    value={deliveryDate}
-                    onChange={(e) => setDeliveryDate(e.target.value)}
-                  />
+                  <input type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min={docDate} value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} />
                 </td>
               </tr>
 
@@ -800,7 +787,9 @@ export const PurchaseOrder = () => {
                 <td className="text-right">Job Order No: </td>
                 <td>
                   <select
-                    onChange={(e) => { setJODocNo(e.target.value) }}
+                    onChange={(e) => {
+                      setJODocNo(e.target.value);
+                    }}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
                     <option value="" disabled selected hidden>
@@ -849,9 +838,8 @@ export const PurchaseOrder = () => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="1.00"
                     value={exchangeRate}
-
                     required
-                  // disabled
+                    // disabled
                   />
                 </td>
               </tr>
@@ -902,22 +890,13 @@ export const PurchaseOrder = () => {
               <tr>
                 <td className="text-right">Send To: </td>
                 <td>
-                  <select
-                    onChange={(e) => setSendTo(e.target.value)}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  >
+                  <select onChange={(e) => setSendTo(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="" disabled selected hidden>
                       Pilih
                     </option>
-                    <option value="JL. Berbek Industri 3 no 15">
-                      JL. Berbek Industri 3 no 15
-                    </option>
-                    <option value="-">
-                      -
-                    </option>
-                    <option value="-">
-                      -
-                    </option>
+                    <option value="JL. Berbek Industri 3 no 15">JL. Berbek Industri 3 no 15</option>
+                    <option value="-">-</option>
+                    <option value="-">-</option>
                   </select>
                 </td>
               </tr>
@@ -938,10 +917,7 @@ export const PurchaseOrder = () => {
               <tr>
                 <td></td>
                 <td>
-                  <button
-                    type="submit"
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-                  >
+                  <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
                     Save
                   </button>
                 </td>
@@ -955,43 +931,19 @@ export const PurchaseOrder = () => {
             <tr>
               <td className="text-right">Total Gross : </td>
               <td>
-                <input
-                  type="number"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="0.00"
-                  disabled
-                  value={totalGross}
-                />
+                <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={totalGross} />
               </td>
               <td className="text-right">Total Disc: </td>
               <td>
-                <input
-                  type="number"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="0.00"
-                  disabled
-                  value={discountOutput}
-                />
+                <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={discountOutput} />
               </td>
               <td className="text-right">Tax: </td>
               <td>
-                <input
-                  type="number"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="0.00"
-                  disabled
-                  value={taxOutput}
-                />
+                <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={taxOutput} />
               </td>
               <td className="text-right font-bold">Total Netto: </td>
               <td>
-                <input
-                  type="text"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="0.00"
-                  disabled
-                  value={totalNetto}
-                />
+                <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={totalNetto} />
               </td>
             </tr>
             <tr>
@@ -1000,10 +952,7 @@ export const PurchaseOrder = () => {
             <tr>
               <td className="text-right">Material:</td>
               <td>
-                <select
-                  onChange={(e) => setMaterialVal(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                >
+                <select onChange={(e) => setMaterialVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option disabled selected hidden>
                     Pilih Material
                   </option>
@@ -1019,7 +968,9 @@ export const PurchaseOrder = () => {
               <td className="text-right">Info:</td>
               <td>
                 <input
-                  onChange={(e) => { setInfo(e.target.value) }}
+                  onChange={(e) => {
+                    setInfo(e.target.value);
+                  }}
                   type="text"
                   className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder=""
@@ -1029,7 +980,9 @@ export const PurchaseOrder = () => {
               <td className="text-right">Quantity:</td>
               <td>
                 <input
-                  onChange={(e) => { setQuantity(e.target.value) }}
+                  onChange={(e) => {
+                    setQuantity(e.target.value);
+                  }}
                   type="number"
                   className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder=""
@@ -1040,7 +993,9 @@ export const PurchaseOrder = () => {
               <td className="text-right">Price:</td>
               <td>
                 <input
-                  onChange={(e) => { setPrice(e.target.value) }}
+                  onChange={(e) => {
+                    setPrice(e.target.value);
+                  }}
                   type="text"
                   className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder=""
@@ -1048,7 +1003,7 @@ export const PurchaseOrder = () => {
               </td>
               <button
                 onClick={() => {
-                  addOrderDetail()
+                  addOrderDetail();
                 }}
                 type="button"
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
@@ -1060,7 +1015,9 @@ export const PurchaseOrder = () => {
               <td className="text-right">Disc Percent:</td>
               <td>
                 <input
-                  onChange={(e) => { setDetailDisc(e.target.value) }}
+                  onChange={(e) => {
+                    setDetailDisc(e.target.value);
+                  }}
                   type="number"
                   className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   min="0"
@@ -1069,7 +1026,9 @@ export const PurchaseOrder = () => {
               <td className="text-right">Disc Percent 2:</td>
               <td>
                 <input
-                  onChange={(e) => { setDetailDisc2(e.target.value) }}
+                  onChange={(e) => {
+                    setDetailDisc2(e.target.value);
+                  }}
                   type="number"
                   className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   min="0"
@@ -1078,7 +1037,9 @@ export const PurchaseOrder = () => {
               <td className="text-right">Disc Percent 3:</td>
               <td>
                 <input
-                  onChange={(e) => { setDetailDisc3(e.target.value) }}
+                  onChange={(e) => {
+                    setDetailDisc3(e.target.value);
+                  }}
                   type="number"
                   className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   min="0"
@@ -1089,40 +1050,24 @@ export const PurchaseOrder = () => {
                 <input
                   type="text"
                   className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  onChange={(e) => { setDiscValue(e.target.value) }}
+                  onChange={(e) => {
+                    setDiscValue(e.target.value);
+                  }}
                 />
               </td>
             </tr>
             <tr>
               <td className="text-right">Gross:</td>
               <td>
-                <input
-                  type="text"
-                  className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder=""
-                  disabled
-                  value={gross}
-                />
+                <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" disabled value={gross} />
               </td>
               <td className="text-right">Netto:</td>
               <td>
-                <input
-                  type="text"
-                  className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder=""
-                  disabled
-                  value={Netto}
-                />
+                <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" disabled value={Netto} />
               </td>
               <td className="text-right">Disc Nominal:</td>
               <td>
-                <input
-                  type="number"
-                  className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  value={discNominal}
-                  disabled
-                  min="0"
-                />
+                <input type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value={discNominal} disabled min="0" />
               </td>
             </tr>
           </table>
@@ -1308,13 +1253,8 @@ export const PurchaseOrder = () => {
             <tbody>
               {getData.map((res, key) => {
                 return (
-                  <tr
-                    key={key}
-                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                  >
-                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      {res.DocNo}
-                    </td>
+                  <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{res.DocNo}</td>
                     <td className="px-6 py-4">{res.Series}</td>
                     <td className="px-6 py-4">{res.TrasactionType}</td>
                     <td className="px-6 py-4">{res.DocDate}</td>
@@ -1342,30 +1282,20 @@ export const PurchaseOrder = () => {
                     <td className="px-6 py-4">{res.PrintCounter}</td>
                     <td className="px-6 py-4">{res.PrintedBy}</td>
                     <td className="px-6 py-4">{res.PrintedDate}</td>
-                    <td className="px-6 py-4">
-                      {res.IsSalesReturn === true ? "true" : "false"}
-                    </td>
+                    <td className="px-6 py-4">{res.IsSalesReturn === true ? "true" : "false"}</td>
                     <td className="px-6 py-4">{res.CreatedBy}</td>
-                    <td className="px-6 py-4">
-                      {dateConverter(res.CreatedDate)}
-                    </td>
+                    <td className="px-6 py-4">{dateConverter(res.CreatedDate)}</td>
                     <td className="px-6 py-4">{res.ChangedBy}</td>
-                    <td className="px-6 py-4">
-                      {dateConverter(res.ChangedDate)}
-                    </td>
+                    <td className="px-6 py-4">{dateConverter(res.ChangedDate)}</td>
                     <td>
-                      <button
-                        onClick={() => deleteData(res.DocNo)}
-                        type="button"
-                        className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                      >
+                      <button onClick={() => deleteData(res.DocNo)} type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
                         Delete
                       </button>
                       <button
                         onClick={() => {
-                          setModalData(res)
-                          setModal(true)
-                          getPurchaseDetailByDocNo(res.DocNo)
+                          setModalData(res);
+                          setModal(true);
+                          getPurchaseDetailByDocNo(res.DocNo);
                         }}
                         type="button"
                         className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
@@ -1379,231 +1309,205 @@ export const PurchaseOrder = () => {
             </tbody>
           </table>
         </div>
-        <div className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${modal ? 'block' : 'hidden'}`}>
+        <div className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${modal ? "block" : "hidden"}`}>
           <div className="space-y-6">
             <div className="text-2xl font-bold mb-4 ">DocNo: {modalData.DocNo}</div>
             <button
               onClick={() => {
-                closeModal()
+                closeModal();
               }}
-              className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none">
+              className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none"
+            >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
             <div className="flex justify-start items-center">
-                <table className="border-separate border-spacing-2 ">
-                  <tr>
-                    <td className="text-right">Series: </td>
-                    <td>
-                      <select
-                        onChange={(e) => setSeriesVal(e.target.value)}
-                        disabled
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      >
-                        <option value="" disabled selected hidden>
-                          {modalData.Series}
-                        </option>
-                      </select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="text-right">Doc Date: </td>
-                    <td>
-                      <input
-                        type="datetime-local"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder=""
-                        disabled
-                        min={currentDate}
-                        value={modalData.DocDate + "T00:00"}
-                      />
-                    </td>
-                  </tr>
+              <table className="border-separate border-spacing-2 ">
+                <tr>
+                  <td className="text-right">Series: </td>
+                  <td>
+                    <select onChange={(e) => setSeriesVal(e.target.value)} disabled className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value="" disabled selected hidden>
+                        {modalData.Series}
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="text-right">Doc Date: </td>
+                  <td>
+                    <input type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" disabled min={currentDate} value={modalData.DocDate + "T00:00"} />
+                  </td>
+                </tr>
 
-                  <tr>
-                    <td className="text-right">Supplier: </td>
-                    <td>
-                      <select
-                        onChange={(e) => setSupplierValUpdate(e.target.value)}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      >
-                        <option value="" disabled selected hidden>
-                          {modalData.SupplierCode}
-                        </option>
-                        {getMySupplier.map((res, key) => {
-                          return (
-                            <option value={res.Code} key={key}>
-                              {res.Code}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </td>
-                  </tr>
+                <tr>
+                  <td className="text-right">Supplier: </td>
+                  <td>
+                    <select onChange={(e) => setSupplierValUpdate(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value="" disabled selected hidden>
+                        {modalData.SupplierCode}
+                      </option>
+                      {getMySupplier.map((res, key) => {
+                        return (
+                          <option value={res.Code} key={key}>
+                            {res.Code}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </td>
+                </tr>
 
-                  <tr>
-                    <td className="text-right">Delivery Date: </td>
-                    <td>
-                      <input
-                        type="datetime-local"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder=""
-                        min={docDate}
-                        value={deliveryDateUpdate || modalData.DeliveryDate + 'T00:00'}
-                        onChange={(e) => setDeliveryDateUpdate(e.target.value)}
-                      />
-                    </td>
-                  </tr>
+                <tr>
+                  <td className="text-right">Delivery Date: </td>
+                  <td>
+                    <input type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" min={docDate} value={deliveryDateUpdate || modalData.DeliveryDate + "T00:00"} onChange={(e) => setDeliveryDateUpdate(e.target.value)} />
+                  </td>
+                </tr>
 
-                  <tr>
-                    <td className="text-right">Job Order No: </td>
-                    <td>
-                      <select
-                        onChange={(e) => { setJODocNoUpdate(e.target.value) }}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      >
-                        <option value="" disabled selected hidden>
-                          {modalData.JODocNo}
-                        </option>
-                        {GetMyjobOrder.map((res, key) => {
-                          return (
-                            <option value={res.Code} key={key}>
-                              {res.Code}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </td>
-                  </tr>
+                <tr>
+                  <td className="text-right">Job Order No: </td>
+                  <td>
+                    <select
+                      onChange={(e) => {
+                        setJODocNoUpdate(e.target.value);
+                      }}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                      <option value="" disabled selected hidden>
+                        {modalData.JODocNo}
+                      </option>
+                      {GetMyjobOrder.map((res, key) => {
+                        return (
+                          <option value={res.Code} key={key}>
+                            {res.Code}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </td>
+                </tr>
 
-                  <tr>
-                    <td className="text-right">Term Of Payment: </td>
-                    <td>
-                      <input
-                        onChange={(e) => {
-                          setTopUpdate(e.target.value);
-                        }}
-                        type="number"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder={modalData.TOP}
-                      />
-                    </td>
-                    <td>Days</td>
-                  </tr>
-                  <tr>
-                    <td className="text-right">Currency: </td>
-                    <td>
-                      <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option>{getFCurrency.Currency ? getFCurrency.Currency : modalData.Currency}</option>
-                      </select>
-                    </td>
-                    <td className="text-right">Exchange Rate: </td>
-                    <td>
-                      <input
-                        onChange={(e) => {
-                          setExchangeRateUpdate(e.target.value);
-                        }}
-                        type="text"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder={modalData.ExchangeRate}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <select
-                        onChange={(e) => {
-                          setTaxUpdate(e.target.value);
-                        }}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      >
-                        <option disabled selected hidden>
-                          {taxUpdate}
-                        </option>
-                        <option value="No">No</option>
-                        <option value="Include">Include</option>
-                        <option value="Exclude">Exclude</option>
-                      </select>
-                    </td>
-                    <td>
-                      <input
-                        onChange={(e) => {
-                          setTaxValUpdate(e.target.value);
-                        }}
-                        type="number"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="10.00"
-                        value={taxValUpdate}
-                      />
-                    </td>
-                    <td> % Tax</td>
-                  </tr>
-                  <tr>
-                    <td className="text-right">Discount: </td>
-                    <td>
-                      <input
-                        onChange={(e) => {
-                          setDiscountUpdate(e.target.value);
-                        }}
-                        type="number"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="0.00"
-                        value={discountUpdate}
-                      />
-                    </td>
-                    <td> %</td>
-                  </tr>
+                <tr>
+                  <td className="text-right">Term Of Payment: </td>
+                  <td>
+                    <input
+                      onChange={(e) => {
+                        setTopUpdate(e.target.value);
+                      }}
+                      type="number"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder={modalData.TOP}
+                    />
+                  </td>
+                  <td>Days</td>
+                </tr>
+                <tr>
+                  <td className="text-right">Currency: </td>
+                  <td>
+                    <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option>{getFCurrency.Currency ? getFCurrency.Currency : modalData.Currency}</option>
+                    </select>
+                  </td>
+                  <td className="text-right">Exchange Rate: </td>
+                  <td>
+                    <input
+                      onChange={(e) => {
+                        setExchangeRateUpdate(e.target.value);
+                      }}
+                      type="text"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder={modalData.ExchangeRate}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <select
+                      onChange={(e) => {
+                        setTaxUpdate(e.target.value);
+                      }}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                      <option disabled selected hidden>
+                        {taxUpdate}
+                      </option>
+                      <option value="No">No</option>
+                      <option value="Include">Include</option>
+                      <option value="Exclude">Exclude</option>
+                    </select>
+                  </td>
+                  <td>
+                    <input
+                      onChange={(e) => {
+                        setTaxValUpdate(e.target.value);
+                      }}
+                      type="number"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="10.00"
+                      value={taxValUpdate}
+                    />
+                  </td>
+                  <td> % Tax</td>
+                </tr>
+                <tr>
+                  <td className="text-right">Discount: </td>
+                  <td>
+                    <input
+                      onChange={(e) => {
+                        setDiscountUpdate(e.target.value);
+                      }}
+                      type="number"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="0.00"
+                      value={discountUpdate}
+                    />
+                  </td>
+                  <td> %</td>
+                </tr>
 
-                  <tr>
-                    <td className="text-right">Send To: </td>
-                    <td>
-                      <select
-                        onChange={(e) => setSendToUpdate(e.target.value)}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      >
-                        <option value="" disabled selected hidden>
-                          {modalData.SendTo}
-                        </option>
-                        <option value="JL. Berbek Industri 3 no 15">
-                          JL. Berbek Industri 3 no 15
-                        </option>
-                        <option value="-">
-                          -
-                        </option>
-                        <option value="-">
-                          -
-                        </option>
-                      </select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="text-right">Information:</td>
-                    <td>
-                      <input
-                        onChange={(e) => {
-                          setInformationUpdate(e.target.value);
-                        }}
-                        type="text"
-                        className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder={modalData.Information}
-
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td>
-                      <button
-                        type="button"
-                        onClick={()=>{updateData(modalData.DocNo)}}
-                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-                      >
-                        Change
-                      </button>
-                    </td>
-                  </tr>
-                </table>
+                <tr>
+                  <td className="text-right">Send To: </td>
+                  <td>
+                    <select onChange={(e) => setSendToUpdate(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value="" disabled selected hidden>
+                        {modalData.SendTo}
+                      </option>
+                      <option value="JL. Berbek Industri 3 no 15">JL. Berbek Industri 3 no 15</option>
+                      <option value="-">-</option>
+                      <option value="-">-</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="text-right">Information:</td>
+                  <td>
+                    <input
+                      onChange={(e) => {
+                        setInformationUpdate(e.target.value);
+                      }}
+                      type="text"
+                      className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder={modalData.Information}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateData(modalData.DocNo);
+                      }}
+                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+                    >
+                      Change
+                    </button>
+                  </td>
+                </tr>
+              </table>
             </div>
 
             <div className="flex justify-between items-start">
@@ -1611,43 +1515,19 @@ export const PurchaseOrder = () => {
                 <tr>
                   <td className="text-right">Total Gross : </td>
                   <td>
-                    <input
-                      type="number"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="0.00"
-                      disabled
-                      value={totalGrossUpdate}
-                    />
+                    <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={totalGrossUpdate} />
                   </td>
                   <td className="text-right">Total Disc: </td>
                   <td>
-                    <input
-                      type="number"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="0.00"
-                      disabled
-                      value={discountOutputUpdate}
-                    />
+                    <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={discountOutputUpdate} />
                   </td>
                   <td className="text-right">Tax: </td>
                   <td>
-                    <input
-                      type="number"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="0.00"
-                      disabled
-                      value={taxOutputUpdate}
-                    />
+                    <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={taxOutputUpdate} />
                   </td>
                   <td className="text-right font-bold">Total Netto: </td>
                   <td>
-                    <input
-                      type="text"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="0.00"
-                      disabled
-                      value={totalNettoUpdate}
-                    />
+                    <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={totalNettoUpdate} />
                   </td>
                 </tr>
                 <tr>
@@ -1656,10 +1536,7 @@ export const PurchaseOrder = () => {
                 <tr>
                   <td className="text-right">Material:</td>
                   <td>
-                    <select
-                      onChange={(e) => setMaterialValUpdate(e.target.value)}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    >
+                    <select onChange={(e) => setMaterialValUpdate(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                       <option disabled selected hidden>
                         Pilih Material
                       </option>
@@ -1675,7 +1552,9 @@ export const PurchaseOrder = () => {
                   <td className="text-right">Info:</td>
                   <td>
                     <input
-                      onChange={(e) => { setInfoUpdate(e.target.value) }}
+                      onChange={(e) => {
+                        setInfoUpdate(e.target.value);
+                      }}
                       type="text"
                       className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder=""
@@ -1685,7 +1564,9 @@ export const PurchaseOrder = () => {
                   <td className="text-right">Quantity:</td>
                   <td>
                     <input
-                      onChange={(e) => { setQuantityUpdate(e.target.value) }}
+                      onChange={(e) => {
+                        setQuantityUpdate(e.target.value);
+                      }}
                       type="number"
                       className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder=""
@@ -1695,7 +1576,9 @@ export const PurchaseOrder = () => {
                   <td className="text-right">Price:</td>
                   <td>
                     <input
-                      onChange={(e) => { setPriceUpdate(e.target.value) }}
+                      onChange={(e) => {
+                        setPriceUpdate(e.target.value);
+                      }}
                       type="number"
                       className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder=""
@@ -1703,7 +1586,7 @@ export const PurchaseOrder = () => {
                   </td>
                   <button
                     onClick={() => {
-                      addOrderDetailUpdate()
+                      addOrderDetailUpdate();
                     }}
                     type="button"
                     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
@@ -1715,7 +1598,9 @@ export const PurchaseOrder = () => {
                   <td className="text-right">Disc Percent:</td>
                   <td>
                     <input
-                      onChange={(e) => { setDetailDiscUpdate(e.target.value) }}
+                      onChange={(e) => {
+                        setDetailDiscUpdate(e.target.value);
+                      }}
                       type="number"
                       className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       min="0"
@@ -1724,7 +1609,9 @@ export const PurchaseOrder = () => {
                   <td className="text-right">Disc Percent 2:</td>
                   <td>
                     <input
-                      onChange={(e) => { setDetailDisc2Update(e.target.value) }}
+                      onChange={(e) => {
+                        setDetailDisc2Update(e.target.value);
+                      }}
                       type="number"
                       className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       min="0"
@@ -1733,7 +1620,9 @@ export const PurchaseOrder = () => {
                   <td className="text-right">Disc Percent 3:</td>
                   <td>
                     <input
-                      onChange={(e) => { setDetailDisc3Update(e.target.value) }}
+                      onChange={(e) => {
+                        setDetailDisc3Update(e.target.value);
+                      }}
                       type="number"
                       className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       min="0"
@@ -1744,40 +1633,24 @@ export const PurchaseOrder = () => {
                     <input
                       type="text"
                       className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      onChange={(e) => { setDiscValueUpdate(e.target.value) }}
+                      onChange={(e) => {
+                        setDiscValueUpdate(e.target.value);
+                      }}
                     />
                   </td>
                 </tr>
                 <tr>
                   <td className="text-right">Gross:</td>
                   <td>
-                    <input
-                      type="text"
-                      className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder=""
-                      disabled
-                      value={grossUpdate}
-                    />
+                    <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" disabled value={grossUpdate} />
                   </td>
                   <td className="text-right">Netto:</td>
                   <td>
-                    <input
-                      type="text"
-                      className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder=""
-                      disabled
-                      value={NettoUpdate}
-                    />
+                    <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" disabled value={NettoUpdate} />
                   </td>
                   <td className="text-right">Disc Nominal:</td>
                   <td>
-                    <input
-                      type="number"
-                      className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      value={discNominalUpdate}
-                      disabled
-                      min="0"
-                    />
+                    <input type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value={discNominalUpdate} disabled min="0" />
                   </td>
                 </tr>
               </table>
@@ -1853,7 +1726,7 @@ export const PurchaseOrder = () => {
               </table>
             </div>
             <div>
-              <table className='border-separate border-spacing-2'>
+              <table className="border-separate border-spacing-2">
                 <tr>
                   <td className="text-right">Material:</td>
                   <td>
@@ -1866,26 +1739,57 @@ export const PurchaseOrder = () => {
                           <option key={key} value={res.Code}>
                             {res.Code}
                           </option>
-                        )
+                        );
                       })}
                     </select>
                   </td>
                   <td className="text-right">Info:</td>
                   <td>
-                    <input onChange={(e) => { setInfoChange(e.target.value) }} type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={infoChange} />
+                    <input
+                      onChange={(e) => {
+                        setInfoChange(e.target.value);
+                      }}
+                      type="text"
+                      className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder=""
+                      value={infoChange}
+                    />
                   </td>
                   <td className="text-right">Quantity:</td>
                   <td>
-                    <input value={quantityChange} onChange={(e) => { setQuantityChange(e.target.value) }} type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min="0" />
+                    <input
+                      value={quantityChange}
+                      onChange={(e) => {
+                        setQuantityChange(e.target.value);
+                      }}
+                      type="number"
+                      className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder=""
+                      required
+                      min="0"
+                    />
                   </td>
                   <td className="text-right">Price:</td>
                   <td>
-                    <input value={priceChange} onChange={(e) => { setPriceChange(e.target.value) }} min="0" type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+                    <input
+                      value={priceChange}
+                      onChange={(e) => {
+                        setPriceChange(e.target.value);
+                      }}
+                      min="0"
+                      type="number"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder=""
+                      required
+                    />
                   </td>
                   <button
-                    onClick={()=>{changePurchaseDetailData(purchaseDetailDocNo,purchaseDetailKey)}}
+                    onClick={() => {
+                      changePurchaseDetailData(purchaseDetailDocNo, purchaseDetailKey);
+                    }}
                     type="button"
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+                  >
                     Change
                   </button>
                 </tr>
@@ -1893,7 +1797,9 @@ export const PurchaseOrder = () => {
                   <td className="text-right">Disc Percent:</td>
                   <td>
                     <input
-                      onChange={(e) => { setDetailDiscChange(e.target.value) }}
+                      onChange={(e) => {
+                        setDetailDiscChange(e.target.value);
+                      }}
                       type="number"
                       className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       min="0"
@@ -1903,7 +1809,9 @@ export const PurchaseOrder = () => {
                   <td className="text-right">Disc Percent 2:</td>
                   <td>
                     <input
-                      onChange={(e) => { setDetailDisc2Change(e.target.value) }}
+                      onChange={(e) => {
+                        setDetailDisc2Change(e.target.value);
+                      }}
                       type="number"
                       className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       min="0"
@@ -1913,7 +1821,9 @@ export const PurchaseOrder = () => {
                   <td className="text-right">Disc Percent 3:</td>
                   <td>
                     <input
-                      onChange={(e) => { setDetailDisc3Change(e.target.value) }}
+                      onChange={(e) => {
+                        setDetailDisc3Change(e.target.value);
+                      }}
                       type="number"
                       className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       min="0"
@@ -1925,7 +1835,9 @@ export const PurchaseOrder = () => {
                     <input
                       type="text"
                       className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      onChange={(e) => { setDiscValueChange(e.target.value) }}
+                      onChange={(e) => {
+                        setDiscValueChange(e.target.value);
+                      }}
                       value={discValueChange}
                     />
                   </td>
@@ -1933,39 +1845,21 @@ export const PurchaseOrder = () => {
                 <tr>
                   <td className="text-right">Gross:</td>
                   <td>
-                    <input
-                      type="text"
-                      className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder=""
-                      disabled
-                      value={grossChange}
-                    />
+                    <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" disabled value={grossChange} />
                   </td>
                   <td className="text-right">Netto:</td>
                   <td>
-                    <input
-                      type="text"
-                      className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder=""
-                      disabled
-                      value={NettoChange}
-                    />
+                    <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" disabled value={NettoChange} />
                   </td>
                   <td className="text-right">Disc Nominal:</td>
                   <td>
-                    <input
-                      type="number"
-                      className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      value={discNominalChange}
-                      disabled
-                      min="0"
-                    />
+                    <input type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value={discNominalChange} disabled min="0" />
                   </td>
                 </tr>
               </table>
             </div>
             <div className="relative overflow-x-auto">
-              <div className='text-xl font-bold'>Detail:</div>
+              <div className="text-xl font-bold">Detail:</div>
               <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
@@ -2020,10 +1914,11 @@ export const PurchaseOrder = () => {
                         <td className="px-6 py-4">
                           <button
                             onClick={() => {
-                              sendDetailToInput(res, key)
+                              sendDetailToInput(res, key);
                             }}
                             type="button"
-                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
+                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+                          >
                             Select
                           </button>
                         </td>
@@ -2041,12 +1936,11 @@ export const PurchaseOrder = () => {
                         <td className="px-6 py-4">{res.DiscNominal}</td>
                         <td className="px-6 py-4">{res.Netto}</td>
                       </tr>
-                    )
+                    );
                   })}
                 </tbody>
               </table>
-              <div>
-              </div>
+              <div></div>
             </div>
           </div>
         </div>
@@ -2055,5 +1949,3 @@ export const PurchaseOrder = () => {
     </div>
   );
 };
-
-
