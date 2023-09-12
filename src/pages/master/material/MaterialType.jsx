@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import { useMe } from '../../../hooks/API/useMe';
+import React, { useEffect, useState } from "react";
+import { useMe } from "../../../hooks/API/useMe";
 import { toast, ToastContainer } from "react-toastify";
-import axios from 'axios';
-import { dateConverter } from '../../../components/dateConverter';
+import axios from "axios";
+import { dateConverter } from "../../../components/dateConverter";
 
 export const MaterialType = () => {
   const { fetchMe, response } = useMe();
@@ -10,16 +10,16 @@ export const MaterialType = () => {
   const [name, setName] = useState("");
   const [waste, setWaste] = useState(false);
   const [getData, setGetData] = useState([]);
-  const [modalData, setModalData] = useState([])
-  const [modal, setModal] = useState(false)
+  const [modalData, setModalData] = useState([]);
+  const [modal, setModal] = useState(false);
   const [nameUpdate, setNameUpdate] = useState("");
   const [wasteUpdate, setWasteUpdate] = useState(false);
 
   const closeModal = () => {
-    setModal(false)
-    setNameUpdate("")
-    setWasteUpdate(false)
-  }
+    setModal(false);
+    setNameUpdate("");
+    setWasteUpdate(false);
+  };
 
   useEffect(() => {
     fetchMe();
@@ -27,37 +27,64 @@ export const MaterialType = () => {
 
   const dataFetching = async () => {
     try {
-      const data = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/materialtype`
-      );
+      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/materialtype`);
       setGetData(data.data);
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
 
   const deleteData = async (params) => {
     try {
-      await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/materialtype/${params}`
-      );
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/materialtype/${params}`);
       dataFetching();
       toast.success("Data Deleted", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
       });
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
 
   const updateData = async (params) => {
     try {
-      await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/materialtype/${params}`,
-        {
-          name: nameUpdate,
-          isWaste: wasteUpdate,
-          changedBy: response.User,
-        }
-      );
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/materialtype/${params}`, {
+        name: nameUpdate,
+        isWaste: wasteUpdate,
+        changedBy: response.User,
+      });
       dataFetching();
       toast.success("Data Updated", {
         position: "top-center",
@@ -65,24 +92,20 @@ export const MaterialType = () => {
         hideProgressBar: true,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-
-  }
+  };
 
   const submitClick = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/materialtype`,
-        {
-          code: code,
-          name: name,
-          isWaste: waste,
-          createdBy: response.User,
-          changedBy: response.User,
-        }
-      );
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/materialtype`, {
+        code: code,
+        name: name,
+        isWaste: waste,
+        createdBy: response.User,
+        changedBy: response.User,
+      });
       dataFetching();
       toast.success("Data Saved", {
         position: "top-center",
@@ -95,9 +118,7 @@ export const MaterialType = () => {
         autoClose: 3000,
         hideProgressBar: false,
       });
-
     }
-
   };
 
   useEffect(() => {
@@ -106,33 +127,58 @@ export const MaterialType = () => {
 
   return (
     <div>
-      <div className='text-2xl font-bold mb-4'>Material Type</div>
+      <div className="text-2xl font-bold mb-4">Material Type</div>
       <form onSubmit={submitClick}>
-        <table className='border-separate border-spacing-2 w-1/2'>
+        <table className="border-separate border-spacing-2 w-1/2">
           <tr>
-            <td className='text-right'>Code: </td>
+            <td className="text-right">Code: </td>
             <td>
-              <input onChange={(e) => { setCode(e.target.value) }} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[20%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required />
+              <input
+                onChange={(e) => {
+                  setCode(e.target.value);
+                }}
+                type="text"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[20%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Isi kode"
+                required
+              />
             </td>
           </tr>
           <tr>
-            <td className='text-right'>Name: </td>
+            <td className="text-right">Name: </td>
             <td>
-              <input onChange={(e) => { setName(e.target.value) }} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi nama" required />
+              <input
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
+                type="text"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Isi nama"
+                required
+              />
             </td>
           </tr>
           <tr>
-            <td className='float-right'>
-              <input onChange={(e) => { setWaste(e.target.checked) }} type="checkbox" name="" id="" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" />
+            <td className="float-right">
+              <input
+                onChange={(e) => {
+                  setWaste(e.target.checked);
+                }}
+                type="checkbox"
+                name=""
+                id=""
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder=""
+              />
             </td>
-            <td className=''>
-              Waste
-            </td>
+            <td className="">Waste</td>
           </tr>
           <tr>
             <td></td>
             <td>
-              <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">Save</button>
+              <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
+                Save
+              </button>
             </td>
           </tr>
         </table>
@@ -175,78 +221,103 @@ export const MaterialType = () => {
                   <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     {res.Code}
                   </th>
+                  <td className="px-6 py-4">{res.Name}</td>
+                  <td className="px-6 py-4">{res.IsWaste === true ? "True" : "False"}</td>
+                  <td className="px-6 py-4">{res.CreatedBy}</td>
+                  <td className="px-6 py-4">{dateConverter(res.CreatedDate)}</td>
+                  <td className="px-6 py-4">{res.ChangedBy}</td>
+                  <td className="px-6 py-4">{dateConverter(res.ChangedDate)}</td>
                   <td className="px-6 py-4">
-                    {res.Name}
-                  </td>
-                  <td className="px-6 py-4">
-                    {res.IsWaste === true ? "True" : "False"}
-                  </td>
-                  <td className="px-6 py-4">
-                    {res.CreatedBy}
-                  </td>
-                  <td className="px-6 py-4">
-                    {dateConverter(res.CreatedDate)}
-                  </td>
-                  <td className="px-6 py-4">
-                    {res.ChangedBy}
-                  </td>
-                  <td className="px-6 py-4">
-                    {dateConverter(res.ChangedDate)}
-                  </td>
-                  <td className="px-6 py-4">
-                    <button onClick={() => { deleteData(res.Code) }} type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Delete</button>
                     <button
                       onClick={() => {
-                        setModalData(res)
-                        setWasteUpdate(res.IsWaste)
-                        setModal(true)
+                        deleteData(res.Code);
                       }}
-                      type="button" className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">Update</button>
+                      type="button"
+                      className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      onClick={() => {
+                        setModalData(res);
+                        setWasteUpdate(res.IsWaste);
+                        setModal(true);
+                      }}
+                      type="button"
+                      className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
+                    >
+                      Update
+                    </button>
                   </td>
                 </tr>
-              )
+              );
             })}
           </tbody>
         </table>
-        <div>
-        </div>
+        <div></div>
       </div>
-      <div className={`flex justify-center top-0 left-0 fixed items-center w-screen h-screen z-[5] ${modal ? 'block' : 'hidden'}`}>
+      <div className={`flex justify-center top-0 left-0 fixed items-center w-screen h-screen z-[5] ${modal ? "block" : "hidden"}`}>
         <div className={`bg-slate-50 fixed rounded-lg border border-black overflow-y-scroll p-5`}>
           <div className="space-y-6">
             <div className="text-2xl font-bold mb-4 ">Code: {modalData.Code}</div>
             <button
               onClick={() => {
-                closeModal()
+                closeModal();
               }}
-              className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none">
+              className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none"
+            >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
             <div className="w-[75%]">
-              <table className='border-separate border-spacing-2'>
+              <table className="border-separate border-spacing-2">
                 <tr>
-                  <td className='text-right'>Name: </td>
+                  <td className="text-right">Name: </td>
                   <td>
-                    <input placeholder={modalData.Name} onChange={(e) => { setNameUpdate(e.target.value) }} type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required value={nameUpdate} />
+                    <input
+                      placeholder={modalData.Name}
+                      onChange={(e) => {
+                        setNameUpdate(e.target.value);
+                      }}
+                      type="text"
+                      className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      required
+                      value={nameUpdate}
+                    />
                   </td>
                 </tr>
                 <tr>
-                  <td className='float-right'>
-                    <input onChange={(e) => { setWasteUpdate(e.target.checked) }} type="checkbox" name="" id="" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" checked={wasteUpdate} placeholder="" />
+                  <td className="float-right">
+                    <input
+                      onChange={(e) => {
+                        setWasteUpdate(e.target.checked);
+                      }}
+                      type="checkbox"
+                      name=""
+                      id=""
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      checked={wasteUpdate}
+                      placeholder=""
+                    />
                   </td>
-                  <td className=''>
-                    Waste
-                  </td>
+                  <td className="">Waste</td>
                 </tr>
               </table>
-              <button onClick={() => { updateData(modalData.Code) }} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">Update</button>
+              <button
+                onClick={() => {
+                  updateData(modalData.Code);
+                }}
+                type="button"
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+              >
+                Update
+              </button>
             </div>
           </div>
         </div>
       </div>
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
     </div>
-  )
-}
+  );
+};

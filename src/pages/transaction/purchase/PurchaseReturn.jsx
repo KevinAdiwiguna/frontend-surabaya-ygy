@@ -1,36 +1,35 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { useMe } from "../../../hooks/API/useMe";
-import { dateConverter } from '../../../components/dateConverter';
-import { toast, ToastContainer } from 'react-toastify'
+import { dateConverter } from "../../../components/dateConverter";
+import { toast, ToastContainer } from "react-toastify";
 
 export const PurchaseReturn = () => {
-
   const { fetchMe, response } = useMe();
-  const currentDate = new Date().toISOString().slice(0, 16)
+  const currentDate = new Date().toISOString().slice(0, 16);
   const [getData, setGetData] = useState([]);
   const [getMySeries, setGetSeries] = useState([]);
   const [series, setSeries] = useState("");
   const [getMyMaterial, setGetMaterial] = useState([]);
-  const [getMyMaterialDetail, setGetMyMaterialDetail] = useState([])
+  const [getMyMaterialDetail, setGetMyMaterialDetail] = useState([]);
   const [materialVal, setMaterialVal] = useState("");
-  const [info, setInfo] = useState("")
+  const [info, setInfo] = useState("");
   const [qty, setQty] = useState("");
-  const [requiredDate, setRequiredDate] = useState("")
-  const [detailData, setDetailData] = useState([])
-  const [GetMyjobOrder, setGetJobOrder] = useState([])
-  const [getMyDepartment, setGetDepartment] = useState([])
-  const [docDate, setDocDate] = useState("")
-  const [JODocNo, setJODocNo] = useState("")
-  const [department, setDepartment] = useState("")
-  const [information, setInformation] = useState("")
-  const [modalData, setModalData] = useState([])
-  const [modal, setModal] = useState(false)
-  const [getPurchaseDetail, setGetPurchaseDetail] = useState([])
-  const [getPurchaseDetailwew, setGetPurchaseDetailwew] = useState([])
+  const [requiredDate, setRequiredDate] = useState("");
+  const [detailData, setDetailData] = useState([]);
+  const [GetMyjobOrder, setGetJobOrder] = useState([]);
+  const [getMyDepartment, setGetDepartment] = useState([]);
+  const [docDate, setDocDate] = useState("");
+  const [JODocNo, setJODocNo] = useState("");
+  const [department, setDepartment] = useState("");
+  const [information, setInformation] = useState("");
+  const [modalData, setModalData] = useState([]);
+  const [modal, setModal] = useState(false);
+  const [getPurchaseDetail, setGetPurchaseDetail] = useState([]);
+  const [getPurchaseDetailwew, setGetPurchaseDetailwew] = useState([]);
   const [detailKey, setDetailKey] = useState(0);
   const [docNoChange, setDocNoChange] = useState(0);
-  
+
   // Newly added state variables
   const [JODocNoUpdate, setJODocNoUpdate] = useState("");
   const [departmentUpdate, setDepartmentUpdate] = useState("");
@@ -42,27 +41,42 @@ export const PurchaseReturn = () => {
   const [infoUpdate, setInfoUpdate] = useState("");
   const [qtyUpdate, setQtyUpdate] = useState("");
   const [requiredDateUpdate, setRequiredDateUpdate] = useState("");
-  const [detailDataUpdate, setDetailDataUpdate] = useState([])
+  const [detailDataUpdate, setDetailDataUpdate] = useState([]);
   const [materialValChange, setMaterialValChange] = useState("");
   const [infoChange, setInfoChange] = useState("");
   const [qtyChange, setQtyChange] = useState("");
   const [requiredDateChange, setRequiredDateChange] = useState("");
 
   const generateDocDate = () => {
-    const today = new Date(docDate)
-    const year = today.getFullYear().toString().substring(2)
-    const month = (today.getMonth() + 1).toString().padStart(2, '0')
-    const day = today.getDate().toString().padStart(2, '0')
-    return year + month + day
-  }
+    const today = new Date(docDate);
+    const year = today.getFullYear().toString().substring(2);
+    const month = (today.getMonth() + 1).toString().padStart(2, "0");
+    const day = today.getDate().toString().padStart(2, "0");
+    return year + month + day;
+  };
 
   const dataFetching = async () => {
     try {
-      const data = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/purchasereturnh`
-      );
+      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchasereturnh`);
       setGetData(data.data);
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
 
   useEffect(() => {
@@ -71,9 +85,7 @@ export const PurchaseReturn = () => {
 
   const deleteData = async (params) => {
     try {
-      await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${params}`
-      );
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${params}`);
       dataFetching();
       toast.success("Data Deleted", {
         position: "top-center",
@@ -94,7 +106,7 @@ export const PurchaseReturn = () => {
   const submitClick = async (e) => {
     e.preventDefault();
     if (!detailData) {
-      return
+      return;
     }
     try {
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/purchasereturnh`, {
@@ -108,22 +120,22 @@ export const PurchaseReturn = () => {
         status: "OPEN",
         createdBy: response.User,
         changedBy: response.User,
-        PurchaseRequestd: detailData
-      })
-      dataFetching()
-      toast.success('Data Created', {
-        position: 'top-center',
+        PurchaseRequestd: detailData,
+      });
+      dataFetching();
+      toast.success("Data Created", {
+        position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
-      })
+      });
     } catch (error) {
-      toast.warn('Data Sudah Ada', {
-        position: 'top-center',
+      toast.warn("Data Sudah Ada", {
+        position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
-      })
+      });
     }
-  }
+  };
 
   return (
     <div>
@@ -140,38 +152,44 @@ export const PurchaseReturn = () => {
                     Pilih series
                   </option>
                   {getMySeries.map((res, key) => {
-                      return (
-                        <option value={res.Series} key={key}>
-                          {res.Series}
-                        </option>
-                      )
-                    })}
+                    return (
+                      <option value={res.Series} key={key}>
+                        {res.Series}
+                      </option>
+                    );
+                  })}
                 </select>
               </td>
             </tr>
             <tr>
               <td className="text-right font-bold">Doc No: </td>
               <td>
-              <select
-                    onChange={(e) => setSeriesVal(e.target.value)}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  >
-                    <option value="" disabled selected hidden>
-                      Pilih nomor dokumen
-                    </option>
-                    {getMySeries.map((res, key) => {
-                      return (
-                        <option value={res.Series} key={key}>
-                          {res.Series}
-                        </option>
-                      );
-                    })}
-                  </select>
+                <select onChange={(e) => setSeriesVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option value="" disabled selected hidden>
+                    Pilih nomor dokumen
+                  </option>
+                  {getMySeries.map((res, key) => {
+                    return (
+                      <option value={res.Series} key={key}>
+                        {res.Series}
+                      </option>
+                    );
+                  })}
+                </select>
               </td>
               <td></td>
               <td className="text-right">Doc Date: </td>
               <td>
-              <input onChange={(e) => { setDocDate(e.target.value) }} min={currentDate} type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+                <input
+                  onChange={(e) => {
+                    setDocDate(e.target.value);
+                  }}
+                  min={currentDate}
+                  type="datetime-local"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder=""
+                  required
+                />
               </td>
             </tr>
             <tr>
@@ -234,47 +252,22 @@ export const PurchaseReturn = () => {
             <tr>
               <td className="text-right">Supplier Doc No: </td>
               <td>
-                <input
-                  type="text"
-                  className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder=""
-                  required
-                />
+                <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
               </td>
               <td></td>
               <td className="text-right">Supplier Tax Number: </td>
               <td>
-                <input
-                  type="text"
-                  className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder=""
-                  required
-                />
+                <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
               </td>
             </tr>
             <tr>
               <td className="text-right">Tax No: </td>
-              <input
-                type="text"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder=""
-                required
-              />
+              <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
               <td>
-                <input
-                  type="text"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder=""
-                  required
-                />
+                <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
               </td>
               <td>
-                <input
-                  type="datetime-local"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder=""
-                  required
-                />
+                <input type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
               </td>
             </tr>
             <tr>
@@ -293,21 +286,12 @@ export const PurchaseReturn = () => {
               <td></td>
               <td className="text-right">Exchange Rate: </td>
               <td>
-                <input
-                  dir="rtl"
-                  type="number"
-                  className="bg-gray-50 border text-right border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="0.00"
-                  required
-                />
+                <input dir="rtl" type="number" className="bg-gray-50 border text-right border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" required />
               </td>
             </tr>
             <tr>
               <td>
-                <select
-                  required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                >
+                <select required className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option value="No">No</option>
                   <option value="Include">Include</option>
                   <option selected value="Exclude">
@@ -316,41 +300,19 @@ export const PurchaseReturn = () => {
                 </select>
               </td>
               <td>
-                <input
-                  type="number"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="10.00"
-                  required
-                  min="0"
-                />
+                <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="10.00" required min="0" />
               </td>
               <td>% Tax</td>
               <td className="text-right">Tax No: </td>
-              <input
-                type="text"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder=""
-                required
-              />
+              <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
               <td>
-                <input
-                  type="text"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder=""
-                  required
-                />
+                <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
               </td>
             </tr>
             <tr>
               <td className="text-right">Disc: </td>
               <td>
-                <input
-                  dir="rtl"
-                  type="number"
-                  className="bg-gray-50 border text-right border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="0.00"
-                  required
-                />
+                <input dir="rtl" type="number" className="bg-gray-50 border text-right border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" required />
               </td>
               <td>%</td>
             </tr>
@@ -359,16 +321,8 @@ export const PurchaseReturn = () => {
 
         <div className="flex ml-16 justify-start items-center mb-2 gap-3 w-full pb-10">
           <label>Information:</label>
-          <input
-            type="text"
-            className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder=""
-            required
-          />
-          <button
-            type="button"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-          >
+          <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+          <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
             Save
           </button>
         </div>
@@ -395,12 +349,7 @@ export const PurchaseReturn = () => {
             <tr>
               <td className="text-right">Status</td>
               <td>
-                <input
-                  type="text"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder=""
-                  required
-                />
+                <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
               </td>
             </tr>
           </table>
@@ -409,56 +358,31 @@ export const PurchaseReturn = () => {
               <tr>
                 <td className="text-right">Total Gross: </td>
                 <td>
-                  <input
-                    type="text"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    required
-                  />
+                  <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
                 </td>
               </tr>
               <tr>
                 <td className="text-right">Total Disc:</td>
                 <td>
-                  <input
-                    type="text"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    required
-                  />
+                  <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
                 </td>
               </tr>
               <tr>
                 <td className="text-right">Tax: </td>
                 <td>
-                  <input
-                    type="text"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    required
-                  />
+                  <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
                 </td>
               </tr>
               <tr>
                 <td className="text-right">Tax IDR:</td>
                 <td>
-                  <input
-                    type="text"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    required
-                  />
+                  <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
                 </td>
               </tr>
               <tr>
                 <td className="text-right font-black">Total Netto: </td>
                 <td>
-                  <input
-                    type="text"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    required
-                  />
+                  <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
                 </td>
               </tr>
             </table>

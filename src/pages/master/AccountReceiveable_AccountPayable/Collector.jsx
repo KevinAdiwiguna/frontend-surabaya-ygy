@@ -1,8 +1,126 @@
 import React, { useEffect, useState } from "react";
 import { useMe } from "../../../hooks/API/useMe";
-import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 import { dateConverter } from "../../../components/dateConverter";
+
+export const Modal = (params) => {
+  const { modal, setModal, updateData, response, fetchGetAllCollector } = params;
+  const [update, setUpdate] = useState({
+    Name: "",
+    Address: "",
+    City: "",
+    Phone: "",
+    Mobile: "",
+    ChangedBy: response.User,
+  });
+
+  const changeValue = (e) => {
+    setUpdate((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  console.log(update);
+
+  const onSubmitClick = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/collector`, {
+        code: updateData,
+        name: update.Name,
+        address: update.Address,
+        city: update.City,
+        phone: update.Phone,
+        mobile: update.Phone,
+        changedBy: response.User,
+      });
+      toast.success("Data Saved", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+      await fetchGetAllCollector();
+      setModal(false);
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
+  };
+
+  return (
+    <div className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${modal ? "block" : "hidden"}`}>
+      <div className="space-y-6">
+        <button
+          onClick={() => {
+            setModal(!modal);
+          }}
+          className="absolute top-5 right-4 text-gray-600 hover:text-gray-800 focus:outline-none"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <form onSubmit={onSubmitClick}>
+        <table className="border-separate border-spacing-2 w-1/2">
+          <tr>
+            <td className="text-right">Name: </td>
+            <td>
+              <input name="Name" onChange={changeValue} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+            </td>
+          </tr>
+          <tr>
+            <td className="text-right">Address: </td>
+            <td>
+              <input name="Address" onChange={changeValue} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+            </td>
+          </tr>
+          <tr>
+            <td className="text-right">City: </td>
+            <td>
+              <input onChange={changeValue} name="City" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+            </td>
+          </tr>
+
+          <td className="text-right">Phone: </td>
+          <td>
+            <input onChange={changeValue} name="Phone" type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+          </td>
+          <tr>
+            <td className="text-right">Mobile: </td>
+            <td>
+              <input name="Mobile" onChange={changeValue} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
+                Save
+              </button>
+            </td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  );
+};
 
 export const Collector = () => {
   const { fetchMe, response } = useMe();
@@ -13,6 +131,8 @@ export const Collector = () => {
   const [phone, setPhone] = useState("");
   const [mobile, setMobile] = useState("");
   const [getCollector, setCollector] = useState([]);
+  const [modal, setModal] = useState(false);
+  const [updateData, setUpdateData] = useState({});
 
   const fetchGetAllCollector = async () => {
     const reponse = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/collector`);
@@ -29,7 +149,7 @@ export const Collector = () => {
     try {
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/collector`, {
         code: code,
-        // name: name,
+        name: name,
         address: address,
         city: city,
         phone: phone,
@@ -215,8 +335,34 @@ export const Collector = () => {
                   <td className="px-6 py-4">{dateConverter(res.ChangedDate)}</td>
                   <td className="px-6 py-4">
                     <button
-                      onClick={() => {
-                        // deleteData(res.Code);
+                      onClick={async () => {
+                        try {
+                          await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/collector/${res.Code}`);
+                          toast.success("Data Deleted", {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: true,
+                          });
+
+                          fetchGetAllCollector();
+                        } catch (error) {
+                          if (error.response) {
+                            toast.error(`${error.response.data.msg}`, {
+                              position: "top-center",
+                              autoClose: 3000,
+                              hideProgressBar: true,
+                            });
+                          } else if (error.request) {
+                            console.error("Request Error:", error.request);
+                            toast.error("Network error. Please check your internet connection.", {
+                              position: "top-center",
+                              autoClose: 3000,
+                              hideProgressBar: true,
+                            });
+                          } else {
+                            console.error("Error:", error.message);
+                          }
+                        }
                       }}
                       type="button"
                       className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
@@ -225,7 +371,9 @@ export const Collector = () => {
                     </button>
                     <button
                       onClick={() => {
-                        // updateData(res.Code);
+                        setModal(true);
+                        setUpdateData(res.Code);
+                        console.log(res.Code);
                       }}
                       type="button"
                       className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
@@ -240,6 +388,7 @@ export const Collector = () => {
         </table>
         <div></div>
       </div>
+      <Modal modal={modal} setModal={setModal} updateData={updateData} response={response} fetchGetAllCollector={fetchGetAllCollector} />
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
     </div>
   );
