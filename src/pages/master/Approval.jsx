@@ -9,6 +9,7 @@ export const Approval = () => {
   const { fetchMe, response } = useMe();
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
+  const [user, setUser] = useState("");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [phone, setPhone] = useState("");
@@ -21,10 +22,10 @@ export const Approval = () => {
 
   const dataFetching = async () => {
     try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/approval`
+      const data = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/Approval`
       );
-      setGetData(res.data);
+      setGetData(data.data);
     } catch (error) {}
   };
 
@@ -45,7 +46,7 @@ export const Approval = () => {
   const submitClick = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/approval`, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/Approval`, {
         code: code,
         name: name,
         address: address,
@@ -72,7 +73,6 @@ export const Approval = () => {
 
   useEffect(() => {
     dataFetching();
-    console.log(getData);
   }, []);
 
   return (
@@ -120,7 +120,17 @@ export const Approval = () => {
           <tr>
                 <td className="text-right">User: </td>
                 <td>
-                  <select> 
+                  <select onChange={(e) => {setUser(e.target.value)}} required className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option disabled selected hidden>
+                      Pilih user
+                    </option>
+                    {/* {getUser.map((res, key) => {
+                      return (
+                        <option value={res.User} key={key}>
+                          {res.User}
+                        </option>
+                      );
+                    })} */}
                   </select>
                 </td>
               </tr>
@@ -177,7 +187,52 @@ export const Approval = () => {
               </th>
             </tr>
           </thead>
-         
+          <tbody>
+            {getData.map((res, key) => {
+              console.log(getData);
+              return (
+                <tr
+                  key={key}
+                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                >
+                  <th
+                    scope="row"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  >
+                    {res.Code}
+                  </th>
+                  <td className="px-6 py-4">{res.Name}</td>
+                  <td className="px-6 py-4">{res.Address}</td>
+                  <td className="px-6 py-4">{res.City}</td>
+                  <td className="px-6 py-4">{res.Phone}</td>
+                  <td className="px-6 py-4">{res.Mobile}</td>
+                  <td className="px-6 py-4">{res.CreatedBy}</td>
+                  <td className="px-6 py-4">
+                    {dateConverter(res.CreatedDate)}
+                  </td>
+                  <td className="px-6 py-4">{res.ChangedBy}</td>
+                  <td className="px-6 py-4">
+                    {dateConverter(res.ChangedDate)}
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => deleteData(res.Code)}
+                      type="button"
+                      className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      type="button"
+                      className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
+                    >
+                      Update
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
         </table>
         <div></div>
       </div>

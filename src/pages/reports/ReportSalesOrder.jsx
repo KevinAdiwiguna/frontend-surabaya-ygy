@@ -55,6 +55,35 @@ export const ReportSalesOrder = () => {
     const [salesDetailKey, setSalesDetailKey] = useState(0)
     const [changedPrice, setChangedPrice] = useState(0)
     const [salesDetailDocNo, setSalesDetailDocNo] = useState('')
+    const [getCustomerShipTo, setGetCustomerShipTo] = useState([]);
+    const [getCustomerTaxTo, setGetCustomerTaxTo] = useState([]);
+
+    
+  const getCustomerShipToFunc = async (params) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/customerpartner/${params}/SHIP TO`
+      );
+      setGetCustomerShipTo(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getCustomerTaxToFunc = async (params) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/customerpartner/${params}/TAX TO`
+      );
+      setGetCustomerTaxTo(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getCustomerShipToFunc(customerValUpdate);
+    getCustomerTaxToFunc(customerValUpdate);
+  }, [customerValUpdate]);
 
     const getSeries = async () => {
         try {
@@ -630,9 +659,16 @@ export const ReportSalesOrder = () => {
                                 <td className="text-right">Ship To: </td>
                                 <td>
                                     <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                        <option selected value={customerValUpdate}>
-                                            {customerValUpdate}
+                                    <option value={modalData.ShipToCode} disabled selected hidden>
+                                            {modalData.ShipToCode}
                                         </option>
+                                    {getCustomerShipTo.map((res, key) => {
+                                            return (
+                                                <option value={res.PartnerCode} key={key}>
+                                                    {res.PartnerCode}
+                                                </option>
+                                            )
+                                        })}
                                     </select>
                                 </td>
                             </tr>
@@ -640,9 +676,16 @@ export const ReportSalesOrder = () => {
                                 <td className="text-right">Tax To: </td>
                                 <td>
                                     <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                        <option selected value={customerValUpdate}>
-                                            {customerValUpdate}
+                                    <option value={modalData.TaxToCode} disabled selected hidden>
+                                            {modalData.TaxToCode}
                                         </option>
+                                    {getCustomerTaxTo.map((res, key) => {
+                                            return (
+                                                <option value={res.PartnerCode} key={key}>
+                                                    {res.PartnerCode}
+                                                </option>
+                                            )
+                                        })}
                                     </select>
                                 </td>
                             </tr>
