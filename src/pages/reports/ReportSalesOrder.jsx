@@ -37,7 +37,7 @@ export const ReportSalesOrder = () => {
     const [taxValUpdate, setTaxValUpdate] = useState(0)
     const [discountUpdate, setDiscountUpdate] = useState(0)
     const [materialValUpdate, setMaterialValUpdate] = useState('')
-    const [QuantityUpdate, setQuantityUpdate] = useState('')
+    const [QuantityUpdate, setQuantityUpdate] = useState(0)
     const [grossUpdate, setGrossUpdate] = useState(0)
     const [discountOutputUpdate, setDiscountOutputUpdate] = useState()
     const [taxOutputUpdate, setTaxOutputUpdate] = useState(0)
@@ -55,6 +55,106 @@ export const ReportSalesOrder = () => {
     const [salesDetailKey, setSalesDetailKey] = useState(0)
     const [changedPrice, setChangedPrice] = useState(0)
     const [salesDetailDocNo, setSalesDetailDocNo] = useState('')
+    const [priceByMaterial, setPriceByMaterial] = useState([]);
+    const [priceByMaterialChange, setPriceByMaterialChange] = useState([]);
+    
+  const getPriceByMaterial = async (params) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/pricematerial/${params}`);
+      setPriceByMaterial(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+ const [selectedPrice, setSelectedPrice] = useState(0);
+
+ const calculatePrice = () => {
+  const selectedMaterials = priceByMaterial.filter(item => item.MaterialCode === materialValUpdate);
+
+  const qty = parseFloat(QuantityUpdate);
+  let foundMaterial = null;
+
+  for (const material of selectedMaterials) {
+    const minQty = parseFloat(material.MinQty);
+    const maxQty = parseFloat(material.MaxQty);
+
+    if (qty >= minQty && qty <= maxQty) {
+      foundMaterial = material;
+      break
+    }
+  }
+
+  let selectedPrice = foundMaterial?.Price;
+  
+  if (!foundMaterial) {
+    selectedPrice = priceUpdate
+  }
+  
+  const totalPrice = selectedPrice * qty;
+  setGrossUpdate(totalPrice)
+  setNettoUpdate(totalPrice)
+  setSelectedPrice(selectedPrice);
+};
+
+  useEffect(() => {
+    calculatePrice()
+  }, [priceByMaterial,QuantityUpdate]);
+
+  useEffect(() => {
+    getPriceByMaterial(materialValUpdate);
+  }, [materialValUpdate]);
+
+  // ---------- //
+  const getPriceByMaterialChange = async (params) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/pricematerial/${params}`);
+      setPriceByMaterialChange(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+ const [selectedPriceChange, setSelectedPriceChange] = useState(null);
+
+ const calculatePriceChange = () => {
+  const selectedMaterials = priceByMaterialChange.filter(item => item.MaterialCode === changeMaterialVal);
+
+  const qty = parseFloat(changeQuantity);
+  let foundMaterial = null;
+
+  for (const material of selectedMaterials) {
+    const minQty = parseFloat(material.MinQty);
+    const maxQty = parseFloat(material.MaxQty);
+
+    if (qty >= minQty && qty <= maxQty) {
+      foundMaterial = material;
+      break
+    }
+  }
+
+  let selectedPrice = foundMaterial?.Price;
+  
+  if (!foundMaterial) {
+    selectedPrice = changedPrice
+  }
+  
+  const totalPrice = selectedPrice * qty;
+
+  console.log(totalPrice)
+  console.log(selectedPrice)
+  setGrossChange(totalPrice)
+  setNettoChange(totalPrice)
+  setSelectedPriceChange(selectedPrice);
+};
+
+  useEffect(() => {
+    calculatePriceChange()
+  }, [priceByMaterialChange,changeQuantity]);
+
+  useEffect(() => {
+    getPriceByMaterialChange(changeMaterialVal);
+  }, [changeMaterialVal]);
 
   const getSeries = async () => {
     try {
@@ -191,48 +291,6 @@ export const ReportSalesOrder = () => {
     return total;
   };
 
-  const calculateNettoUpdate = () => {
-    let total = QuantityUpdate * priceUpdate;
-    return total;
-  };
-
-  const calculateGrossUpdate = () => {
-    let total = QuantityUpdate * priceUpdate;
-    return total;
-  };
-
-  const totalUpdateHandle = () => {
-    const Netto = calculateNettoUpdate();
-    const Gross = calculateGrossUpdate();
-    setNettoUpdate(Netto);
-    setGrossUpdate(Gross);
-  };
-
-  useEffect(() => {
-    totalUpdateHandle();
-  }, [QuantityUpdate, priceUpdate, getMaterialDetailForUpdate?.DefaultPrice]);
-
-  const calculateNettoChange = () => {
-    let total = changeQuantity * changedPrice;
-    return total;
-  };
-
-  const calculateGrossChange = () => {
-    let total = changeQuantity * changedPrice;
-    return total;
-  };
-
-  const totalChangeHandle = () => {
-    const Netto = calculateNettoChange();
-    const gross = calculateGrossChange();
-    setGrossChange(gross);
-    setNettoChange(Netto);
-  };
-
-  useEffect(() => {
-    totalChangeHandle();
-  }, [changeQuantity, changedPrice, getMyMaterialDetailForChange?.DefaultPrice]);
-
   useEffect(() => {
     getMaterialDetailForUpdate(materialValUpdate);
   }, [materialValUpdate]);
@@ -251,7 +309,7 @@ export const ReportSalesOrder = () => {
         info: changeInfo,
         unit: getSalesOrderDetail[key - 1].Unit,
         qty: changeQuantity,
-        price: getMyMaterialDetailForChange?.DefaultPrice,
+        price: selectedPriceChange || getMyMaterialDetailForChange?.DefaultPrice,
         gross: grossChange,
         discPercent: getSalesOrderDetail[key - 1].DiscPercent,
         discPercent2: getSalesOrderDetail[key - 1].DiscPercent2,
@@ -366,7 +424,7 @@ export const ReportSalesOrder = () => {
         info: infoUpdate || getMyMaterialDetailForUpdate?.Info ? infoUpdate || getMyMaterialDetailForUpdate?.Info : "-",
         unit: getMyMaterialDetailForUpdate?.SmallestUnit,
         qty: QuantityUpdate,
-        price: getMyMaterialDetailForUpdate?.DefaultPrice,
+        price: selectedPrice || getMyMaterialDetailForUpdate?.DefaultPrice,
         gross: grossUpdate,
         discPercent1: 0.0,
         discPercent2: 0.0,
@@ -823,7 +881,7 @@ export const ReportSalesOrder = () => {
                                 </td>
                                 <td className="text-right">Price:</td>
                                 <td>
-                                    <input disabled type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={getMyMaterialDetailForUpdate?.DefaultPrice} />
+                                    <input disabled type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={selectedPrice || getMyMaterialDetailForUpdate?.DefaultPrice} />
                                 </td>
                                 <button
                                     onClick={() => {
@@ -975,7 +1033,7 @@ export const ReportSalesOrder = () => {
                                 </td>
                                 <td className="text-right">Price:</td>
                                 <td>
-                                    <input disabled type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={getMyMaterialDetailForChange?.DefaultPrice} />
+                                    <input disabled type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={selectedPriceChange || getMyMaterialDetailForChange?.DefaultPrice} />
                                 </td>
                                 <td className="text-right">Netto:</td>
                                 <td>

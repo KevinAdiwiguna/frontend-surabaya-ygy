@@ -156,7 +156,7 @@ export const Price = () => {
         hideProgressBar: false,
       });
     }
-    if (minQty >= maxQty) {
+    if (minQty <= maxQty) {
       return toast.warn("min Qty tidak boleh lebih dari max Qty", {
         position: "top-center",
         autoClose: 3000,

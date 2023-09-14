@@ -446,7 +446,6 @@ export const Customer = () => {
     getMyCountry();
     getMyCustomerGroup();
     getMyPricelistType();
-    getTransactionTypeFunc();
   }, []);
 
   return (
