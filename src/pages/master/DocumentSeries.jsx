@@ -1,13 +1,13 @@
 import axios from "axios";
-import React, { useState } from "react";
-import { useEffect } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import React, {useState} from "react";
+import {useEffect} from "react";
+import {toast, ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useMe } from "../../hooks/API/useMe";
-import { dateConverter } from "../../components/dateConverter";
+import {useMe} from "../../hooks/API/useMe";
+import {dateConverter} from "../../components/dateConverter";
 
 export const DocumentSeries = () => {
-  const { fetchMe, response } = useMe();
+  const {fetchMe, response} = useMe();
   const [user, setUser] = useState("");
   const [document, setDocument] = useState("");
   const [series, setSeries] = useState("");
@@ -16,15 +16,8 @@ export const DocumentSeries = () => {
   const [autoTaxNo, setAutoTaxNo] = useState(false);
   const [getData, setGetData] = useState([]);
   const [getUser, setGetUser] = useState([]);
-  // const [getMaterialType, setGetMaterialType] = useState([]);```````
-
-  const handleSave = () => {
-    toast.success("Data Saved", {
-      position: "top-center",
-      autoClose: 3000,
-      hideProgressBar: true,
-    });
-  };
+  const [materialType, setMaterialType] = useState([]);
+  const [getMaterialType, setGetMaterialType] = useState([]);
 
   const handleDelete = () => {
     toast.error("Data Deleted", {
@@ -48,10 +41,32 @@ export const DocumentSeries = () => {
 
   const dataFetching = async () => {
     try {
-      const data = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/series`
-      );
+      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/series`);
       setGetData(data.data);
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
+  };
+
+  const getMaterialTypeFunc = async () => {
+    try {
+      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/materialtype`);
+      setGetMaterialType(data.data);
     } catch (error) {
       if (error.response) {
         toast.error(`${error.response.data.msg}`, {
@@ -74,9 +89,7 @@ export const DocumentSeries = () => {
 
   const deleteData = async (params) => {
     try {
-      await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/series/${params}`
-      );
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/series/${params}`);
       handleDelete();
       dataFetching();
     } catch (error) {
@@ -101,16 +114,13 @@ export const DocumentSeries = () => {
 
   const updateData = async (params) => {
     try {
-      await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/series/${params}`,
-        {
-          // users: user,
-          needQC: needQualityControl,
-          autoTaxNo: autoTaxNo,
-          iso: iso,
-          changedBy: response.User,
-        }
-      );
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/series/${params}`, {
+        // users: user,
+        needQC: needQualityControl,
+        autoTaxNo: autoTaxNo,
+        iso: iso,
+        changedBy: response.User,
+      });
       dataFetching();
       handleUpdate();
     } catch (error) {
@@ -135,9 +145,7 @@ export const DocumentSeries = () => {
 
   const getMyUser = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/users`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users`);
       setGetUser(response.data);
     } catch (error) {
       if (error.response) {
@@ -159,38 +167,43 @@ export const DocumentSeries = () => {
     }
   };
 
-  // const getMyMaterialType = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       `${process.env.REACT_APP_API_BASE_URL}/materialtype`
-  //     );
-  //     setGetMaterialType(response.data);
-  //   } catch (error) {}
-  // };
+  const [selectedNames, setSelectedNames] = useState([]);
+
+  const handleCheckboxChange = (event) => {
+    const name = event.target.value;
+
+    setSelectedNames((prevSelectedNames) => {
+      if (prevSelectedNames.includes(name)) {
+        return prevSelectedNames.filter((n) => n !== name);
+      } else {
+        return [...prevSelectedNames, name];
+      }
+    });
+  };
+
+  const isChecked = (name) => selectedNames.includes(name);
 
   const submitClick = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/series`,
-        {
-          document: document,
-          series: series,
-          users: user,
-          needQC: needQualityControl,
-          autoTaxNo: autoTaxNo,
-          iso: iso,
-          createdBy: response.User,
-          changedBy: response.User,
-        }
-      );
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/series`, {
+        document: document,
+        series: series,
+        users: user,
+        needQC: needQualityControl,
+        autoTaxNo: autoTaxNo,
+        iso: iso,
+        createdBy: response.User,
+        changedBy: response.User,
+        details: selectedNames,
+      });
       dataFetching();
       toast.success("Data Saved", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
       });
-    } catch (error) { 
+    } catch (error) {
       if (error.response) {
         toast.error(`${error.response.data.msg}`, {
           position: "top-center",
@@ -207,23 +220,22 @@ export const DocumentSeries = () => {
       } else {
         console.error("Error:", error.message);
       }
-
     }
   };
 
   useEffect(() => {
     dataFetching();
     getMyUser();
-    // getMyMaterialType();
+    getMaterialTypeFunc();
   }, []);
 
   return (
     <div>
       <div className="text-2xl font-bold mb-4">Document Series</div>
-      <div className="">
-        <div className="">
+      <div className="flex">
+        <div className="w-1/2">
           <form onSubmit={submitClick}>
-            <table className="border-separate border-spacing-2 w-1/2">
+            <table className="border-separate border-spacing-2">
               <tr>
                 <td className="text-right">Document: </td>
                 <td>
@@ -242,26 +254,18 @@ export const DocumentSeries = () => {
                     <option value="PURCHASE COST">PURCHASE COST</option>
                     <option value="GOODS RECEIPT">GOODS RECEIPT</option>
                     <option value="PURCHASE INVOICE">PURCHASE INVOICE</option>
-                    <option value="PURCHASE RET ORDER">
-                      PURCHASE RET ORDER
-                    </option>
+                    <option value="PURCHASE RET ORDER">PURCHASE RET ORDER</option>
                     <option value="PURCHASE RETURN">PURCHASE RETURN</option>
                     <option value="WORK ORDER">WORK ORDER</option>
                     <option value="JOB ORDER">JOB ORDER</option>
                     <option value="MATERIAL USAGE">MATERIAL USAGE</option>
-                    <option value="MATERIAL USAGE RET">
-                      MATERIAL USAGE RET
-                    </option>
+                    <option value="MATERIAL USAGE RET">MATERIAL USAGE RET</option>
                     <option value="JOB RESULT">JOB RESULT</option>
-                    <option value="STOCK TRANSFER REQ">
-                      STOCK TRANSFER REQ
-                    </option>
+                    <option value="STOCK TRANSFER REQ">STOCK TRANSFER REQ</option>
                     <option value="STOCK TRANSFER">STOCK TRANSFER</option>
                     <option value="ADJUSTMENT IN">ADJUSTMENT IN</option>
                     <option value="ADJUSTMENT OUT">ADJUSTMENT OUT</option>
-                    <option value="STOCK PRICE ADJUST">
-                      STOCK PRICE ADJUST
-                    </option>
+                    <option value="STOCK PRICE ADJUST">STOCK PRICE ADJUST</option>
                     <option value="SALES ORDER">SALES ORDER</option>
                     <option value="GOODS ISSUE">GOODS ISSUE</option>
                     <option value="DELIVERY RETURN">DELIVERY RETURN</option>
@@ -308,7 +312,13 @@ export const DocumentSeries = () => {
               <tr>
                 <td className="text-right">User: </td>
                 <td>
-                  <select onChange={(e) => {setUser(e.target.value)}} required className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <select
+                    onChange={(e) => {
+                      setUser(e.target.value);
+                    }}
+                    required
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
                     <option disabled selected hidden>
                       Pilih user
                     </option>
@@ -322,24 +332,6 @@ export const DocumentSeries = () => {
                   </select>
                 </td>
               </tr>
-              {/* <tr>
-              <td className="text-right">Material Type: </td>
-              <td>
-                <select
-                  onChange={(e)=>{setMaterialType(e.target.value)}}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                >
-                  <option disabled selected hidden>
-                    Pilih material
-                  </option>
-                  {getMyMaterialType.map((res,key)=>{
-                    return (
-                      <option value={res.Code} key={key}>{res.Code}</option>
-                    )
-                  })}
-                </select>
-              </td>
-            </tr> */}
               <tr>
                 <td className="float-right">
                   <input
@@ -384,16 +376,30 @@ export const DocumentSeries = () => {
               <tr>
                 <td></td>
                 <td className="">
-                  <button
-                    type="submit"
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-                  >
+                  <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
                     Save
                   </button>
                 </td>
               </tr>
             </table>
           </form>
+        </div>
+        <div>
+          <div>Material Type</div>
+          <div className="overflow-y-auto rounded-md px-1 border-gray-400 border h-[80%] w-full">
+            <table className="">
+              {getMaterialType.map((res, key) => {
+                return (
+                  <tr>
+                    <label key={key}>
+                      <input type="checkbox" value={res.Code} onChange={handleCheckboxChange} checked={isChecked(res.Code)} />
+                      {res.Code}
+                    </label>
+                  </tr>
+                );
+              })}
+            </table>
+          </div>
         </div>
       </div>
 
@@ -439,28 +445,17 @@ export const DocumentSeries = () => {
           <tbody>
             {getData.map((res, key) => {
               return (
-                <tr
-                  key={key}
-                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                >
+                <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <td className="px-6 py-4">{res.Document}</td>
                   <td className="px-6 py-4">{res.Series}</td>
                   <td className="px-6 py-4">{res.Users}</td>
-                  <td className="px-6 py-4">
-                    {res.NeedQC === true ? "true" : "false"}
-                  </td>
-                  <td className="px-6 py-4">
-                    {res.AutoTaxNo === true ? "true" : "false"}
-                  </td>
+                  <td className="px-6 py-4">{res.NeedQC === true ? "true" : "false"}</td>
+                  <td className="px-6 py-4">{res.AutoTaxNo === true ? "true" : "false"}</td>
                   <td className="px-6 py-4">{res.Iso}</td>
                   <td className="px-6 py-4">{res.CreatedBy}</td>
-                  <td className="px-6 py-4">
-                    {dateConverter(res.CreatedDate)}
-                  </td>
+                  <td className="px-6 py-4">{dateConverter(res.CreatedDate)}</td>
                   <td className="px-6 py-4">{res.ChangedBy}</td>
-                  <td className="px-6 py-4">
-                    {dateConverter(res.ChangedDate)}
-                  </td>
+                  <td className="px-6 py-4">{dateConverter(res.ChangedDate)}</td>
                   <td className="px-6 py-4">
                     <button
                       type="button"
@@ -493,6 +488,3 @@ export const DocumentSeries = () => {
     </div>
   );
 };
-
-
-
