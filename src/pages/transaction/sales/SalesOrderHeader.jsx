@@ -464,11 +464,9 @@ export const SalesOrderHeader = () => {
                     onChange={(e) => {
                       setPoNo(e.target.value);
                     }}
-                    type="number"
+                    type="text"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="PO No"
-                    required
-                    min="0"
                   />
                 </td>
               </tr>
@@ -482,7 +480,6 @@ export const SalesOrderHeader = () => {
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="0"
-                    required
                     min="0"
                   />
                 </td>
@@ -501,7 +498,7 @@ export const SalesOrderHeader = () => {
                     onChange={(e) => {
                       setExchangeRate(e.target.value);
                     }}
-                    type="text"
+                    type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="1.00"
                     required
@@ -519,7 +516,6 @@ export const SalesOrderHeader = () => {
                     type="text"
                     className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder=""
-                    required
                   />
                 </td>
               </tr>
@@ -548,7 +544,6 @@ export const SalesOrderHeader = () => {
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="10.00"
-                    required
                     min="0"
                   />
                 </td>
@@ -564,7 +559,6 @@ export const SalesOrderHeader = () => {
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="0.00"
-                    required
                     min="0"
                   />
                 </td>
