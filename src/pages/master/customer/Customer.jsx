@@ -199,7 +199,24 @@ export const Customer = () => {
         hideProgressBar: true,
     });
 
-    } catch (error) { }
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
 
   const updateData = async (params) => {
