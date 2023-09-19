@@ -1093,19 +1093,19 @@ export const SalesInvoice = () => {
                     DocDate
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    CustomerCode
+                    SODocNo
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    ShipToCode
+                    GIDocNo
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    CustomerCode
                   </th>
                   <th scope="col" className="px-6 py-3">
                     TaxToCode
                   </th>
                   <th scope="col" className="px-6 py-3">
                     SalesCode
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    DeliveryDate
                   </th>
                   <th scope="col" className="px-6 py-3">
                     PONo
@@ -1127,6 +1127,12 @@ export const SalesInvoice = () => {
                   </th>
                   <th scope="col" className="px-6 py-3">
                     ExchangeRate
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    TaxPrefix
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    TaxNo
                   </th>
                   <th scope="col" className="px-6 py-3">
                     TotalGross
@@ -1173,11 +1179,11 @@ export const SalesInvoice = () => {
                       <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{res.DocNo}</td>
                       <td className="px-6 py-4">{res.Series}</td>
                       <td className="px-6 py-4">{res.DocDate}</td>
+                      <td className="px-6 py-4">{res.SODocNo}</td>
+                      <td className="px-6 py-4">{res.GIDocNo}</td>
                       <td className="px-6 py-4">{res.CustomerCode}</td>
-                      <td className="px-6 py-4">{res.ShipToCode}</td>
                       <td className="px-6 py-4">{res.TaxToCode}</td>
                       <td className="px-6 py-4">{res.SalesCode}</td>
-                      <td className="px-6 py-4">{res.DeliveryDate}</td>
                       <td className="px-6 py-4">{res.PONo}</td>
                       <td className="px-6 py-4">{res.TOP}</td>
                       <td className="px-6 py-4">{res.DiscPercent}</td>
@@ -1185,6 +1191,8 @@ export const SalesInvoice = () => {
                       <td className="px-6 py-4">{res.TaxPercent}</td>
                       <td className="px-6 py-4">{res.Currency}</td>
                       <td className="px-6 py-4">{res.ExchangeRate}</td>
+                      <td className="px-6 py-4">{res.TaxPrefix}</td>
+                      <td className="px-6 py-4">{res.TaxNo}</td>
                       <td className="px-6 py-4">{res.TotalGross}</td>
                       <td className="px-6 py-4">{res.TotalDisc}</td>
                       <td className="px-6 py-4">{res.TaxValue}</td>
