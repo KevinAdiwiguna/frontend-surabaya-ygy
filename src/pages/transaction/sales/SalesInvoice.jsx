@@ -620,8 +620,8 @@ export const SalesInvoice = () => {
         exchangeRate: exchangeRate,
         taxStatus: tax,
         taxPercent: taxVal,
-        taxPrefix: taxNo,
-        taxNo: taxNo2,
+        taxPrefix: tax === 'no' ? '' : taxNo,
+        taxNo: tax === 'no' ? '' : taxNo2,
         discPercent: discount,
         totalGross: totalGross,
         totalDisc: discountOutput,
@@ -640,6 +640,9 @@ export const SalesInvoice = () => {
         changedBy: response.User,
         detail: salesInvoiceDetail,
       });
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/taxno/`, {
+        
+      })
       dataFetching();
       toast.success("Data Saved", {
         position: "top-center",

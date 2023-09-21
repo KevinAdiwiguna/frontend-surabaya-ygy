@@ -45,6 +45,7 @@ import { ReportSalesOrder } from "./reports/ReportSalesOrder"
 import { Collector } from "./master/AccountReceiveable_AccountPayable/Collector";
 import { Bank } from "./master/AccountReceiveable_AccountPayable/Bank";
 import { ExchangeRate } from "./master/AccountReceiveable_AccountPayable/ExchangeRate";
+import ARRequestList from "./transaction/AR/ARRequestList";
 
 
 export const Home = () => {
@@ -141,6 +142,8 @@ export const Home = () => {
         return <Bank />;
       case "ExchangeRate":
         return <ExchangeRate/>;
+      case "AR Request List":
+        return <ARRequestList/>;
       default:
         navigate("/Dashboard");
     }

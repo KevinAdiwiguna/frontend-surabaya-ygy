@@ -7,12 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 export const GenerateTaxNo = () => {
   const { fetchMe, response } = useMe();
-  const [code, setCode] = useState("");
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [phone, setPhone] = useState("");
-  const [mobile, setMobile] = useState("");
+  const [taxNo, setTaxNo] = useState();
+  const [taxNo2, setTaxNo2] = useState();
   const [getData, setGetData] = useState([]);
 
   useEffect(() => {
@@ -22,7 +18,7 @@ export const GenerateTaxNo = () => {
   const dataFetching = async () => {
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/approval`
+        `${process.env.REACT_APP_API_BASE_URL}/taxno/${taxNo}/${taxNo2}`
       );
       setGetData(res.data);
     } catch (error) {
@@ -33,7 +29,6 @@ export const GenerateTaxNo = () => {
           hideProgressBar: true,
         });
       } else if (error.request) {
-        console.error("Request Error:", error.request);
         toast.error("Network error. Please check your internet connection.", {
           position: "top-center",
           autoClose: 3000,
@@ -48,7 +43,7 @@ export const GenerateTaxNo = () => {
   const deleteData = async (params) => {
     try {
       await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/Price/${params}`
+        `${process.env.REACT_APP_API_BASE_URL}/taxno/${params}`
       );
       dataFetching();
       toast.success("Data Deleted", {
@@ -79,15 +74,9 @@ export const GenerateTaxNo = () => {
   const submitClick = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/approval`, {
-        code: code,
-        name: name,
-        address: address,
-        city: city,
-        phone: phone,
-        mobile: mobile,
-        createdBy: response.User,
-        changedBy: response.User,
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/taxno`, {
+        start: taxNo,
+        end: taxNo2,
       });
       dataFetching();
       toast.success("Data Saved", {
@@ -95,6 +84,7 @@ export const GenerateTaxNo = () => {
         autoClose: 3000,
         hideProgressBar: true,
       });
+      console.log(response)
     } catch (error) {
       if (error.response) {
         toast.error(`${error.response.data.msg}`, {
@@ -115,8 +105,6 @@ export const GenerateTaxNo = () => {
     }
   };
 
-
-
   return (
     <div>
       <div className="text-2xl font-bold mb-4">GenerateTaxNo</div>
@@ -125,42 +113,55 @@ export const GenerateTaxNo = () => {
           <tr>
             <td className="text-right">Tax No: </td>
             <td>
-            <input
-            type="text"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="0"
-            value="0"
-            required
-            // disabled
-          />
+              <input
+                onChange={(e) => {
+                  setTaxNo(e.target.value);
+                }}
+                type="text"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="0"
+                required
+                pattern="\d{13}"
+                maxLength="13"
+                // disabled
+              />
             </td>
             <td className="text-right">To </td>
             <td>
-            <input
-            type="text"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="0"
-            value="0"
-            required
-            // disabled
-          />
+              <input
+                onChange={(e) => {
+                  setTaxNo2(e.target.value);
+                }}
+                type="text"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="0"
+                required
+                pattern="\d{13}"
+                maxLength="13"
+                // disabled
+              />
             </td>
-            <td> <button
+            <td>
+              <button
                 type="submit"
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
               >
                 Save
-              </button></td>
-              
+              </button>
+            </td>
           </tr>
-          <td> <button
-                type="submit"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-              >
-                Show
-              </button></td>
+          <td>
+            <button
+              onClick={() => {
+                dataFetching();
+              }}
+              type="button"
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+            >
+              Show
+            </button>
+          </td>
         </table>
-        
       </form>
 
       <div className="relative overflow-x-auto pt-10">
@@ -171,38 +172,37 @@ export const GenerateTaxNo = () => {
                 Code
               </th>
               <th scope="col" className="px-6 py-3">
-                Name
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Address
-              </th>
-              <th scope="col" className="px-6 py-3">
-                City
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Phone
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Mobile
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Created By
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Created Date
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Changed By
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Changed Date
+                DocNo
               </th>
               <th scope="col" className="px-6 py-3">
                 Control
               </th>
             </tr>
           </thead>
-         
+          <tbody>
+            {getData?.response?.map((res, key) => {
+              return (
+                <tr
+                  key={key}
+                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                >
+                  <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {res.TaxNo}
+                  </td>
+                  <td className="px-6 py-4">{res.DocNo}</td>
+                  <td>
+                    <button
+                      onClick={() => deleteData(res.TaxNo)}
+                      type="button"
+                      className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
         </table>
         <div></div>
       </div>
