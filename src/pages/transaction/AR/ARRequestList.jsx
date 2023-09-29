@@ -9,24 +9,7 @@ const ARRequestList = () => {
   const [docDate, setDocDate] = useState(currentDate);
   const [deliveryDate, setDeliveryDate] = useState("");
   const [getMySeries, setGetSeries] = useState([]);
-  const [getMySelesman, setGetMySelesman] = useState([]);
-  const [getMyCurrency, setGetMyCurrency] = useState([]);
-  const [getMyMaterial, setGetMyMaterial] = useState([]);
-  const [getMyMaterialDetail, setGetMyMaterialDetail] = useState([]);
-  const [quantity, setQuantity] = useState(0);
-  const [price, setPrice] = useState(0);
-  const [discount, setDiscount] = useState(0);
-  const [discountOutput, setDiscountOutput] = useState();
-  const [tax, setTax] = useState();
-  const [taxVal, setTaxVal] = useState(0);
-  const [taxOutput, setTaxOutput] = useState(0);
-  const [gross, setGross] = useState(0);
-  const [Netto, setNetto] = useState(0);
-  const [poNo, setPoNo] = useState("");
-  const [top, setTop] = useState("");
-  const [shipToVal, setShipToVal] = useState("");
-  const [taxToVal, setTaxToVal] = useState("");
-  const [exchangeRate, setExchangeRate] = useState(0.0);
+
   const [info, setInfo] = useState("");
   const [info2, setInfo2] = useState("");
   const [salesDetail, setSalesDetail] = useState([]);
@@ -91,37 +74,6 @@ const ARRequestList = () => {
     console.log(uniqueCheckedCustomers)
   },[selectedItems])
 
-  const getPriceByMaterial = async (params) => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/pricematerial/${params}`);
-      setPriceByMaterial(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getCustomerTaxTo = async (params) => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/customerpartner/${params}/TAX TO`);
-      setCustomerTaxTo(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const getCustomerShipTo = async (params) => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/customerpartner/${params}/SHIP TO`);
-      setCustomerShipTo(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    setTaxToVal(customerTaxTo);
-    setShipToVal(customerShipTo);
-  }, [customerTaxTo, customerShipTo]);
-
   const getSeries = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/seriescode/AR REQUEST LIST`);
@@ -140,62 +92,10 @@ const ARRequestList = () => {
     }
   };
 
-  const getSelesman = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesman`);
-      setGetMySelesman(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getCurrency = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/currency`);
-      setGetMyCurrency(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getMaterial = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/material`);
-      setGetMyMaterial(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getMaterialDetail = async (params) => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/material/${params}`);
-      setGetMyMaterialDetail(response.data);
-      setPrice(response?.data.DefaultPrice);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-
-
-  const [getFCurrency, setGetFCurrency] = useState([]);
-
-  const getCurrencyByCustomer = async (params) => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/customer/${params}`);
-      setGetFCurrency(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   useEffect(() => {
     getSeries();
     getCollector();
-    getSelesman();
-    getCurrency();
-    getMaterial();
   }, []);
 
   useEffect(() => {
@@ -243,17 +143,6 @@ const ARRequestList = () => {
     }
   };
 
-  const [disabled, setDisabled] = useState(false);
-
-  const checkExchangeRate = () => {
-    if (getFCurrency.Currency === "IDR") {
-      setDisabled(true);
-      setExchangeRate(1.0);
-    } else {
-      setDisabled(false);
-    }
-  };
-
   const getARBook = async () => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/arrequestlist`)
@@ -277,11 +166,6 @@ const ARRequestList = () => {
       }
     }
   }
-
-  useEffect(() => {
-    checkExchangeRate();
-  }, [getFCurrency.Currency]);
-
 
   return (
     <div>
