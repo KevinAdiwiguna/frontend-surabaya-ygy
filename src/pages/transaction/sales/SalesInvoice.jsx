@@ -19,16 +19,20 @@ export const SalesInvoice = () => {
   const [getMyCurrency, setGetMyCurrency] = useState([]);
   const [getMyMaterial, setGetMyMaterial] = useState([]);
   const [getMyMaterialDetail, setGetMyMaterialDetail] = useState([]);
-  const [getMyMaterialDetailForUpdate, setGetMyMaterialDetailForUpdate] = useState([]);
-  const [getMyMaterialDetailForChange, setGetMyMaterialDetailForChange] = useState([]);
+  const [getMyMaterialDetailForUpdate, setGetMyMaterialDetailForUpdate] =
+    useState([]);
+  const [getMyMaterialDetailForChange, setGetMyMaterialDetailForChange] =
+    useState([]);
   const [data, setData] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [discountOutput, setDiscountOutput] = useState();
-  const [tax, setTax] = useState();
+  const [tax, setTax] = useState("No");
   const [taxNo, setTaxNo] = useState();
   const [taxNo2, setTaxNo2] = useState();
+  const [taxNoUpdate, setTaxNoUpdate] = useState();
+  const [taxNo2Update, setTaxNo2Update] = useState();
   const [taxVal, setTaxVal] = useState(0);
   const [taxOutput, setTaxOutput] = useState(0);
   const [gross, setGross] = useState(0);
@@ -56,6 +60,7 @@ export const SalesInvoice = () => {
   const [totalGrossUpdate, setTotalGrossUpdate] = useState(0);
   const [salesOrderNo, setSalesOrderNo] = useState();
   const [salesInvoiceDetail, setSalesInvoiceDetail] = useState([]);
+  const [salesInvoiceDetailReal, setSalesInvoiceDetailReal] = useState([]);
 
   const [nettoChange, setNettoChange] = useState("");
   const [grossChange, setGrossChange] = useState("");
@@ -84,16 +89,14 @@ export const SalesInvoice = () => {
   const [priceUpdate, setPriceUpdate] = useState(0);
   const [getSalesOrderHeader, setGetSalesOrderHeader] = useState([]);
   const [getSalesOrderDetail, setGetSalesOrderDetail] = useState([]);
-  const [changeTax, setChangeTax] = useState("");
-  const [changeTaxVal, setChangeTaxVal] = useState("");
-  const [changeDiscount, setChangeDiscount] = useState("");
   const [changeMaterialVal, setChangeMaterialVal] = useState("");
   const [changeInfo, setChangeInfo] = useState("");
   const [changeQuantity, setChangeQuantity] = useState("");
   const [totalNettoUpdate, setTotalNettoUpdate] = useState("");
   const [salesDetailKey, setSalesDetailKey] = useState(0);
   const [changedPrice, setChangedPrice] = useState(0);
-  const [salesDetailDocNo, setSalesDetailDocNo] = useState("");
+  const [salesInvoiceDetailUpdate,setSalesInvoiceDetailUpdate] = useState([])
+  
 
   const handleDocDateChange = (e) => {
     const selectedDocDate = e.target.value;
@@ -104,7 +107,9 @@ export const SalesInvoice = () => {
 
   const getSeries = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/seriescode/SALES INVOICE`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/seriescode/SALES INVOICE`
+      );
       setGetSeries(response.data);
     } catch (error) {
       console.log(error);
@@ -113,7 +118,9 @@ export const SalesInvoice = () => {
 
   const getCustomer = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/customer`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/customer`
+      );
       setGetMyCustomer(response.data);
     } catch (error) {
       console.log(error);
@@ -122,7 +129,9 @@ export const SalesInvoice = () => {
 
   const getSelesman = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesman`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/salesman`
+      );
       setGetMySelesman(response.data);
     } catch (error) {
       console.log(error);
@@ -131,7 +140,9 @@ export const SalesInvoice = () => {
 
   const getCurrency = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/currency`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/currency`
+      );
       setGetMyCurrency(response.data);
     } catch (error) {
       console.log(error);
@@ -140,7 +151,9 @@ export const SalesInvoice = () => {
 
   const getMaterial = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/material`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/material`
+      );
       setGetMyMaterial(response.data);
     } catch (error) {
       console.log(error);
@@ -148,7 +161,9 @@ export const SalesInvoice = () => {
   };
   const getGoodsIssue = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/goodsissuestatus/PRINTED`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/goodsissuestatus/PRINTED`
+      );
       setGetMyGoodsIssue(response.data);
     } catch (error) {
       console.log(error);
@@ -156,7 +171,9 @@ export const SalesInvoice = () => {
   };
   const getGoodsIssueDetail = async (params) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/goodsissuedetail/${params}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/goodsissuedetail/${params}`
+      );
       setGetMyGoodsIssueDetail(response.data);
     } catch (error) {
       console.log(error);
@@ -165,7 +182,9 @@ export const SalesInvoice = () => {
 
   const getSalesOrderHeaderByDocNo = async (params) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesorderh/${params}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/salesorderh/${params}`
+      );
       setGetSalesOrderHeader(response.data);
       return response.data;
     } catch (error) {
@@ -175,7 +194,9 @@ export const SalesInvoice = () => {
 
   const getSalesOrderDetailByDocNo = async (params) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesorderd/${params}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/salesorderd/${params}`
+      );
       setGetSalesOrderDetail(response.data);
       return response.data;
     } catch (error) {
@@ -188,12 +209,13 @@ export const SalesInvoice = () => {
     setChangeInfo(e.Info);
     setChangeQuantity(e.Qty);
     setSalesDetailKey(e.Number);
-    setSalesDetailDocNo(e.DocNo);
   };
 
   const getMaterialDetail = async (params) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/material/${params}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/material/${params}`
+      );
       setGetMyMaterialDetail(response.data);
       setPrice(response?.data.DefaultPrice);
     } catch (error) {
@@ -203,7 +225,9 @@ export const SalesInvoice = () => {
 
   const getMaterialDetailForUpdate = async (params) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/material/${params}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/material/${params}`
+      );
       setGetMyMaterialDetailForUpdate(response.data);
       setPriceUpdate(response?.data.DefaultPrice);
     } catch (error) {
@@ -213,7 +237,9 @@ export const SalesInvoice = () => {
 
   const getMaterialDetailForChange = async (params) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/material/${params}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/material/${params}`
+      );
       setGetMyMaterialDetailForChange(response.data);
       setChangedPrice(response?.data.DefaultPrice);
     } catch (error) {
@@ -235,7 +261,9 @@ export const SalesInvoice = () => {
 
   const getCurrencyByCustomer = async (params) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/customer/${params}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/customer/${params}`
+      );
       setGetFCurrency(response.data.Currency);
     } catch (error) {
       console.log(error);
@@ -244,7 +272,9 @@ export const SalesInvoice = () => {
 
   const getSalesInvoiceDetail = async (params) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesinvoiced/${params}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/salesinvoiced/${params}`
+      );
       setSalesInvoiceDetail(response.data);
     } catch (error) {
       console.log();
@@ -255,6 +285,21 @@ export const SalesInvoice = () => {
     getGoodsIssueDetail(goodsIssue);
     getSalesInvoiceDetail(goodsIssue);
   }, [goodsIssue]);
+
+  const getSalesInvoiceDetailUpdate = async (params) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/salesinvoicedu/${params}`
+      );
+      setSalesInvoiceDetailUpdate(response.data);
+    } catch (error) {
+      console.log();
+    }
+  };
+
+  useEffect(() => {
+    getSalesInvoiceDetailUpdate(modalData?.DocNo);
+  }, [modalData?.DocNo]);
 
   useEffect(() => {
     setExchangeRate(getSalesOrderHeader.ExchangeRate);
@@ -406,27 +451,56 @@ export const SalesInvoice = () => {
   };
 
   useEffect(() => {
+    const newData = salesInvoiceDetail.map((item) => ({
+      Number: item["Number"],
+      MaterialCode: item["Code"],
+      Info: item["Info"],
+      Location: item["Location"],
+      BatchNo: item["BatchNo"],
+      Unit: item["Unit"],
+      Qty: item["Qty"],
+      Price: item["Price"],
+      Gross: item["Gross"],
+      DiscPercent: item["DiscPercent"],
+      DiscPercent2: item["DiscPercent2"],
+      DiscPercent3: item["DiscPercent3"],
+      DiscValue: item["DiscValue"],
+      DiscNominal: item["DiscNominal"],
+      Netto: item["Netto"],
+      Cost: item["Netto"],
+    }));
+    setSalesInvoiceDetailReal(newData);
+  }, [salesInvoiceDetail]);
+
+  useEffect(() => {
     totalChangeHandle();
-  }, [changeQuantity, changedPrice, getMyMaterialDetailForChange?.DefaultPrice]);
+  }, [
+    changeQuantity,
+    changedPrice,
+    getMyMaterialDetailForChange?.DefaultPrice,
+  ]);
 
   const changeSalesDetailData = async (key, doc) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/salesorderd/${doc}/${key}`, {
-        materialCode: changeMaterialVal,
-        info: changeInfo,
-        unit: getSalesOrderDetail[key - 1].Unit,
-        qty: changeQuantity,
-        price: getMyMaterialDetailForChange?.DefaultPrice,
-        gross: grossChange,
-        discPercent: getSalesOrderDetail[key - 1].DiscPercent,
-        discPercent2: getSalesOrderDetail[key - 1].DiscPercent2,
-        discPercent3: getSalesOrderDetail[key - 1].DiscPercent3,
-        discValue: getSalesOrderDetail[key - 1].DiscValue,
-        discNominal: getSalesOrderDetail[key - 1].DiscNominal,
-        netto: nettoChange,
-        qtyDelivered: 0,
-        qtyWO: 0,
-      });
+      await axios.patch(
+        `${process.env.REACT_APP_API_BASE_URL}/salesorderd/${doc}/${key}`,
+        {
+          materialCode: changeMaterialVal,
+          info: changeInfo,
+          unit: getSalesOrderDetail[key - 1].Unit,
+          qty: changeQuantity,
+          price: getMyMaterialDetailForChange?.DefaultPrice,
+          gross: grossChange,
+          discPercent: getSalesOrderDetail[key - 1].DiscPercent,
+          discPercent2: getSalesOrderDetail[key - 1].DiscPercent2,
+          discPercent3: getSalesOrderDetail[key - 1].DiscPercent3,
+          discValue: getSalesOrderDetail[key - 1].DiscValue,
+          discNominal: getSalesOrderDetail[key - 1].DiscNominal,
+          netto: nettoChange,
+          qtyDelivered: 0,
+          qtyWO: 0,
+        }
+      );
 
       await getSalesOrderDetailByDocNo(doc);
       let salesDetail = await getSalesOrderDetailByDocNo(doc);
@@ -444,12 +518,15 @@ export const SalesInvoice = () => {
         totalNetto = totalNetto + tax;
       }
       console.log(gross);
-      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/salesorderh/${doc}`, {
-        totalGross: gross,
-        totalDisc: nettoDiscount,
-        taxValue: tax,
-        totalNetto: totalNetto,
-      });
+      await axios.patch(
+        `${process.env.REACT_APP_API_BASE_URL}/salesorderh/${doc}`,
+        {
+          totalGross: gross,
+          totalDisc: nettoDiscount,
+          taxValue: tax,
+          totalNetto: totalNetto,
+        }
+      );
       toast.success("Data Changed", {
         position: "top-center",
         autoClose: 3000,
@@ -474,7 +551,9 @@ export const SalesInvoice = () => {
 
   const dataFetching = async () => {
     try {
-      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesinvoice`);
+      const data = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/salesinvoice`
+      );
       setGetData(data.data);
     } catch (error) {
       if (error.response) {
@@ -502,7 +581,9 @@ export const SalesInvoice = () => {
 
   const deleteData = async (params) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/salesorderh/${params}`);
+      await axios.delete(
+        `${process.env.REACT_APP_API_BASE_URL}/salesinvoice/${params}`
+      );
       dataFetching();
       toast.success("Data Deleted", {
         position: "top-center",
@@ -546,7 +627,10 @@ export const SalesInvoice = () => {
       {
         number: salesDetail.length + 1,
         materialCode: materialVal,
-        info: info2 || getMyMaterialDetail?.Info ? info2 || getMyMaterialDetail?.Info : "-",
+        info:
+          info2 || getMyMaterialDetail?.Info
+            ? info2 || getMyMaterialDetail?.Info
+            : "-",
         unit: getMyMaterialDetail?.SmallestUnit,
         qty: quantity,
         price: getMyMaterialDetail?.DefaultPrice,
@@ -578,7 +662,10 @@ export const SalesInvoice = () => {
       {
         number: salesDetail.length + 1,
         materialCode: materialValUpdate,
-        info: infoUpdate || getMyMaterialDetailForUpdate?.Info ? infoUpdate || getMyMaterialDetailForUpdate?.Info : "-",
+        info:
+          infoUpdate || getMyMaterialDetailForUpdate?.Info
+            ? infoUpdate || getMyMaterialDetailForUpdate?.Info
+            : "-",
         unit: getMyMaterialDetailForUpdate?.SmallestUnit,
         qty: QuantityUpdate,
         price: getMyMaterialDetailForUpdate?.DefaultPrice,
@@ -611,17 +698,18 @@ export const SalesInvoice = () => {
         generateDocDate: generateDocDate(),
         docDate: docDate,
         customerCode: customerVal,
-        salesCode: salesmanVal,
+        taxToCode: getSalesOrderHeader.TaxToCode,
+        salesCode: getSalesOrderHeader.SalesCode,
         sODocNo: getMyGoodsIssueDetail?.goodsissueh?.SODocNo,
         giDocNo: goodsIssue,
         poNo: poNo,
         top: top,
-        currency: currencyVal,
+        currency: getFCurrency,
         exchangeRate: exchangeRate,
         taxStatus: tax,
         taxPercent: taxVal,
-        taxPrefix: tax === 'no' ? '' : taxNo,
-        taxNo: tax === 'no' ? '' : taxNo2,
+        taxPrefix: tax === "No" ? "" : taxNo,
+        taxNo: tax === "No" ? "" : taxNo2,
         discPercent: discount,
         totalGross: totalGross,
         totalDisc: discountOutput,
@@ -629,20 +717,19 @@ export const SalesInvoice = () => {
         taxValueInTaxCurrency: taxOutput,
         totalNetto: totalNetto,
         totalCost: totalNetto,
-        cutPPh: "",
-        pPhPercent: "",
-        PPhValue: "",
+        downPayment: 0,
+        taxValueInTaxCur: taxOutput,
+        cutPPh: false,
+        pPhPercent: 0,
+        PPhValue: 0,
         information: info,
         status: "OPEN",
-        printCounter: "",
+        printCounter: 0,
         printedBy: "",
         createdBy: response.User,
         changedBy: response.User,
-        detail: salesInvoiceDetail,
+        detail: salesInvoiceDetailReal,
       });
-      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/taxno/`, {
-        
-      })
       dataFetching();
       toast.success("Data Saved", {
         position: "top-center",
@@ -651,12 +738,22 @@ export const SalesInvoice = () => {
       });
       setSalesDetail([]);
     } catch (error) {
-      console.log(error);
-      toast.warn("Code Sudah Digunakan", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-      });
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 
@@ -668,28 +765,31 @@ export const SalesInvoice = () => {
 
   const updateData = async (params) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/salesorderh/${params}`, {
-        customerCode: customerValUpdate,
-        shipToCode: shipToValUpdate,
-        taxToCode: taxToValUpdate,
-        salesCode: salesmanValUpdate,
-        deliveryDate: deliveryDateUpdate,
-        poNo: poNoUpdate,
-        top: topUpdate,
-        discPercent: discountUpdate,
-        taxStatus: taxUpdate,
-        taxPercent: taxValUpdate,
-        currency: currencyVal,
-        exchangeRate: exchangeRate,
-        totalGross: totalGrossUpdate,
-        totalDisc: discountOutputUpdate,
-        taxValue: taxOutputUpdate,
-        totalNetto: totalNettoUpdate,
-        information: infoUpdate,
-        status: "OPEN",
-        isPurchaseReturn: false,
-        changedBy: response.User,
-      });
+      await axios.patch(
+        `${process.env.REACT_APP_API_BASE_URL}/salesinvoice/${params}`,
+        {
+          customerCode: customerValUpdate,
+          shipToCode: shipToValUpdate,
+          taxToCode: taxToValUpdate,
+          salesCode: salesmanValUpdate,
+          deliveryDate: deliveryDateUpdate,
+          poNo: poNoUpdate,
+          top: topUpdate,
+          discPercent: discountUpdate,
+          taxStatus: taxUpdate,
+          taxPercent: taxValUpdate,
+          currency: currencyVal,
+          exchangeRate: exchangeRate,
+          totalGross: totalGrossUpdate,
+          totalDisc: discountOutputUpdate,
+          taxValue: taxOutputUpdate,
+          totalNetto: totalNettoUpdate,
+          information: infoUpdate,
+          status: "OPEN",
+          isPurchaseReturn: false,
+          changedBy: response.User,
+        }
+      );
       if (salesDetailUpdate) {
         await axios.patch(
           `${process.env.REACT_APP_API_BASE_URL}/salesorderd/${params}`,
@@ -753,7 +853,10 @@ export const SalesInvoice = () => {
               <tr>
                 <td className="text-right">Series: </td>
                 <td>
-                  <select onChange={(e) => setSeriesVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <select
+                    onChange={(e) => setSeriesVal(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
                     <option value="" disabled selected hidden>
                       Pilih series
                     </option>
@@ -770,7 +873,15 @@ export const SalesInvoice = () => {
               <tr>
                 <td className="text-right">Doc Date: </td>
                 <td>
-                  <input type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min={currentDate} value={docDate} onChange={handleDocDateChange} />
+                  <input
+                    type="date"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    required
+                    min={currentDate}
+                    value={docDate}
+                    onChange={handleDocDateChange}
+                  />
                 </td>
               </tr>
 
@@ -810,18 +921,19 @@ export const SalesInvoice = () => {
                     onChange={(e) => {
                       setPoNo(e.target.value);
                     }}
-                    type="number"
+                    type="text"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     value={poNo}
-                    required
-                    min="0"
                   />
                 </td>
               </tr>
               <tr>
                 <td className="text-right">Customer: </td>
                 <td>
-                  <select onChange={(e) => setCustomerVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <select
+                    onChange={(e) => setCustomerVal(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
                     <option value="" disabled selected hidden>
                       {getSalesOrderHeader.CustomerCode}
                     </option>
@@ -835,8 +947,8 @@ export const SalesInvoice = () => {
                     <option value="" disabled selected hidden>
                       Pilih salesman
                     </option>
-                    <option selected value={getSalesOrderHeader.CustomerCode}>
-                      {getSalesOrderHeader.CustomerCode}
+                    <option selected value={getSalesOrderHeader.TaxToCode}>
+                      {getSalesOrderHeader.TaxToCode}
                     </option>
                   </select>
                 </td>
@@ -844,7 +956,10 @@ export const SalesInvoice = () => {
               <tr>
                 <td className="text-right">Salesman: </td>
                 <td>
-                  <select onChange={(e) => setSalesmanVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <select
+                    onChange={(e) => setSalesmanVal(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
                     <option value="" disabled selected hidden>
                       {getSalesOrderHeader.SalesCode}
                     </option>
@@ -899,7 +1014,6 @@ export const SalesInvoice = () => {
                     }}
                     type="text"
                     className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
                   />
                 </td>
               </tr>
@@ -909,7 +1023,6 @@ export const SalesInvoice = () => {
                     onChange={(e) => {
                       setTax(e.target.value);
                     }}
-                    required
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
                     <option disabled selected hidden>
@@ -928,7 +1041,6 @@ export const SalesInvoice = () => {
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="10.00"
-                    required
                     min="0"
                   />
                 </td>
@@ -966,7 +1078,6 @@ export const SalesInvoice = () => {
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="0.00"
-                    required
                     min="0"
                   />
                 </td>
@@ -979,19 +1090,43 @@ export const SalesInvoice = () => {
               <tr>
                 <td className="text-right">Total Gross : </td>
                 <td>
-                  <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={totalGross} />
+                  <input
+                    type="number"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="0.00"
+                    disabled
+                    value={totalGross}
+                  />
                 </td>
                 <td className="text-right">Total Disc: </td>
                 <td>
-                  <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={discountOutput} />
+                  <input
+                    type="number"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="0.00"
+                    disabled
+                    value={discountOutput}
+                  />
                 </td>
                 <td className="text-right">Tax: </td>
                 <td>
-                  <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={taxOutput} />
+                  <input
+                    type="number"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="0.00"
+                    disabled
+                    value={taxOutput}
+                  />
                 </td>
                 <td className="text-right font-bold">Total Netto: </td>
                 <td>
-                  <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={totalNetto} />
+                  <input
+                    type="text"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="0.00"
+                    disabled
+                    value={totalNetto}
+                  />
                 </td>
               </tr>
             </table>
@@ -1051,8 +1186,13 @@ export const SalesInvoice = () => {
               <tbody>
                 {salesInvoiceDetail.map((res, key) => {
                   return (
-                    <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{res.Number}</td>
+                    <tr
+                      key={key}
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                    >
+                      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {res.Number}
+                      </td>
                       <td className="px-6 py-4">{res.Code}</td>
                       <td className="px-6 py-4">{res.Info}</td>
                       <td className="px-6 py-4">{res.Location}</td>
@@ -1076,7 +1216,10 @@ export const SalesInvoice = () => {
           <div className="pt-2 pl-4">
             <td className="text-right"></td>
             <td>
-              <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
+              <button
+                type="submit"
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+              >
                 Save
               </button>
             </td>
@@ -1178,8 +1321,13 @@ export const SalesInvoice = () => {
               <tbody>
                 {getData.map((res, key) => {
                   return (
-                    <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{res.DocNo}</td>
+                    <tr
+                      key={key}
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                    >
+                      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {res.DocNo}
+                      </td>
                       <td className="px-6 py-4">{res.Series}</td>
                       <td className="px-6 py-4">{res.DocDate}</td>
                       <td className="px-6 py-4">{res.SODocNo}</td>
@@ -1202,13 +1350,23 @@ export const SalesInvoice = () => {
                       <td className="px-6 py-4">{res.TotalNetto}</td>
                       <td className="px-6 py-4">{res.Information}</td>
                       <td className="px-6 py-4">{res.Status}</td>
-                      <td className="px-6 py-4">{res.IsPurchaseReturn === true ? "true" : "false"}</td>
+                      <td className="px-6 py-4">
+                        {res.IsPurchaseReturn === true ? "true" : "false"}
+                      </td>
                       <td className="px-6 py-4">{res.CreatedBy}</td>
-                      <td className="px-6 py-4">{dateConverter(res.CreatedDate)}</td>
+                      <td className="px-6 py-4">
+                        {dateConverter(res.CreatedDate)}
+                      </td>
                       <td className="px-6 py-4">{res.ChangedBy}</td>
-                      <td className="px-6 py-4">{dateConverter(res.ChangedDate)}</td>
+                      <td className="px-6 py-4">
+                        {dateConverter(res.ChangedDate)}
+                      </td>
                       <td>
-                        <button onClick={() => deleteData(res.DocNo)} type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                        <button
+                          onClick={() => deleteData(res.DocNo)}
+                          type="button"
+                          className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                        >
                           Delete
                         </button>
                         <button
@@ -1232,468 +1390,406 @@ export const SalesInvoice = () => {
         </div>
       </form>
 
-      <div className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${modal ? "block" : "hidden"}`}>
+      <div
+        className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${
+          modal ? "block" : "hidden"
+        }`}
+      >
         <div className="space-y-6">
-          <div className="text-2xl font-bold mb-4 ">DocNo: {modalData.DocNo}</div>
+          <div className="text-2xl font-bold mb-4 ">
+            DocNo: {modalData.DocNo}
+          </div>
           <button
             onClick={() => {
               closeModal();
             }}
             className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
-          <form>
-            <table className="border-separate border-spacing-2">
-              <tr>
-                <td className="text-right">Series:</td>
-                <td>
-                  <input disabled value={modalData.Series} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
-                </td>
-              </tr>
-              <tr>
-                <td className="text-right">Doc Date: </td>
-                <td>
-                  <input disabled type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value={modalData.DocDate + "T00:00"} />
-                </td>
-              </tr>
-
-              <tr>
-                <td className="text-right">Customer: </td>
-                <td>
-                  <select onChange={(e) => setCustomerValUpdate(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value={modalData.CustomerCode} disabled selected hidden>
-                      {modalData.CustomerCode}
-                    </option>
-                    {getMyCustomer.map((res, key) => {
-                      return (
-                        <option value={res.Code} key={key}>
-                          {res.Code}
+          <form onSubmit={submitClick}>
+            <div className="w-full">
+              <div className="flex justify-start items-center">
+                <table className="border-separate border-spacing-2 ">
+                  <tr>
+                    <td className="text-right">Series: </td>
+                    <td>
+                      <select
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      >
+                        <option value="" disabled selected hidden>
+                          {modalData.Series}
                         </option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Doc Date: </td>
+                    <td>
+                      <input
+                        type="datetime"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder=""
+                        disabled
+                        min={currentDate}
+                        value={modalData.DocDate}
+                      />
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="text-right">Goods Issue No: </td>
+                    <td>
+                      <select
+                        disabled className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      >
+                        <option value="" disabled selected hidden>
+                          {modalData.GIDocNo}
+                        </option>
+                      </select>
+                    </td>
+                    <td className="text-right">Sales Order No: </td>
+                    <td>
+                      <select disabled className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option value="" disabled selected hidden>
+                          {modalData.SODocNo}
+                        </option>
+                      </select>
+                    </td>
+                    <td></td>
+                    <td className="text-right">PO No: </td>
+                    <td>
+                      <input
+                        onChange={(e) => {
+                          setPoNoUpdate(e.target.value);
+                        }}
+                        type="text"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        value={poNoUpdate || modalData.PONo}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Customer: </td>
+                    <td>
+                      <select
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      >
+                        <option value="" disabled selected hidden>
+                          {modalData.CustomerCode}
+                        </option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Customer Tax To: </td>
+                    <td>
+                      <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option value="" disabled selected hidden>
+                        {modalData.TaxToCode}
+                        </option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Salesman: </td>
+                    <td>
+                      <select
+                        onChange={(e) => setSalesmanValUpdate(e.target.value)}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      >
+                        <option value="" disabled selected hidden>
+                          {modalData.SalesCode}
+                        </option>
+                        {getMySelesman.map((res,key)=>{
+                          return(
+                            <option value={res.Code} key={key}>
+                              {res.Code}
+                            </option>
+                          )
+                        })}
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Currency: </td>
+                    <td>
+                      <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option>{modalData.Currency}</option>
+                      </select>
+                    </td>
+                    <td className="text-right">Exchange Rate: </td>
+                    <td>
+                      <input
+                        onChange={(e) => {
+                          setExchangeRate(e.target.value);
+                        }}
+                        type="text"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="0.00"
+                        required
+                        value={exchangeRate}
+                        // disabled
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Term Of Payment: </td>
+                    <td>
+                      <input
+                        onChange={(e) => {
+                          setTopUpdate(e.target.value)
+                        }}
+                        type="number"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="0"
+                        required
+                        min="0"
+                        value={topUpdate || modalData.TOP}
+                      />
+                    </td>
+                    <td>Days</td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Information:</td>
+                    <td>
+                      <input
+                        onChange={(e) => {
+                          setInfoUpdate(e.target.value);
+                        }}
+                        value={infoUpdate||modalData.Information}
+                        type="text"
+                        className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <select
+                        onChange={(e) => {
+                          setTaxUpdate(e.target.value);
+                        }}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      >
+                        <option disabled selected hidden>
+                          {modalData.TaxStatus}
+                        </option>
+                        <option value="No">No</option>
+                        <option value="Include">Include</option>
+                        <option value="Exclude">Exclude</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        onChange={(e) => {
+                          setTaxValUpdate(e.target.value);
+                        }}
+                        type="number"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        value={taxValUpdate || modalData.TaxPercent}
+                        min="0"
+                      />
+                    </td>
+                    <td> % Tax</td>
+                    <td className="text-right">Tax No:</td>
+                    <td>
+                      <input
+                        onChange={(e) => {
+                          setTaxNoUpdate(e.target.value);
+                        }}
+                        type="number"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        min="0"
+                        value={taxNoUpdate || modalData.TaxPrefix}
+                        max="999"
+                        maxLength="3"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        onChange={(e) => {
+                          setTaxNo2Update(e.target.value);
+                        }}
+                        type="number"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[200%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        min="0"
+                        value={taxNo2Update || modalData.TaxNo}
+                        maxLength="13"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-right">Discount: </td>
+                    <td>
+                      <input
+                        onChange={(e) => {
+                          setDiscountUpdate(e.target.value);
+                        }}
+                        type="number"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="0.00"
+                        value={discountUpdate || modalData.DiscPercent}
+                        min="0"
+                      />
+                    </td>
+                    <td> %</td>
+                  </tr>
+                </table>
+              </div>
+              <div className="flex justify-between items-start">
+                <table className="border-separate border-spacing-2 ">
+                  <tr>
+                    <td className="text-right">Total Gross : </td>
+                    <td>
+                      <input
+                        type="number"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="0.00"
+                        disabled
+                        value={totalGrossUpdate}
+                      />
+                    </td>
+                    <td className="text-right">Total Disc: </td>
+                    <td>
+                      <input
+                        type="number"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="0.00"
+                        disabled
+                        value={discountOutputUpdate}
+                      />
+                    </td>
+                    <td className="text-right">Tax: </td>
+                    <td>
+                      <input
+                        type="number"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="0.00"
+                        disabled
+                        value={taxOutputUpdate}
+                      />
+                    </td>
+                    <td className="text-right font-bold">Total Netto: </td>
+                    <td>
+                      <input
+                        type="text"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="0.00"
+                        disabled
+                        value={totalNettoUpdate}
+                      />
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div className="text-xl font-bold mb-4 pt-10">Detail</div>
+              <div className="relative overflow-x-auto">
+                <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                  <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                      <th scope="col" className="px-6 py-3">
+                        Number
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Code
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Information
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Location
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        BatchNo
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Unit
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Qty
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Price
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Gross
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        DiscPercent
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        DiscPercent2
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        DiscPercent3
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        DiscValue
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        DiscNominal
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Netto
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {salesInvoiceDetailUpdate.map((res, key) => {
+                      return (
+                        <tr
+                          key={key}
+                          className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                        >
+                          <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {res.Number}
+                          </td>
+                          <td className="px-6 py-4">{res.Code}</td>
+                          <td className="px-6 py-4">{res.Info}</td>
+                          <td className="px-6 py-4">{res.Location}</td>
+                          <td className="px-6 py-4">{res.BatchNo}</td>
+                          <td className="px-6 py-4">{res.Unit}</td>
+                          <td className="px-6 py-4">{res.Qty}</td>
+                          <td className="px-6 py-4">{res.Price}</td>
+                          <td className="px-6 py-4">{res.Gross}</td>
+                          <td className="px-6 py-4">{res.DiscPercent}</td>
+                          <td className="px-6 py-4">{res.DiscPercent2}</td>
+                          <td className="px-6 py-4">{res.DiscPercent3}</td>
+                          <td className="px-6 py-4">{res.DiscValue}</td>
+                          <td className="px-6 py-4">{res.DiscNominal}</td>
+                          <td className="px-6 py-4">{res.Netto}</td>
+                        </tr>
                       );
                     })}
-                  </select>
-                </td>
-              </tr>
-
-              <tr>
-                <td className="text-right">Ship To: </td>
-                <td>
-                  <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option selected value={customerValUpdate}>
-                      {customerValUpdate}
-                    </option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td className="text-right">Tax To: </td>
-                <td>
-                  <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option selected value={customerValUpdate}>
-                      {customerValUpdate}
-                    </option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td className="text-right">Salesman: </td>
-                <td>
-                  <select onChange={(e) => setSalesmanValUpdate(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value={modalData.SalesCode} selected>
-                      {modalData.SalesCode}
-                    </option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td className="text-right">Delivery Date: </td>
-                <td>
-                  <input type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" min={modalData.DocDate + "T00:00"} value={deliveryDateUpdate || modalData.DeliveryDate + "T00:00"} onChange={(e) => setDeliveryDateUpdate(e.target.value)} />
-                </td>
-                <td className="text-right">PO No: </td>
-                <td>
-                  <input
-                    onChange={(e) => {
-                      setPoNoUpdate(e.target.value);
-                    }}
-                    placeholder={modalData.PONo}
-                    type="number"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td className="text-right">Term Of Payment: </td>
-                <td>
-                  <input
-                    onChange={(e) => {
-                      setTopUpdate(e.target.value);
-                    }}
-                    type="number"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder={modalData.TOP}
-                  />
-                </td>
-                <td>Days</td>
-              </tr>
-              <tr>
-                <td className="text-right">Currency: </td>
-                <td>
-                  <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">{/* <option>{getFCurrency.Currency}</option> */}</select>
-                </td>
-                <td className="text-right">Exchange Rate: </td>
-                <td>
-                  <input
-                    onChange={(e) => {
-                      setExchangeRateUpdate(e.target.value);
-                    }}
-                    type="text"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder={modalData.ExchangeRate}
-                    // disabled
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td className="text-right">Information:</td>
-                <td>
-                  <input
-                    onChange={(e) => {
-                      setInformationUpdate(e.target.value);
-                    }}
-                    type="text"
-                    className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder={modalData.Info}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <select
-                    onChange={(e) => {
-                      setTaxUpdate(e.target.value);
-                    }}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  >
-                    <option disabled selected hidden>
-                      {taxUpdate}
-                    </option>
-                    <option value="No">No</option>
-                    <option value="Include">Include</option>
-                    <option value="Exclude">Exclude</option>
-                  </select>
-                </td>
-                <td>
-                  <input
-                    onChange={(e) => {
-                      setTaxValUpdate(e.target.value);
-                    }}
-                    type="number"
-                    placeholder={modalData.TaxPercent}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    value={taxValUpdate}
-                  />
-                </td>
-                <td> % Tax</td>
-              </tr>
-              <tr>
-                <td className="text-right">Discount: </td>
-                <td>
-                  <input
-                    onChange={(e) => {
-                      setDiscountUpdate(e.target.value);
-                    }}
-                    type="number"
-                    placeholder={modalData.DiscPercent}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    value={discountUpdate}
-                  />
-                </td>
-                <td> %</td>
-              </tr>
-              <tr>
-                <td className="text-right">Material:</td>
-                <td>
-                  <select onChange={(e) => setMaterialValUpdate(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option disabled selected hidden>
-                      Pilih Material
-                    </option>
-                    {getMyMaterial.map((res, key) => {
-                      return (
-                        <option key={key} value={res.Code}>
-                          {res.Code}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </td>
-                <td className="text-right">Info:</td>
-                <td>
-                  <input onChange={(e) => setInfoUpdate(e.target.value)} type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={infoUpdate || getMyMaterialDetailForUpdate?.Info} />
-                </td>
-                <td className="text-right">Quantity:</td>
-                <td>
-                  <input onChange={(e) => setQuantityUpdate(e.target.value)} type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" />
-                </td>
-                <td className="text-right">Price:</td>
-                <td>
-                  <input disabled type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={getMyMaterialDetailForUpdate?.DefaultPrice} />
-                </td>
-                <button
-                  onClick={() => {
-                    addSalesDetailOnUpdate();
-                  }}
-                  type="button"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-                >
-                  Add
-                </button>
-              </tr>
-              <tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="pt-2 pl-4">
                 <td className="text-right"></td>
                 <td>
                   <button
-                    onClick={() => {
-                      updateData(modalData.DocNo);
-                    }}
-                    type="button"
+                    type="submit"
                     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
                   >
                     Update
                   </button>
                 </td>
-              </tr>
-            </table>
+              </div>
+            </div>
           </form>
-          <div className="flex justify-between items-start">
-            <table className="border-separate border-spacing-2 ">
-              <tr>
-                <td className="text-right">Total Gross : </td>
-                <td>
-                  <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={totalGrossUpdate} />
-                </td>
-                <td className="text-right">Total Disc: </td>
-                <td>
-                  <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={discountOutputUpdate} />
-                </td>
-                <td className="text-right">Tax: </td>
-                <td>
-                  <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={taxOutputUpdate} />
-                </td>
-                <td className="text-right font-bold">Netto:</td>
-                <td>
-                  <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={NettoUpdate} />
-                </td>
-              </tr>
-              <tr>
-                <td className="text-right font-bold">Total Netto: </td>
-                <td>
-                  <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={totalNettoUpdate} />
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div className="text-xl font-bold mb-4">New Series Data</div>
-          <div className="relative overflow-x-auto">
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" className="px-6 py-3">
-                    Number
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Code
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Info
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Unit
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Qty
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Price
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Gross
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    DiscPercent
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    DiscPercent2
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    DiscPercent3
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    DiscValue
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    DiscNominal
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Netto
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {salesDetailUpdate.map((res, key) => {
-                  return (
-                    <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{res.number}</td>
-                      <td className="px-6 py-4">{res.materialCode}</td>
-                      <td className="px-6 py-4">{res.info}</td>
-                      <td className="px-6 py-4">{res.unit}</td>
-                      <td className="px-6 py-4">{res.qty}</td>
-                      <td className="px-6 py-4">{res.price}</td>
-                      <td className="px-6 py-4">{res.gross}</td>
-                      <td className="px-6 py-4">{res.discPercent1}</td>
-                      <td className="px-6 py-4">{res.discPercent2}</td>
-                      <td className="px-6 py-4">{res.discPercent3}</td>
-                      <td className="px-6 py-4">{res.discValue}</td>
-                      <td className="px-6 py-4">{res.discNominal}</td>
-                      <td className="px-6 py-4">{res.netto}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          <div>
-            <div className="text-xl font-bold mb-4">Change Data</div>
-            <table className="border-separate border-spacing-2">
-              <tr>
-                <td className="text-right">Material:</td>
-                <td>
-                  <select onChange={(e) => setChangeMaterialVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option disabled selected hidden>
-                      {changeMaterialVal || "Pilih Material"}
-                    </option>
-                    {getMyMaterial.map((res, key) => {
-                      return (
-                        <option key={key} value={res.Code}>
-                          {res.Code}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </td>
-                <td className="text-right">Info:</td>
-                <td>
-                  <input onChange={(e) => setChangeInfo(e.target.value)} type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={changeInfo} />
-                </td>
-                <td className="text-right">Quantity:</td>
-                <td>
-                  <input onChange={(e) => setChangeQuantity(e.target.value)} type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value={changeQuantity} />
-                </td>
-                <td className="text-right">Price:</td>
-                <td>
-                  <input disabled type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={getMyMaterialDetailForChange?.DefaultPrice} />
-                </td>
-                <td className="text-right">Netto:</td>
-                <td>
-                  <input disabled type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={nettoChange} />
-                </td>
-                <button
-                  onClick={() => {
-                    changeSalesDetailData(salesDetailKey, salesDetailDocNo);
-                  }}
-                  type="button"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-                >
-                  Change
-                </button>
-              </tr>
-            </table>
-          </div>
-          <div className="relative overflow-x-auto">
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" className="px-6 py-3">
-                    Control
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Number
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Code
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Info
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Unit
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Qty
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Price
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Gross
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    DiscPercent
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    DiscPercent2
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    DiscPercent3
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    DiscValue
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    DiscNominal
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Netto
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {getSalesOrderDetail.map((res, key) => {
-                  return (
-                    <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                      <td className="px-6 py-4">
-                        <button
-                          onClick={() => {
-                            sendSalesDetailToInput(res, key);
-                          }}
-                          type="button"
-                          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-                        >
-                          Select
-                        </button>
-                      </td>
-                      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{res.Number}</td>
-                      <td className="px-6 py-4">{res.MaterialCode}</td>
-                      <td className="px-6 py-4">{res.Info}</td>
-                      <td className="px-6 py-4">{res.Unit}</td>
-                      <td className="px-6 py-4">{res.Qty}</td>
-                      <td className="px-6 py-4">{res.Price}</td>
-                      <td className="px-6 py-4">{res.Gross}</td>
-                      <td className="px-6 py-4">{res.DiscPercent}</td>
-                      <td className="px-6 py-4">{res.DiscPercent2}</td>
-                      <td className="px-6 py-4">{res.DiscPercent3}</td>
-                      <td className="px-6 py-4">{res.DiscValue}</td>
-                      <td className="px-6 py-4">{res.DiscNominal}</td>
-                      <td className="px-6 py-4">{res.Netto}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
         </div>
       </div>
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar />

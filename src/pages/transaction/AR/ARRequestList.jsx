@@ -33,10 +33,6 @@ const ARRequestList = () => {
   const [ARBook,setARBook] = useState([])
 
   const [seriesVal, setSeriesVal] = useState("");
-  const [salesmanVal, setSalesmanVal] = useState("");
-  const [currencyVal, setCurrencyVal] = useState("");
-  const [materialVal, setMaterialVal] = useState("");
-  const [customerVal, setCustomerVal] = useState("");
   const [totalNetto, setTotalNetto] = useState(0);
   const [totalGross, setTotalGross] = useState(0);
   const [customerShipTo, setCustomerShipTo] = useState([]);
@@ -45,6 +41,11 @@ const ARRequestList = () => {
   const [collector, setCollector] = useState([])
   const [getMyCollector, setGetMyCollector] = useState([])
 
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItemsChanged, setSelectedItemsChanged] = useState([]);
+  const [totalCheckedItems, setTotalCheckedItems] = useState(0);
+  const [uniqueCheckedCustomers, setUniqueCheckedCustomers] = useState(new Set());
+
   const handleDocDateChange = (e) => {
     const selectedDocDate = e.target.value;
     setDocDate(selectedDocDate);
@@ -52,7 +53,44 @@ const ARRequestList = () => {
     setDeliveryDate("");
   };
 
+  const handleCheckboxChange = (res) => {
+    const { CustomerCode, DocNo, DocValue } = res;
   
+    const isSelected = selectedItems.some((item) => item.CustomerCode === CustomerCode && item.DocNo === DocNo);
+  
+    if (isSelected) {
+      setSelectedItems((prevSelectedItems) =>
+        prevSelectedItems.filter((item) => !(item.CustomerCode === CustomerCode && item.DocNo === DocNo))
+      );
+      setTotalGross((prevTotal) => prevTotal - parseInt(DocValue));
+    } else {
+      setSelectedItems((prevSelectedItems) => [...prevSelectedItems, { CustomerCode, DocNo }]);
+      setTotalGross((prevTotal) => prevTotal + parseInt(DocValue));
+    }
+  };
+  
+  // UseEffect untuk mengupdate totalCheckedItems dan uniqueCheckedCustomers
+  useEffect(() => {
+    // Menghitung totalCheckedItems
+    setTotalCheckedItems(selectedItems.length);
+  
+    // Menghitung uniqueCheckedCustomers
+    const uniqueCustomers = new Set();
+    selectedItems.forEach((item) => uniqueCustomers.add(item.CustomerCode));
+    setUniqueCheckedCustomers(uniqueCustomers);
+    const newData = selectedItems.map(item => ({
+      "customerCode": item["CustomerCode"],
+      "arDocNo": item["DocNo"]
+    }));
+    setSelectedItemsChanged(newData)
+  }, [selectedItems]);
+
+  useEffect(()=>{
+    console.log(selectedItems)
+    console.log(totalCheckedItems)
+    console.log(uniqueCheckedCustomers)
+  },[selectedItems])
+
   const getPriceByMaterial = async (params) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/pricematerial/${params}`);
@@ -61,50 +99,6 @@ const ARRequestList = () => {
       console.log(error);
     }
   };
-
- const [selectedPrice, setSelectedPrice] = useState(null);
-
- const calculatePrice = () => {
-  const selectedMaterials = priceByMaterial.filter(item => item.MaterialCode === materialVal);
-
-  const qty = parseFloat(quantity);
-  let foundMaterial = null;
-
-  for (const material of selectedMaterials) {
-    const minQty = parseFloat(material.MinQty);
-    const maxQty = parseFloat(material.MaxQty);
-
-    if (qty >= minQty && qty <= maxQty) {
-      foundMaterial = material;
-      break
-    }
-  }
-
-  let selectedPrice = foundMaterial?.Price;
-  
-  if (!foundMaterial) {
-    selectedPrice = getMyMaterialDetail.DefaultPrice
-  }
-  
-  const totalPrice = selectedPrice * qty;
-
-  setGross(totalPrice)
-  setNetto(totalPrice)
-  setSelectedPrice(selectedPrice);
-};
-
-
-
-  useEffect(() => {
-    console.log(selectedPrice)
-  }, [selectedPrice]);
-  useEffect(() => {
-    calculatePrice()
-  }, [priceByMaterial,quantity]);
-
-  useEffect(() => {
-    getPriceByMaterial(materialVal);
-  }, [materialVal]);
 
   const getCustomerTaxTo = async (params) => {
     try {
@@ -183,9 +177,7 @@ const ARRequestList = () => {
     }
   };
 
-  useEffect(() => {
-    getMaterialDetail(materialVal);
-  }, [materialVal]);
+
 
   const [getFCurrency, setGetFCurrency] = useState([]);
 
@@ -199,43 +191,6 @@ const ARRequestList = () => {
   };
 
   useEffect(() => {
-    getCurrencyByCustomer(customerVal);
-  }, [customerVal]);
-
-  const calculateTotalGross = () => {
-    return quantity * (selectedPrice || getMyMaterialDetail?.DefaultPrice);
-  };
-
-  const calculateDiscount = () => {
-    let total = (totalGross * discount) / 100;
-    return total;
-  };
-
-  const calculateTax = (e) => {
-    if (tax === "No") {
-      return 0;
-    }
-    let total = (e * taxVal) / 100;
-    return total;
-  };
-
-  const calculateTotalNetto = () => {
-    let discount = calculateDiscount();
-    let total = totalGross - calculateDiscount();
-    let taks = calculateTax(total);
-    if (tax === "Exclude") {
-      total = total + taks;
-    }
-    setDiscountOutput(discount);
-    setTaxOutput(taks);
-    setTotalNetto(total);
-  };
-
-  useEffect(() => {
-    calculateTotalNetto();
-  }, [totalGross, taxVal, tax, discount]);
-
-  useEffect(() => {
     getSeries();
     getCollector();
     getSelesman();
@@ -246,40 +201,6 @@ const ARRequestList = () => {
   useEffect(() => {
     fetchMe();
   }, [!response]);
-
-  const addSalesDetail = () => {
-    if (!materialVal || !quantity) {
-      toast.warn("Material and Quantity is required", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-      });
-      return;
-    }
-
-    setTotalGross(totalGross + gross);
-
-    setSalesDetail([
-      ...salesDetail,
-      {
-        number: salesDetail.length + 1,
-        materialCode: materialVal,
-        info: info2 || getMyMaterialDetail?.Info ? info2 || getMyMaterialDetail?.Info : "-",
-        unit: getMyMaterialDetail?.SmallestUnit,
-        qty: quantity,
-        price: selectedPrice || getMyMaterialDetail?.DefaultPrice,
-        gross: gross,
-        discPercent1: 0.0,
-        discPercent2: 0.0,
-        discPercent3: 0.0,
-        discValue: 0.0,
-        discNominal: 0.0,
-        netto: Netto,
-        qtyDelivered: 0.0,
-        qtyWO: 0.0,
-      },
-    ]);
-  };
 
   const generateDocDate = () => {
     const today = new Date(docDate);
@@ -292,32 +213,19 @@ const ARRequestList = () => {
   const submitClick = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/salesorderh`, {
-        series: seriesVal,
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/arrequestlist`, {
         generateDocDate: generateDocDate(),
+        series: seriesVal,
         docDate: docDate,
-        customerCode: customerVal,
-        shipToCode: shipToVal,
-        taxToCode: taxToVal,
-        salesCode: salesmanVal,
-        deliveryDate: deliveryDate,
-        poNo: poNo,
-        top: top,
-        discPercent: discount,
-        taxStatus: tax,
-        taxPercent: taxVal,
-        currency: getFCurrency.Currency,
-        exchangeRate: exchangeRate,
-        totalGross: totalGross,
-        totalDisc: discountOutput,
-        taxValue: taxOutput,
-        totalNetto: totalNetto,
+        collectorCode: collector,
+        totalCustomer: uniqueCheckedCustomers.size,
+        totalDocument: totalCheckedItems,
+        totalValue: totalGross,
         information: info,
         status: "OPEN",
-        isPurchaseReturn: false,
         createdBy: response.User,
         changedBy: response.User,
-        salesOrderDetail: salesDetail,
+        details: selectedItemsChanged,
       });
       toast.success("Data Saved", {
         position: "top-center",
@@ -348,7 +256,7 @@ const ARRequestList = () => {
 
   const getARBook = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/arbook`)
+      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/arrequestlist`)
       setARBook(res.data)
     } catch (error) {
       if (error.response) {
@@ -374,12 +282,6 @@ const ARRequestList = () => {
     checkExchangeRate();
   }, [getFCurrency.Currency]);
 
-  useEffect(() => {
-    setShipToVal(customerVal);
-    setTaxToVal(customerVal);
-    getCustomerShipTo(customerVal);
-    getCustomerTaxTo(customerVal);
-  }, [customerVal]);
 
   return (
     <div>
@@ -411,7 +313,7 @@ const ARRequestList = () => {
               <tr>
                 <td className="text-right">Doc Date: </td>
                 <td>
-                  <input type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min={currentDate} value={docDate} onChange={handleDocDateChange} />
+                  <input type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min={currentDate} value={docDate} onChange={handleDocDateChange} />
                 </td>
               </tr>
 
@@ -471,9 +373,6 @@ const ARRequestList = () => {
                     CustomerCode
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Name
-                  </th>
-                  <th scope="col" className="px-6 py-3">
                     DocDate
                   </th>
                   <th scope="col" className="px-6 py-3">
@@ -516,10 +415,9 @@ const ARRequestList = () => {
                   return (
                     <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                       <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        <input type="checkbox" />
+                        <input type="checkbox" onChange={() => handleCheckboxChange(res)}/>
                       </td>
                       <td className="px-6 py-4">{res.CustomerCode}</td>
-                      <td className="px-6 py-4">{res.Name}</td>
                       <td className="px-6 py-4">{res.DocDate}</td>
                       <td className="px-6 py-4">{res.DocNo}</td>
                       <td className="px-6 py-4">{res.TOP}</td>
@@ -528,10 +426,10 @@ const ARRequestList = () => {
                       <td className="px-6 py-4">{res.DC}</td>
                       <td className="px-6 py-4">{res.Currency}</td>
                       <td className="px-6 py-4">{res.DocValue}</td>
-                      <td className="px-6 py-4">{res.Payment}</td>
-                      <td className="px-6 py-4">{res.Netto}</td>
-                      <td className="px-6 py-4">{res.ExchangeRate}</td>
-                      <td className="px-6 py-4">{res.NettoLocal}</td>
+                      <td className="px-6 py-4">{res.PaymentValue}</td>
+                      <td className="px-6 py-4">{res.DocValue}</td>
+                      <td className="px-6 py-4">{res.ExchangeRateDiff}</td>
+                      <td className="px-6 py-4">{res.DocValue}</td>
                     </tr>
                   );
                 })}
@@ -541,9 +439,21 @@ const ARRequestList = () => {
           <div className="flex justify-between items-start">
             <table className="border-separate border-spacing-2 ">
               <tr>
+                <td className="text-right">No of Customer : </td>
+                <td>
+                  <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled value={uniqueCheckedCustomers.size} />
+                </td>
+              </tr>
+              <tr>
+                <td className="text-right">No of Document : </td>
+                <td>
+                  <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled value={totalCheckedItems} />
+                </td>
+              </tr>
+              <tr>
                 <td className="text-right">Total Value : </td>
                 <td>
-                  <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={totalGross} />
+                  <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled value={totalGross} />
                 </td>
               </tr>
               <tr>
