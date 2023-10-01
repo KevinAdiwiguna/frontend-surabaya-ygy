@@ -780,9 +780,9 @@ export const ReportSalesOrder = () => {
                 <td>
                   <input
                     disabled
-                    type="datetime-local"
+                    type="date"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    value={modalData.DocDate + "T00:00"}
+                    value={modalData.DocDate}
                   />
                 </td>
               </tr>
@@ -850,12 +850,12 @@ export const ReportSalesOrder = () => {
                 <td className="text-right">Delivery Date: </td>
                 <td>
                   <input
-                    type="datetime-local"
+                    type="date"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder=""
-                    min={modalData.DocDate + "T00:00"}
+                    min={modalData.DocDate}
                     value={
-                      deliveryDateUpdate || modalData.DeliveryDate + "T00:00"
+                      deliveryDateUpdate || modalData.DeliveryDate
                     }
                     onChange={(e) => setDeliveryDateUpdate(e.target.value)}
                   />
