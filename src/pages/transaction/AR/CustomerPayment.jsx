@@ -4,6 +4,7 @@ import {toast, ToastContainer} from "react-toastify";
 import {useMe} from "../../../hooks/API/useMe";
 
 const CustomerPayment = () => {
+  const {fetchMe, response} = useMe();
 	const [seriesVal,setSeriesVal] = useState()
 	const [getMySeries,setGetSeries] = useState([])
 	const [getMyRequestList,setGetRequestList] = useState([])
@@ -42,10 +43,10 @@ const CustomerPayment = () => {
   const getRequestListDetail = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/customerpaymentd/${requestList}`);
-			const modifiedData = response.data.map(item => {
-				// Buat objek baru tanpa properti 'nama' dan tambahkan 'name' yang baru
+			console.log(response.data)
+      const modifiedData = response.data.map(item => {
 				const { TransType, ...rest } = item;
-				return { ...rest, TransactionType: TransType,  };
+				return { ...rest, TransactionType: TransType, PaymentLocal: 0 };
 			});
 			setGetRequestListDetail(modifiedData);
     } catch (error) {
@@ -53,35 +54,136 @@ const CustomerPayment = () => {
     }
   };
 
-	const handleChangeDataAPI = (key, field, value) => {
+  
+  const [totalPaymentLocal, setTotalPaymentLocal] = useState(0);
+  const [paidCount, setPaidCount] = useState([]);
+  const [paidByCustomerCount, setPaidByCustomerCount] = useState(new Set());
+
+  // Fungsi ini akan dipanggil setiap kali ada perubahan pada getMyRequestListDetail
+  useEffect(() => {
+    // Hitung jumlah total PaymentLocal
+    const newTotalPaymentLocal = getMyRequestListDetail.reduce(
+      (total, data) => total + parseFloat(data.PaymentLocal || 0),
+      0
+    );
+    // Update state untuk total PaymentLocal dan jumlah data yang telah dibayar
+    setTotalPaymentLocal(newTotalPaymentLocal);
+  }, [getMyRequestListDetail]);
+
+  const handleChangeDataAPI = (key, field, value) => {
     setGetRequestListDetail((prevData) =>
       prevData.map((data, index) => {
         if (index === key) {
-          return {
+          let updatedData = {
             ...data,
             [field]: value,
           };
+          // Calculate PaymentLocal when ExchangeRate or Payment changes
+          if (field === "ExchangeRate" || field === "Payment") {
+            const exchangeRate = parseFloat(updatedData.ExchangeRate) || 1; // Use 1 as default if ExchangeRate is not a number
+            const payment = parseFloat(updatedData.Payment) || 0; // Use 0 as default if Payment is not a number
+            updatedData.PaymentLocal = (exchangeRate * payment).toFixed(2);
+          }
+          return updatedData;
         }
         return data;
       })
     );
   };
 
+  const [getMyRequestListDetailChanged, setGetMyRequestListDetailChanged] = useState()
+
 	useEffect(()=>{
-		console.log(getMyRequestListDetail)
+    const isSelected = getMyRequestListDetail.some((item) => item.PaymentLocal > 0);
+    if (isSelected) {
+      const filterData = getMyRequestListDetail
+        .filter((res) => res.PaymentLocal > 0) // Filter hanya item dengan PaymentLocal > 0
+        .map((res) => ({ CustomerCode: res.CustomerCode, PaymentLocal: res.PaymentLocal }));
+      setPaidCount(filterData);
+    } else {
+      setPaidCount([])
+    }
+    const newData = getMyRequestListDetail.map(item => ({
+      "transactionType": item["TransactionType"],
+      "arDocNo": item["DocNo"],
+      "dc": item["DC"],
+      "currency": item["Currency"],
+      "payment": item["Payment"],
+      "exchangeRate": item["ExchangeRate"],
+      "paymentLocal": item["PaymentLocal"],
+      "taxPrefix": item["TaxPrefix"],
+      "taxNo": item["TaxNo"],
+      "information": item["Information"],
+      "customerCode": item["CustomerCode"]
+    }));
+    setGetMyRequestListDetailChanged(newData)
 	},[getMyRequestListDetail])
+
+  useEffect(()=>{
+    console.log(getMyRequestListDetailChanged)
+  },[getMyRequestListDetailChanged])
+
+	useEffect(()=>{ 
+    const uniqueCustomers = new Set();
+    paidCount.forEach((item) => uniqueCustomers.add(item.CustomerCode));
+    setPaidByCustomerCount(uniqueCustomers);
+	},[paidCount])
 
 	useEffect(()=>{
 		getSeries()
 		getRequestList()
 	},[])
 
+  const generateDocDate = () => {
+    const today = new Date(docDate);
+    const year = today.getFullYear().toString().substring(2);
+    const month = (today.getMonth() + 1).toString().padStart(2, "0");
+    const day = today.getDate().toString().padStart(2, "0");
+    return year + month + day;
+  };
+
+  const submitClick = async (e) => {
+    e.preventDefault()
+    try {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/customerpayment`,{
+      generateDocDate: generateDocDate(),
+      series: seriesVal,
+      docDate: docDate,
+      arRequestListNo: requestList,
+      totalCustomer: paidByCustomerCount.size,
+      totalDocument: paidCount.length,
+      totalPayment: totalPaymentLocal,
+      information: info,
+      status: 'OPEN',
+      createdBy: response.User,
+      changedBy: response.User,
+      details: getMyRequestListDetailChanged
+      })
+      toast.success("Data Saved", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    } catch (error) {
+      console.log(error)
+      toast.warn(error, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
+    }
+  }
+
+  useEffect(() => {
+    fetchMe();
+  }, [!response]);
+
   return (
     <div>
       <div className="flex justify-between">
         <div className="text-2xl font-bold mb-4">Customer Payment</div>
       </div>
-      <form onSubmit="">
+      <form onSubmit={submitClick}>
         <div className="w-full">
           <div className="flex justify-start items-center">
             <table className="border-separate border-spacing-2 ">
@@ -234,12 +336,16 @@ const CustomerPayment = () => {
                       <td className="px-6 py-4">{res.DC}</td>
                       <td className="px-6 py-4">{res.DocValue}</td>
                       <td className="px-6 py-4">
-												<input type="number" onChange={(e) => handleChangeDataAPI(key, "Payment", e.target.value)} className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00" /></td>
+												<input type="number" onChange={(e) => {
+                          handleChangeDataAPI(key, "Payment", e.target.value);
+                          }} 
+                          className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00" />
+                      </td>
                       <td className="px-6 py-4">{res.DocValue}</td>
                       <td className="px-6 py-4">
 												<input type="number" onChange={(e) => handleChangeDataAPI(key, "ExchangeRate", e.target.value)} className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00" />
 											</td>
-                      <td className="px-6 py-4"></td>
+                      <td className="px-6 py-4">{res.PaymentLocal}</td>
                     </tr>
                   );
                 })}
@@ -255,6 +361,7 @@ const CustomerPayment = () => {
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     disabled
+                    value={paidByCustomerCount.size}
                   />
                 </td>
               </tr>
@@ -265,6 +372,7 @@ const CustomerPayment = () => {
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     disabled
+                    value={paidCount.length}
                   />
                 </td>
               </tr>
@@ -275,6 +383,7 @@ const CustomerPayment = () => {
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     disabled
+                    value={totalPaymentLocal}
                   />
                 </td>
               </tr>

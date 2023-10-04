@@ -38,7 +38,7 @@ const ARRequestList = () => {
 
   const handleCheckboxChange = (res) => {
     const { CustomerCode, DocNo, DocValue } = res;
-  
+    console.log(res)
     const isSelected = selectedItems.some((item) => item.CustomerCode === CustomerCode && item.DocNo === DocNo);
   
     if (isSelected) {
