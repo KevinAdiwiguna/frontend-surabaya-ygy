@@ -402,6 +402,7 @@ const CustomerPayment = () => {
           </div>
         </div>
       </form>
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
     </div>
   );
 };
