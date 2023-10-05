@@ -183,13 +183,35 @@ export const DocumentSeries = () => {
 
   const isChecked = (name) => selectedNames.includes(name);
 
+  const [selectedNamesUser, setSelectedNamesUser] = useState([]);
+
+  const handleCheckboxChangeUser = (event) => {
+    const name = event.target.value;
+
+    setSelectedNamesUser((prevSelectedNamesUser) => {
+      if (prevSelectedNamesUser.includes(name)) {
+        return prevSelectedNamesUser.filter((n) => n !== name);
+      } else {
+        return [...prevSelectedNamesUser, name];
+      }
+    });
+  };
+
+  const isCheckedUser = (name) => selectedNamesUser.includes(name);
+
+  const [selectedNameUserNew,setSelectedNameUserNew] = useState([])
+
+  useEffect(()=>{
+    setSelectedNameUserNew(selectedNamesUser.map((data)=> {return `<${data}>`}))
+  },[selectedNamesUser])
+
   const submitClick = async (e) => {
     e.preventDefault();
     try {
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/series`, {
         document: document,
         series: series,
-        users: user,
+        users: selectedNameUserNew.join(','),
         needQC: needQualityControl,
         autoTaxNo: autoTaxNo,
         iso: iso,
@@ -310,29 +332,6 @@ export const DocumentSeries = () => {
                 </td>
               </tr>
               <tr>
-                <td className="text-right">User: </td>
-                <td>
-                  <select
-                    onChange={(e) => {
-                      setUser(e.target.value);
-                    }}
-                    required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  >
-                    <option disabled selected hidden>
-                      Pilih user
-                    </option>
-                    {getUser.map((res, key) => {
-                      return (
-                        <option value={res.User} key={key}>
-                          {res.User}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </td>
-              </tr>
-              <tr>
                 <td className="float-right">
                   <input
                     onChange={(e) => {
@@ -384,7 +383,7 @@ export const DocumentSeries = () => {
             </table>
           </form>
         </div>
-        <div>
+        <div className="mr-5">
           <div>Material Type</div>
           <div className="overflow-y-auto rounded-md px-1 border-gray-400 border h-[80%] w-full">
             <table className="">
@@ -394,6 +393,23 @@ export const DocumentSeries = () => {
                     <label key={key}>
                       <input type="checkbox" value={res.Code} onChange={handleCheckboxChange} checked={isChecked(res.Code)} />
                       {res.Code}
+                    </label>
+                  </tr>
+                );
+              })}
+            </table>
+          </div>
+        </div>
+        <div>
+          <div>Users</div>
+          <div className="overflow-y-auto rounded-md px-1 border-gray-400 border h-[80%] w-full">
+            <table className="">
+              {getUser.map((res, key) => {
+                return (
+                  <tr>
+                    <label key={key}>
+                      <input type="checkbox" value={res.User} onChange={handleCheckboxChangeUser} checked={isCheckedUser(res.User)} />
+                      {res.User}
                     </label>
                   </tr>
                 );
