@@ -507,6 +507,23 @@ export const SidebarComp = () => {
                         </p>
                       </Link>
                     </Sidebar.Collapse>
+                    <Sidebar.Collapse label="General Ledger">
+                      <Link to="/Account">
+                        <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        Account
+                        </p>
+                      </Link>
+                      <Link to="/Budget">
+                        <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        Budget
+                        </p>
+                      </Link>
+                      <Link to="/Cashflow">
+                        <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        Cashflow
+                        </p>
+                      </Link>
+                    </Sidebar.Collapse>
                   </div>
             
               
