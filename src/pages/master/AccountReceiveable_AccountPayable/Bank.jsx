@@ -21,7 +21,7 @@ export const Bank = () => {
   const dataFetching = async () => {
     try {
       const data = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/currency`
+        `${process.env.REACT_APP_API_BASE_URL}/masterbank`
       );
       setGetData(data.data);
     } catch (error) {
@@ -52,7 +52,7 @@ export const Bank = () => {
   const deleteData = async (params) => {
     try {
       await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/currency/${params}`
+        `${process.env.REACT_APP_API_BASE_URL}/masterbank/${params}`
       );
       dataFetching();
       toast.success("Data Deleted", {
@@ -83,7 +83,7 @@ export const Bank = () => {
   const updateData = async (params) => {
     try {
       await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/currency/${params}`,
+        `${process.env.REACT_APP_API_BASE_URL}/masterbank/${params}`,
         {
           name: nameUpdate,
           changedBy: response.User,
@@ -119,7 +119,7 @@ export const Bank = () => {
     e.preventDefault();
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/currency`,
+        `${process.env.REACT_APP_API_BASE_URL}/masterbank`,
         {
           code: code,
           name: name,
