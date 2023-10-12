@@ -47,6 +47,9 @@ import { Bank } from "./master/AccountReceiveable_AccountPayable/Bank";
 import { ExchangeRate } from "./master/AccountReceiveable_AccountPayable/ExchangeRate";
 import ARRequestList from "./transaction/AR/ARRequestList";
 import CustomerPayment from "./transaction/AR/CustomerPayment";
+import CashierReceipt from "./transaction/KBM/CashierReceipt";
+import Account from "./master/General_Ledger/Account";
+import ARSettlement from "./transaction/AR/ARSettlement";
 
 
 export const Home = () => {
@@ -143,10 +146,16 @@ export const Home = () => {
         return <Bank />;
       case "ExchangeRate":
         return <ExchangeRate/>;
-      case "AR Request List":
+        case "AR Request List":
         return <ARRequestList/>;
       case "Customer Payment":
         return <CustomerPayment/>;
+      case "Cashier Receipt":
+        return <CashierReceipt/>;
+      case "Account":
+        return <Account/>;
+      case "AR Settlement":
+        return <ARSettlement/>;
       default:
         navigate("/Dashboard");
     }
