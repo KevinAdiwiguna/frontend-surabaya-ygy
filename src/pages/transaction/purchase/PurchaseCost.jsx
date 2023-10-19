@@ -5,6 +5,7 @@ import { dateConverter } from "../../../components/dateConverter";
 import { toast, ToastContainer } from "react-toastify";
 
 export const PurchaseCost = () => {
+  const { fetchMe, response } = useMe();
   const [getMySupplier, setGetMySupplier] = useState([]);
   const [getMyTransacationType, setGetMyTransactionType] = useState([]);
   const [getMySeries, setGetMySeries] = useState([]);
@@ -13,8 +14,22 @@ export const PurchaseCost = () => {
   const [getMyDescription, setGetMyDescription] = useState("");
   const currentDate = new Date().toISOString().slice(0, 16);
   const [docDate, setDocDate] = useState(currentDate);
+  const [supplierTaxToVal, setSupplierTaxToVal] = useState("")
+  const [supplierInvoiceNo, setSupplierInvoiceNo] = useState('')
+  const [top, setTop] = useState('')
+  const [series, setSeries] = useState('')
+  const [exchangeRate, setExchangeRate] = useState(1)
+  const [taxNo, setTaxNo] = useState("")
+  const [taxNo2, setTaxNo2] = useState("")
+  const [tax, setTax] = useState("No")
+  const [transactionType,setTransactionType] = useState('')
+  const [taxPercent,setTaxPercent] = useState(0)
+  const [totalCost, setTotalCost] = useState(0)
+  const [totalNetto, setTotalNetto] = useState(0)
+  const [taxValue, setTaxValue] = useState(0)
+  const [taxValueIDR, setTaxValueIDR] = useState(0)
 
-  const [informationUpdate, setInformationUpdate] = useState("");
+  const [information, setInformation] = useState("");
   const [detailDataUpdate, setDetailDataUpdate] = useState([]);
   const [modalData, setModalData] = useState([]);
   const [modal, setModal] = useState(false);
@@ -29,7 +44,6 @@ export const PurchaseCost = () => {
   const closeModal = () => {
     setModal(false);
     setDetailDataUpdate([]);
-    setInformationUpdate("");
   };
 
   const generateDocDate = () => {
@@ -50,6 +64,8 @@ export const PurchaseCost = () => {
       return;
     }
 
+    setTotalCost(Number(totalCost) + Number(getMyCost))
+
     setGetMyPCDetail([
       ...getMyPCDetail,
       {
@@ -57,7 +73,92 @@ export const PurchaseCost = () => {
         cost: getMyCost,
       },
     ]);
+
+    console.log(totalCost)
   };
+
+  const calculateTax = (e) => {
+    if (tax === "No") {
+      return 0;
+    }
+    let total = (e * taxPercent) / 100;
+    return total;
+  };
+
+  const calculateTotalNetto = () => {
+    let total = totalCost
+    let taks = calculateTax(total);
+    if (tax === "Exclude") {
+      total = total + taks;
+    }
+    setTaxValue(taks)
+    setTotalNetto(total);
+  };
+
+  useEffect(() => {
+    calculateTotalNetto();
+  }, [taxPercent, tax, totalCost]);
+
+  useEffect(()=>{
+    setTaxValueIDR(taxValue * exchangeRate)
+  },[taxValue])
+
+  const submitClick = async () => {
+    try {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/purchasecosth`, {
+        generateDocDate: generateDocDate(),
+        series,
+        docDate,
+        transactionType: transactionType,
+        supplierCode: supplierVal,
+        supplierTaxTo: supplierTaxToVal,
+        supplierInvNo: supplierInvoiceNo,
+        TOP: top,
+        taxStatus: tax,
+        taxPercent: taxPercent,
+        taxPrefix: taxNo,
+        taxNo: taxNo2,
+        currency: getFCurrency.Currency,
+        exchangeRate: exchangeRate,
+        totalCost: totalCost,
+        taxValue: taxValue,
+        taxValueInTaxCur: taxValueIDR,
+        totalNetto: totalNetto,
+        information: information,
+        invoiceDocNo: "",
+        status: "OPEN",
+        createdBy: response?.User,
+        changedBy: response?.User,
+        PurchaseCostd: getMyPCDetail
+      })
+      toast.success("Data Created", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
+  }
+
+  useEffect(()=>{
+    fetchMe()
+  },[!response])
 
   const [getFCurrency, setGetFCurrency] = useState([]);
 
@@ -83,10 +184,26 @@ export const PurchaseCost = () => {
 
   const getTransactionType = async () => {
     try {
-      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transactiontype`);
+      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transactiontype/PURCHASE COST`);
       setGetMyTransactionType(data.data);
     } catch (error) {}
   };
+
+  const [disabled, setDisabled] = useState(false);
+
+  const checkExchangeRate = () => {
+    if (getFCurrency.Currency === "IDR") {
+      setDisabled(true);
+      setExchangeRate(1.0);
+    } else {
+      setDisabled(false);
+    }
+  };
+
+  useEffect(() => {
+    checkExchangeRate();
+  }, [getFCurrency.Currency]);
+
 
   useEffect(() => {
     getSupplier();
@@ -107,7 +224,7 @@ export const PurchaseCost = () => {
             <tr>
               <td className="text-right">Series: </td>
               <td>
-                <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <select onChange={(e)=> setSeries(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option value="" disabled selected hidden>
                     Pilih series
                   </option>
@@ -124,13 +241,13 @@ export const PurchaseCost = () => {
             <tr>
               <td className="text-right">Doc Date: </td>
               <td>
-                <input type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min={currentDate} value={docDate} />
+                <input onChange={(e) => setDocDate(e.target.value)} min={currentDate} type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required value={docDate} />
               </td>
             </tr>
             <tr>
               <td className="text-right">Transaction Type: </td>
               <td>
-                <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <select onChange={(e)=> {setTransactionType(e.target.value)}} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option value="" disabled selected hidden>
                     Pilih tipe transaksi
                   </option>
@@ -164,26 +281,29 @@ export const PurchaseCost = () => {
             <tr>
               <td className="text-right">Supplier Tax To: </td>
               <td>
-                <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <select onChange={(e) => setSupplierTaxToVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option value="" disabled selected hidden>
                     Pilih supplier tax
                   </option>
-                  <option value="US">United States</option>
-                  <option value="CA">Canada</option>
-                  <option value="FR">France</option>
-                  <option value="DE">Germany</option>
+                  {getMySupplier.map((res, key) => {
+                    return (
+                      <option key={key} value={res.Code}>
+                        {res.Code}
+                      </option>
+                    );
+                  })}
                 </select>
               </td>
             </tr>
             <tr>
               <td className="text-right">Supplier Invoice No: </td>
               <td>
-                <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+                <input onChange={(e)=> setSupplierInvoiceNo(e.target.value)} type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
               </td>
               <td> </td>
               <td className="text-right">Term of Payment: </td>
               <td>
-                <input dir="rtl" type="number" className="bg-gray-50 border text-right border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
+                <input onChange={(e)=> setTop(e.target.value)} dir="rtl" type="number" className="bg-gray-50 border text-right border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
               </td>
               <td>days</td>
             </tr>
@@ -197,12 +317,12 @@ export const PurchaseCost = () => {
               <td> </td>
               <td className="text-right">Exchange Rate: </td>
               <td>
-                <input dir="rtl" type="number" className="bg-gray-50 border text-right border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" required />
+                <input onChange={(e) => {setExchangeRate(e.target.value);}} disabled={disabled} dir="rtl" type="number" className="bg-gray-50 border text-right border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00" required />
               </td>
             </tr>
             <tr>
               <td>
-                <select required className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <select onChange={(e)=> {setTax(e.target.value)}} required className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option selected value="No">
                     No
                   </option>
@@ -211,13 +331,13 @@ export const PurchaseCost = () => {
                 </select>
               </td>
               <td>
-                <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="10.00" required min="0" />
+                <input onChange={(e)=> {setTaxPercent(e.target.value)}} type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="10.00" required min="0" />
               </td>
               <td>% Tax</td>
               <td className="text-right">Tax No: </td>
-              <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+              <input onChange={(e)=> {setTaxNo(e.target.value)}} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
               <td>
-                <input type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+                <input onChange={(e)=> {setTaxNo2(e.target.value)}} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
               </td>
             </tr>
           </table>
@@ -225,7 +345,7 @@ export const PurchaseCost = () => {
 
         <div className="flex gap-3 justify-center items-center mx-auto my-10">
           <label>Information:</label>
-          <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+          <input onChange={(e)=> {setInformation(e.target.value)}} type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
         </div>
 
         <div className="flex justify-between items-start">
@@ -237,7 +357,7 @@ export const PurchaseCost = () => {
               </td>
               <td className="text-right pl-20">Cost:</td>
               <td>
-                <input onChange={(e) => setGetMyCost(e.target.value)} type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min="0" />
+                <input onChange={(e) => {setGetMyCost(e.target.value)}} type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required min="0" />
               </td>
               <td>
                 <button
@@ -251,9 +371,27 @@ export const PurchaseCost = () => {
                 </button>
               </td>
               <td>
-                <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
+                <button onClick={() => {submitClick()}} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
                   Save
                 </button>
+              </td>
+            </tr>
+            <tr>
+            <td className="text-right pl-20">Total Cost:</td>
+              <td>
+                <input value={totalCost} type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled />
+              </td>
+            <td className="text-right pl-20">Tax Value:</td>
+              <td>
+                <input value={taxValue} type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled />
+              </td>
+            <td className="text-right pl-20">Tax Value {getFCurrency.Currency}:</td>
+              <td>
+                <input value={taxValueIDR} type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled />
+              </td>
+            <td className="text-right pl-20">Total Netto:</td>
+              <td>
+                <input value={totalNetto} type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled />
               </td>
             </tr>
           </table>

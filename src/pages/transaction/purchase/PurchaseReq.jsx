@@ -50,19 +50,19 @@ export const PurchaseReq = () => {
     setGetMaterial(data.data);
   };
 
-  // const getDepartment = async () => {
-  //   const data = await axios.get(
-  //     `${process.env.REACT_APP_API_BASE_URL}/department`
-  //   );
-  //   setGetDepartment(data.data);
-  // }
+  const getDepartment = async () => {
+    const data = await axios.get(
+      `${process.env.REACT_APP_API_BASE_URL}/department`
+    );
+    setGetDepartment(data.data);
+  }
 
-  // const getJobOrder = async () => {
-  //   const response = await axios.get(
-  //     `${process.env.REACT_APP_API_BASE_URL}/joborder`
-  //   );
-  //   setGetJobOrder(response.data);
-  // }
+  const getJobOrder = async () => {
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_BASE_URL}/joborder`
+    );
+    setGetJobOrder(response.data);
+  }
 
   const getMaterialDetail = async (params) => {
     try {
@@ -309,7 +309,8 @@ export const PurchaseReq = () => {
     dataFetching();
     getSeries();
     getMaterial();
-    // getJobOrder();
+    getJobOrder();
+    getDepartment();
   }, []);
 
   useEffect(() => {
@@ -376,8 +377,8 @@ export const PurchaseReq = () => {
                     </option>
                     {GetMyjobOrder.map((res, key) => {
                       return (
-                        <option key={key} value={res.Code}>
-                          {res.Code}
+                        <option key={key} value={res.DocNo}>
+                          {res.DocNo}
                         </option>
                       );
                     })}

@@ -16,16 +16,15 @@ export const GoodsReceipt = () => {
 
   const [getMySeries, setGetSeries] = useState([]);
   const [getMySeriesVal, setGetSeriesVal] = useState("");
-  const [getDocDate, setGetDocDate] = useState("");
+  const [getDocDate, setGetDocDate] = useState();
   const [getPurchaseDocNo, setGetPurchaseDocNo] = useState([]);
-  const [dataFilter, setDataFilter] = useState([]);
-
-  const dataFetching = async () => {
-    try {
-      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh`);
-      setGetData(data.data);
-    } catch (error) {}
-  };
+  const [purchaseOrderNo, setPurchaseOrderNo] = useState()
+  const [purchaseOrderDetail,setPurchaseOrderDetail] = useState([])
+  const [purchaseOrderHeader,setPurchaseOrderHeader] = useState([])
+  const [Location, setGetLocation] = useState([])
+  const [supplyDeliveryNo, setSupplyDeliveryNo] = useState("")
+  const [vehicleNo, setVehicleNo] = useState("")
+  const [information, setInformation] = useState("")
 
   const closeModal = () => {
     setModal(false);
@@ -34,9 +33,10 @@ export const GoodsReceipt = () => {
     // setDeliveryDateUpdate('')
   };
 
-
-
-  console.log(dataFilter);
+  const getLocation = async () => {
+    const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location`);
+    setGetLocation(response.data)
+  }
 
   const getSeries = async () => {
     try {
@@ -56,18 +56,104 @@ export const GoodsReceipt = () => {
     }
   };
 
+  const handleChangeDataAPI = (key, field, value) => {
+    setPurchaseOrderDetail((prevData) =>
+      prevData.map((data, index) => {
+        if (index === key) {
+          return {
+            ...data,
+            [field]: value,
+          };
+        }
+        return data;
+      })
+    );
+  };
+
+  const getPurchaseOrder = async (params) => {
+    try {
+      const detail = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderd/${params}`)
+      const header = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${params}`)
+      const modifiedData = detail.data.map(item => {
+				const { Qty, Number, MaterialCode, Info, Unit, ...rest } = item;
+				return { ...rest, QtyPOTotal: Qty, qty: 0,info: Info, unit: Unit, number: Number, materialCode: MaterialCode};
+			});
+      setPurchaseOrderDetail(modifiedData)
+      setPurchaseOrderHeader(header.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(()=>{
+    getPurchaseOrder(purchaseOrderNo)
+  },[purchaseOrderNo])
+
   useEffect(() => {
     getSeries();
     getPurchaseOrderNo();
+    getLocation()
   }, []);
 
-  const onCreate = async () => {
-    await axios.post(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh`, {
-      series: getMySeriesVal,
-      docDate: getDocDate,
-      supplierCode: dataFilter.SupplierCode,
-    });
+  useEffect(()=>{
+    console.log(purchaseOrderDetail)
+  },[purchaseOrderDetail])
+
+    const generateDocDate = () => {
+    const today = new Date(getDocDate);
+    const year = today.getFullYear().toString().substring(2);
+    const month = (today.getMonth() + 1).toString().padStart(2, "0");
+    const day = today.getDate().toString().padStart(2, "0");
+    return year + month + day;
   };
+
+
+  const submitClick = async () => {
+    try {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/goodsreceipth`, {
+        generateDocDate: generateDocDate(),
+        series: getMySeriesVal,
+        docDate: getDocDate,
+        supplierCode: purchaseOrderHeader.SupplierCode,
+        PODocNo: purchaseOrderNo,
+        supplierDlvDocNo: supplyDeliveryNo,
+        vehicleNo: vehicleNo,
+        information: information,
+        printCounter: 0,
+        printedBy: "",
+        status: "OPEN",
+        createdBy: response?.User,
+        changedBy: response?.User,
+        GoodReceiptd: purchaseOrderDetail
+      })
+      toast.success("Data Created", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
+  }
+
+  useEffect(()=>{
+    fetchMe()
+  },[!response])
 
   return (
     <div>
@@ -103,12 +189,7 @@ export const GoodsReceipt = () => {
               <td>
                 <select
                   onChange={(e) => {
-                    setDataFilter(
-                      getPurchaseDocNo.find((data) => {
-                        if (!data) return null;
-                        return data?.DocNo === e.target.value;
-                      })
-                    );
+                    setPurchaseOrderNo(e.target.value);
                   }}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
@@ -133,7 +214,7 @@ export const GoodsReceipt = () => {
               <td>
                 <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option value="" disabled selected hidden>
-                    {dataFilter.SupplierCode}
+                    {purchaseOrderHeader.SupplierCode}
                   </option>
                 </select>
               </td>
@@ -141,19 +222,19 @@ export const GoodsReceipt = () => {
             <tr>
               <td className="text-right">Supply Delivery No: </td>
               <td>
-                <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
+                <input onChange={(e)=> {setSupplyDeliveryNo(e.target.value)}} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
               </td>
             </tr>
             <tr>
               <td className="text-right">Vehicle No: </td>
               <td>
-                <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
+                <input onChange={(e)=> {setVehicleNo(e.target.value)}} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
               </td>
             </tr>
             <tr>
               <td className="text-right">Batch No: </td>
               <td>
-                <input type="number" className="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
+                <input disabled type="text" className="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
               </td>
             </tr>
           </table>
@@ -161,8 +242,8 @@ export const GoodsReceipt = () => {
 
         <div className="w-full  flex gap-3 justify-center items-center mx-auto mt-10">
           <label>Information:</label>
-          <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
-          <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
+          <input onChange={(e) => setInformation(e.target.value)} type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+          <button onClick={submitClick} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
             Save
           </button>
         </div>
@@ -174,115 +255,62 @@ export const GoodsReceipt = () => {
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
-                DocNo
+                Number
               </th>
               <th scope="col" className="px-6 py-3">
-                Series
+                Code
               </th>
               <th scope="col" className="px-6 py-3">
-                DocDate
+                Info
               </th>
               <th scope="col" className="px-6 py-3">
-                SupplierCode
+                Location
               </th>
               <th scope="col" className="px-6 py-3">
-                PODocNo
+                Unit
               </th>
               <th scope="col" className="px-6 py-3">
-                BatchNo
+                QtyPOTotal
               </th>
               <th scope="col" className="px-6 py-3">
-                SupplierDlvDocNo
+                QtyPORemain
               </th>
               <th scope="col" className="px-6 py-3">
-                VehicleNo
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Information
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Status
-              </th>
-              <th scope="col" className="px-6 py-3">
-                PrintCounter
-              </th>
-              <th scope="col" className="px-6 py-3">
-                PrintedBy
-              </th>
-              <th scope="col" className="px-6 py-3">
-                PrintedDate
-              </th>
-              <th scope="col" className="px-6 py-3">
-                CreatedBy
-              </th>
-              <th scope="col" className="px-6 py-3">
-                CreatedDate
-              </th>
-              <th scope="col" className="px-6 py-3">
-                ChangedBy
-              </th>
-              <th scope="col" className="px-6 py-3">
-                ChangedDate
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Control
+                Qty
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            {purchaseOrderDetail.map((res,key)=>{
+              return (
+            <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
               <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                1
+                {res.Number}
               </th>
-              <td className="px-6 py-4">Belum tau mau isi apa</td>
-              <td className="px-6 py-4"></td>
-              <td className="px-6 py-4">KG</td>
-              <td className="px-6 py-4">1</td>
-              <td className="px-6 py-4">6/26/2023</td>
-              <td className="px-6 py-4">0</td>
-              <td className="px-6 py-4"></td>
+              <td className="px-6 py-4">{res.materialCode}</td>
+              <td className="px-6 py-4"><input type="text" onChange={(e) => handleChangeDataAPI(key, "info", e.target.value)} className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" /></td>
               <td className="px-6 py-4">
-                <p>Siapa hayo</p>
+              <select onChange={(e) => handleChangeDataAPI(key, "location", e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[80%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Isi kode" required>
+                        <option value="">Pilih Location</option>
+                        {Location.map((loc, locKey) => {
+                          return (
+                            <option key={locKey} value={loc.Code}>
+                              {loc.Code}
+                            </option>
+                          );
+                        })}
+                      </select>
               </td>
+              <td className="px-6 py-4">{res.unit}</td>
+              <td className="px-6 py-4">{res.QtyPOTotal}</td>
+              <td className="px-6 py-4">{res.QtyPOTotal - res.qty}</td>
               <td className="px-6 py-4">
-                <p>Siapa hayo</p>
-              </td>
-              <td className="px-6 py-4">
-                <p>Siapa hayo</p>
-              </td>
-              <td className="px-6 py-4">
-                <p>Siapa hayo</p>
-              </td>
-              <td className="px-6 py-4">
-                <p>Siapa hayo</p>
-              </td>
-              <td className="px-6 py-4">
-                <p>Siapa hayo</p>
-              </td>
-              <td className="px-6 py-4">
-                <p>Siapa hayo</p>
-              </td>
-              <td className="px-6 py-4">
-                <p>Siapa hayo</p>
-              </td>
-              <td className="px-6 py-4">
-                <p>Siapa hayo</p>
-              </td>
-              <td className="px-6 py-4">
-                <button type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
-                  Delete
-                </button>
-                <button
-                  onClick={() => {
-                    setModal(true);
-                  }}
-                  type="button"
-                  className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
-                >
-                  Update
-                </button>
+              <input type="number" onChange={(e) => handleChangeDataAPI(key, "qty", e.target.value)} className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00" />
+
               </td>
             </tr>
+              )
+            })}
           </tbody>
         </table>
         <div></div>
@@ -513,6 +541,7 @@ export const GoodsReceipt = () => {
           </div>
         </div>
       </div>
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
     </div>
   );
 };

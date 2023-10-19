@@ -32,7 +32,7 @@ export const PurchaseOrder = () => {
   const [top, setTop] = useState("");
   const [shipToVal, setShipToVal] = useState("");
   const [taxToVal, setTaxToVal] = useState("");
-  const [exchangeRate, setExchangeRate] = useState("");
+  const [exchangeRate, setExchangeRate] = useState(0);
   const [info, setInfo] = useState("");
   const [information, setInformation] = useState("");
   const [detailDisc, setDetailDisc] = useState(0);
@@ -151,6 +151,15 @@ export const PurchaseOrder = () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/material`);
       setGetMyMaterial(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getJobOrder = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/joborder`);
+      setGetJobOrder(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -389,6 +398,7 @@ export const PurchaseOrder = () => {
     getCurrency();
     getMaterial();
     getSupplier();
+    getJobOrder();
   }, []);
 
   useEffect(() => {
@@ -635,6 +645,21 @@ export const PurchaseOrder = () => {
     }
   };
 
+  const [disabled, setDisabled] = useState(false);
+
+  const checkExchangeRate = () => {
+    if (getFCurrency.Currency === "IDR") {
+      setDisabled(true);
+      setExchangeRate(1.0);
+    } else {
+      setDisabled(false);
+    }
+  };
+
+  useEffect(() => {
+    checkExchangeRate();
+  }, [getFCurrency.Currency]);
+
   const getPurchaseDetailByDocNo = async (params) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderd/${params}`);
@@ -644,6 +669,43 @@ export const PurchaseOrder = () => {
       console.log(error);
     }
   };
+
+  const printData = async (params) => {
+    try {
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${params}`,{
+        printCounter: 1,
+        printedBy: response?.User,
+        printedDate: currentDate,
+        status: "PRINTED"
+      })
+      dataFetching();
+      toast.success("Data Printed", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    } catch (error) {
+      
+    }
+  }
+  const approveData = async (params) => {
+    try {
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${params}`,{
+        status: "APPROVED",
+        isApproved: 1,
+        approvedBy: response?.User,
+        approvedDate: currentDate,
+      })
+      dataFetching();
+      toast.success("Data Printed", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    } catch (error) {
+      
+    }
+  }
 
   const updateData = async (params) => {
     try {
@@ -754,7 +816,7 @@ export const PurchaseOrder = () => {
               <tr>
                 <td className="text-right">Doc Date: </td>
                 <td>
-                  <input type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min={currentDate} value={docDate} onChange={handleDocDateChange} />
+                  <input type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min={currentDate} value={docDate} onChange={handleDocDateChange} />
                 </td>
               </tr>
 
@@ -779,7 +841,7 @@ export const PurchaseOrder = () => {
               <tr>
                 <td className="text-right">Delivery Date: </td>
                 <td>
-                  <input type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min={docDate} value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} />
+                  <input type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min={docDate} value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} />
                 </td>
               </tr>
 
@@ -797,8 +859,8 @@ export const PurchaseOrder = () => {
                     </option>
                     {GetMyjobOrder.map((res, key) => {
                       return (
-                        <option value={res.Code} key={key}>
-                          {res.Code}
+                        <option value={res.DocNo} key={key}>
+                          {res.DocNo}
                         </option>
                       );
                     })}
@@ -836,10 +898,9 @@ export const PurchaseOrder = () => {
                     }}
                     type="text"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="1.00"
                     value={exchangeRate}
                     required
-                    // disabled
+                    disabled={disabled}
                   />
                 </td>
               </tr>
@@ -867,7 +928,6 @@ export const PurchaseOrder = () => {
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="10.00"
-                    required
                   />
                 </td>
                 <td> % Tax</td>
@@ -910,7 +970,6 @@ export const PurchaseOrder = () => {
                     type="text"
                     className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder=""
-                    required
                   />
                 </td>
               </tr>
@@ -1276,7 +1335,7 @@ export const PurchaseOrder = () => {
                     <td className="px-6 py-4">{res.SendTo}</td>
                     <td className="px-6 py-4">{res.Information}</td>
                     <td className="px-6 py-4">{res.Status}</td>
-                    <td className="px-6 py-4">{res.IsApproved}</td>
+                    <td className="px-6 py-4">{res.IsApproved == 1 ? "True" : "False"}</td>
                     <td className="px-6 py-4">{res.ApprovedBy}</td>
                     <td className="px-6 py-4">{res.ApprovedDate}</td>
                     <td className="px-6 py-4">{res.PrintCounter}</td>
@@ -1301,6 +1360,24 @@ export const PurchaseOrder = () => {
                         className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                       >
                         Update
+                      </button>
+                      <button
+                        onClick={() => {
+                          printData(res.DocNo);
+                        }}
+                        type="button"
+                        className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
+                      >
+                        Print
+                      </button>
+                      <button
+                        onClick={() => {
+                          approveData(res.DocNo);
+                        }}
+                        type="button"
+                        className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
+                      >
+                        Approve
                       </button>
                     </td>
                   </tr>
