@@ -50,6 +50,7 @@ import CustomerPayment from "./transaction/AR/CustomerPayment";
 import CashierReceipt from "./transaction/KBM/CashierReceipt";
 import Account from "./master/General_Ledger/Account";
 import ARSettlement from "./transaction/AR/ARSettlement";
+import APReceiptList from "./transaction/AP/APReceiptList";
 
 
 export const Home = () => {
@@ -156,6 +157,8 @@ export const Home = () => {
         return <Account/>;
       case "AR Settlement":
         return <ARSettlement/>;
+      case "AP Receipt List":
+        return <APReceiptList/>;
       default:
         navigate("/Dashboard");
     }
