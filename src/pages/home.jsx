@@ -52,6 +52,7 @@ import Account from "./master/General_Ledger/Account";
 import ARSettlement from "./transaction/AR/ARSettlement";
 import APReceiptList from "./transaction/AP/APReceiptList";
 import DebtPayment from "./transaction/AP/DebtPayment";
+import CashierPayment from "./transaction/BKK/CashierPayment";
 
 
 export const Home = () => {
@@ -162,6 +163,8 @@ export const Home = () => {
         return <APReceiptList/>;
       case "Debt Payment":
       return <DebtPayment/>
+      case "Cashier Payment":
+      return <CashierPayment/>
       default:
         navigate("/Dashboard");
     }
