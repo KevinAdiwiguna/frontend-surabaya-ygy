@@ -53,6 +53,7 @@ import ARSettlement from "./transaction/AR/ARSettlement";
 import APReceiptList from "./transaction/AP/APReceiptList";
 import DebtPayment from "./transaction/AP/DebtPayment";
 import CashierPayment from "./transaction/BKK/CashierPayment";
+import APSettlement from "./transaction/AP/APSettlement";
 
 
 export const Home = () => {
@@ -165,6 +166,8 @@ export const Home = () => {
       return <DebtPayment/>
       case "Cashier Payment":
       return <CashierPayment/>
+      case "AP Settlement":
+      return <APSettlement/>
       default:
         navigate("/Dashboard");
     }

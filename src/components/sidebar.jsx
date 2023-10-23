@@ -66,11 +66,11 @@ export const SidebarComp = () => {
             {/* Transaction */}
             <Sidebar.Collapse icon={HiSwitchHorizontal} label="Transaction">
               <div className="pl-4">
-                <Link to="/dashboard">
+                {/* <Link to="/dashboard">
                   <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                     Quality Control
                   </p>
-                </Link>
+                </Link> */}
                 <Sidebar.Collapse icon={BiSolidNotepad} label="Sales">
                   {/* <div className="pl-6">
                     <Sidebar.Collapse label="Sales Order">
@@ -92,7 +92,7 @@ export const SidebarComp = () => {
                       Good Issue
                     </p>
                   </Link>
-                  <Link to="/Delivery Return">
+                  {/* <Link to="/Delivery Return">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Delivery Return
                     </p>
@@ -101,17 +101,17 @@ export const SidebarComp = () => {
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Packing List
                     </p>
-                  </Link>
+                  </Link> */}
                   <Link to="/Sales Invoice">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Sales Invoice
                     </p>
                   </Link>
-                  <Link to="/Sales Return">
+                  {/* <Link to="/Sales Return">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Sales Return
                     </p>
-                  </Link>
+                  </Link> */}
                 </Sidebar.Collapse>
 
                 <Sidebar.Collapse icon={HiShoppingCart} label="Purchase">
@@ -125,11 +125,11 @@ export const SidebarComp = () => {
                       Purchase Order
                     </p>
                   </Link>
-                  <Link to="/Purchase Cost">
+                  {/* <Link to="/Purchase Cost">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Purchase Cost
                     </p>
-                  </Link>
+                  </Link> */}
                   <Link to="/Goods Receipt">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Goods Receipt
@@ -140,11 +140,11 @@ export const SidebarComp = () => {
                       Purchase Invoice
                     </p>
                   </Link>
-                  <Link to="/Purchase Return">
+                  {/* <Link to="/Purchase Return">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Purchase Return
                     </p>
-                  </Link>
+                  </Link> */}
                 </Sidebar.Collapse>
 
                 <Sidebar.Collapse icon={BiPackage} label="Production">
@@ -165,7 +165,7 @@ export const SidebarComp = () => {
                   </Link>
                 </Sidebar.Collapse>
 
-                <Sidebar.Collapse
+                {/* <Sidebar.Collapse
                   icon={HiSwitchHorizontal}
                   label="Internal Transaction"
                   className="text-sm"
@@ -200,7 +200,7 @@ export const SidebarComp = () => {
                       Stock Price Adjustment
                     </p>
                   </Link>
-                </Sidebar.Collapse>
+                </Sidebar.Collapse> */}
 
                 <Sidebar.Collapse
                   icon={GrAccessibility}
@@ -249,7 +249,7 @@ export const SidebarComp = () => {
                   label="Account Payable"
                   className="text-sm"
                 >
-                  <Link to="/AR Supplier Debt Note">
+                  {/* <Link to="/AR Supplier Debt Note">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       AP Supplier Debet Note
                     </p>
@@ -258,7 +258,7 @@ export const SidebarComp = () => {
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       AP Supplier Credit
                     </p>
-                  </Link>
+                  </Link> */}
                   <Link to="/AP Receipt List">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       AP Receipt List
@@ -274,7 +274,7 @@ export const SidebarComp = () => {
                       AP Settlement
                     </p>
                   </Link>
-                  <Link to="/AP Clearing Giro">
+                  {/* <Link to="/AP Clearing Giro">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       AP Clearing Giro
                     </p>
@@ -283,7 +283,7 @@ export const SidebarComp = () => {
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       AP Reject Giro
                     </p>
-                  </Link>
+                  </Link> */}
                 </Sidebar.Collapse>
 
                 <Sidebar.Collapse
@@ -320,7 +320,7 @@ export const SidebarComp = () => {
                   </Link>
                 </Sidebar.Collapse>
 
-                <Sidebar.Collapse icon={TbPackages} label="Asset">
+                {/* <Sidebar.Collapse icon={TbPackages} label="Asset">
                   <Link to="/Asset">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Asset
@@ -331,9 +331,9 @@ export const SidebarComp = () => {
                       AUC Settlement
                     </p>
                   </Link>
-                </Sidebar.Collapse>
+                </Sidebar.Collapse> */}
 
-                <Sidebar.Collapse icon={BiBook} label="General Ledger">
+                {/* <Sidebar.Collapse icon={BiBook} label="General Ledger">
                   <Link to="/General Journal Posting">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       General Journal Posting
@@ -349,20 +349,20 @@ export const SidebarComp = () => {
                       Special Journal Posting
                     </p>
                   </Link>
-                </Sidebar.Collapse>
+                </Sidebar.Collapse> */}
               </div>
             </Sidebar.Collapse>
 
             {/* End of Transaction  */}
             {/* Reports */}
-            <Sidebar.Collapse label="Reports">
+            {/* <Sidebar.Collapse label="Reports">
               <div className="pl-6 !mt-0">
               <Sidebar.Collapse label="Sales">
                 <Link to="/Report Sales Order"><Sidebar.Item>Sales Order</Sidebar.Item></Link>
               </Sidebar.Collapse>
               </div>
               <Link to="/"></Link>
-            </Sidebar.Collapse>
+            </Sidebar.Collapse> */}
             {/* End of Reports */}
             {/* Master */}
             <Sidebar.Collapse icon={HiKey} label="Master">
