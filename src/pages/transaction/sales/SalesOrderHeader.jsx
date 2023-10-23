@@ -291,39 +291,40 @@ export const SalesOrderHeader = () => {
   const submitClick = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/salesorderh`, {
-        series: seriesVal,
-        generateDocDate: generateDocDate(),
-        docDate: docDate,
-        customerCode: customerVal,
-        shipToCode: shipToVal[0].PartnerCode,
-        taxToCode: taxToVal[0].PartnerCode,
-        salesCode: salesmanVal,
-        deliveryDate: deliveryDate,
-        poNo: poNo,
-        top: top,
-        discPercent: discount,
-        taxStatus: !tax ? "No" : tax,
-        taxPercent: taxVal,
-        currency: getFCurrency.Currency,
-        exchangeRate: exchangeRate,
-        totalGross: totalGross,
-        totalDisc: discountOutput,
-        taxValue: taxOutput,
-        totalNetto: totalNetto,
-        information: info,
-        status: "OPEN",
-        isPurchaseReturn: false,
-        createdBy: response.User,
-        changedBy: response.User,
-        salesOrderDetail: salesDetail,
-      });
+      // await axios.post(`${process.env.REACT_APP_API_BASE_URL}/salesorderh`, {
+      //   series: seriesVal,
+      //   generateDocDate: generateDocDate(),
+      //   docDate: docDate,
+      //   customerCode: customerVal,
+      //   shipToCode: shipToVal[0].PartnerCode,
+      //   taxToCode: taxToVal[0].PartnerCode,
+      //   salesCode: salesmanVal,
+      //   deliveryDate: deliveryDate,
+      //   poNo: poNo,
+      //   top: top,
+      //   discPercent: discount,
+      //   taxStatus: !tax ? "No" : tax,
+      //   taxPercent: taxVal,
+      //   currency: getFCurrency.Currency,
+      //   exchangeRate: exchangeRate,
+      //   totalGross: totalGross,
+      //   totalDisc: discountOutput,
+      //   taxValue: taxOutput,
+      //   totalNetto: totalNetto,
+      //   information: info,
+      //   status: "OPEN",
+      //   isPurchaseReturn: false,
+      //   createdBy: response.User,
+      //   changedBy: response.User,
+      //   salesOrderDetail: salesDetail,
+      // });
       toast.success("Data Saved", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
       });
-      setSalesDetail([]);
+
+      resetForm()
     } catch (error) {
       console.log(error);
       toast.warn("Code Sudah Digunakan", {
@@ -333,6 +334,55 @@ export const SalesOrderHeader = () => {
       });
     }
   };
+
+  const resetForm = () => {
+    setSeriesVal('')
+    setCustomerVal('')
+    setCustomerShipTo('')
+    setCustomerTaxTo('')
+    setSalesmanVal('')
+    setDeliveryDate('')
+    setPoNo('')
+    setTop('')
+    setGetFCurrency([])
+    setExchangeRate('')
+    setInfo('')
+    setTax('')
+    setTaxVal('')
+    setDiscount('')
+    setMaterialVal('')
+    setInfo('')
+    setQuantity('')
+    setSelectedPrice('')
+    setSalesDetail([]);
+  }
+
+  const handleChangeDataAPI = async (key, field, value) => {
+    setSalesDetail((prevData) =>
+      prevData.map((data, index) => {
+        if (index === key) {
+          let updatedData = {
+            ...data,
+            [field]: value,
+          };
+          if (field === "qty") {
+            updatedData.gross = (value * updatedData.price).toFixed(2);
+            updatedData.netto = (value * updatedData.price).toFixed(2);
+          }
+          return updatedData;
+        }
+        return data;
+      })
+    );
+  };
+  
+  useEffect(() => {
+    const sum = salesDetail.reduce((accumulator, currentData) => {
+      return accumulator + parseFloat(currentData.gross);
+    }, 0);
+    setTotalGross(sum.toFixed(2));
+  }, [salesDetail]);
+
 
   const [disabled, setDisabled] = useState(false);
 
@@ -369,7 +419,7 @@ export const SalesOrderHeader = () => {
               <tr>
                 <td className="text-right">Series: </td>
                 <td>
-                  <select onChange={(e) => setSeriesVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <select value={seriesVal} onChange={(e) => setSeriesVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="" disabled selected hidden>
                       Pilih series
                     </option>
@@ -393,7 +443,7 @@ export const SalesOrderHeader = () => {
               <tr>
                 <td className="text-right">Customer: </td>
                 <td>
-                  <select required onChange={(e) => setCustomerVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <select required value={customerVal} onChange={(e) => setCustomerVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="" disabled selected hidden>
                       Pilih Customer
                     </option>
@@ -439,7 +489,7 @@ export const SalesOrderHeader = () => {
               <tr>
                 <td className="text-right">Salesman: </td>
                 <td>
-                  <select required onChange={(e) => setSalesmanVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <select required value={salesmanVal} onChange={(e) => setSalesmanVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="" disabled selected hidden>
                       Pilih salesman
                     </option>
@@ -464,6 +514,7 @@ export const SalesOrderHeader = () => {
                     onChange={(e) => {
                       setPoNo(e.target.value);
                     }}
+                    value={poNo}
                     type="text"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="PO No"
@@ -477,6 +528,7 @@ export const SalesOrderHeader = () => {
                     onChange={(e) => {
                       setTop(e.target.value);
                     }}
+                    value={top}
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="0"
@@ -502,6 +554,7 @@ export const SalesOrderHeader = () => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="1.00"
                     required
+                    value={exchangeRate}
                     disabled={disabled}
                   />
                 </td>
@@ -513,6 +566,7 @@ export const SalesOrderHeader = () => {
                     onChange={(e) => {
                       setInfo(e.target.value);
                     }}
+                    value={info}
                     type="text"
                     className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder=""
@@ -525,6 +579,7 @@ export const SalesOrderHeader = () => {
                     onChange={(e) => {
                       setTax(e.target.value);
                     }}
+                    value={tax}
                     required
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
@@ -541,6 +596,7 @@ export const SalesOrderHeader = () => {
                     onChange={(e) => {
                       setTaxVal(e.target.value);
                     }}
+                    value={taxVal}
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="10.00"
@@ -556,6 +612,7 @@ export const SalesOrderHeader = () => {
                     onChange={(e) => {
                       setDiscount(e.target.value);
                     }}
+                    value={discount}
                     type="number"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="0.00"
@@ -586,11 +643,11 @@ export const SalesOrderHeader = () => {
                 </td>
                 <td className="text-right">Quantity:</td>
                 <td>
-                  <input onChange={(e) => setQuantity(e.target.value)} type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min="0" />
+                  <input value={quantity} onChange={(e) => setQuantity(e.target.value)} type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min="0" />
                 </td>
                 <td className="text-right">Price:</td>
                 <td>
-                  <input disabled type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={selectedPrice || getMyMaterialDetail?.DefaultPrice} />
+                  <input disabled type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value={Math.floor(selectedPrice || getMyMaterialDetail?.DefaultPrice)} />
                 </td>
                 <button
                   onClick={() => {
@@ -648,9 +705,6 @@ export const SalesOrderHeader = () => {
                   <th scope="col" className="px-6 py-3">
                     Netto
                   </th>
-                  <th scope="col" className="px-6 py-3">
-                    Control
-                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -659,11 +713,21 @@ export const SalesOrderHeader = () => {
                     <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                       <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{res.number}</td>
                       <td className="px-6 py-4">{res.materialCode}</td>
-                      <td className="px-6 py-4">{res.info}</td>
+                      <td className="px-6 py-4">
+												<input type="text" onChange={(e) => {
+                          handleChangeDataAPI(key, "info", e.target.value);
+                          }} 
+                          className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.info}/>
+                      </td>
                       <td className="px-6 py-4">{res.unit}</td>
-                      <td className="px-6 py-4">{res.qty}</td>
-                      <td className="px-6 py-4">{res.price}</td>
-                      <td className="px-6 py-4">{res.gross}</td>
+                      <td className="px-6 py-4">
+												<input type="text" onChange={(e) => {
+                          handleChangeDataAPI(key, "qty", e.target.value);
+                          }} 
+                          className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.qty}/>
+                      </td>
+                      <td className="px-6 py-4">{Math.floor(res.price)}</td>
+                      <td className="px-6 py-4">{Math.floor(res.gross)}</td>
                       <td className="px-6 py-4">{res.discPercent1}</td>
                       <td className="px-6 py-4">{res.discPercent2}</td>
                       <td className="px-6 py-4">{res.discPercent3}</td>
@@ -681,7 +745,7 @@ export const SalesOrderHeader = () => {
               <tr>
                 <td className="text-right">Total Gross : </td>
                 <td>
-                  <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={totalGross} />
+                  <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" disabled value={Math.floor(totalGross)} />
                 </td>
                 <td className="text-right">Total Disc: </td>
                 <td>
