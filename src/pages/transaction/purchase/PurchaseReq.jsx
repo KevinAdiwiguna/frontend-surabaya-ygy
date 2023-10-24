@@ -45,8 +45,28 @@ export const PurchaseReq = () => {
   const [qtyChange, setQtyChange] = useState("");
   const [requiredDateChange, setRequiredDateChange] = useState("");
 
+  const handleReset = () => {
+    // setSeries("");
+    // setDocDate("");
+    // setJODocNo("");
+    // setMaterialValUpdate("");
+    // infoUpdate("");
+    // qtyUpdate("");
+    // requiredDateUpdate("");
+
+    setDepartment("");
+    setQty(0);
+    setInformation("");
+    setDetailData([]);
+    setInfo("");
+    setQty("");
+    setRequiredDate("0000-00-00T00:00");
+  };
+
   const getMaterial = async () => {
-    const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/material`);
+    const data = await axios.get(
+      `${process.env.REACT_APP_API_BASE_URL}/material`
+    );
     setGetMaterial(data.data);
   };
 
@@ -55,18 +75,20 @@ export const PurchaseReq = () => {
       `${process.env.REACT_APP_API_BASE_URL}/department`
     );
     setGetDepartment(data.data);
-  }
+  };
 
   const getJobOrder = async () => {
     const response = await axios.get(
       `${process.env.REACT_APP_API_BASE_URL}/joborder`
     );
     setGetJobOrder(response.data);
-  }
+  };
 
   const getMaterialDetail = async (params) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/material/${params}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/material/${params}`
+      );
       setGetMyMaterialDetail(response.data);
     } catch (error) {
       console.log(error);
@@ -83,7 +105,9 @@ export const PurchaseReq = () => {
 
   const dataFetching = async () => {
     try {
-      const data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchaserequesth`);
+      const data = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/purchaserequesth`
+      );
       setGetData(data.data);
     } catch (error) {
       if (error.response) {
@@ -107,7 +131,9 @@ export const PurchaseReq = () => {
 
   const getSeries = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/seriescode/PURCHASE REQUEST`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/seriescode/PURCHASE REQUEST`
+      );
       setGetSeries(response.data);
     } catch (error) {
       console.log(error);
@@ -126,7 +152,10 @@ export const PurchaseReq = () => {
       ...detailData,
       {
         materialCode: materialVal,
-        info: info || getMyMaterialDetail?.Info ? info || getMyMaterialDetail?.Info : "-",
+        info:
+          info || getMyMaterialDetail?.Info
+            ? info || getMyMaterialDetail?.Info
+            : "-",
         qty: qty,
         unit: getMyMaterialDetail?.SmallestUnit,
         requiredDate: dateConverter(requiredDate),
@@ -141,7 +170,10 @@ export const PurchaseReq = () => {
       ...detailDataUpdate,
       {
         materialCode: materialValUpdate,
-        info: infoUpdate || getMyMaterialDetail?.Info ? infoUpdate || getMyMaterialDetail?.Info : "-",
+        info:
+          infoUpdate || getMyMaterialDetail?.Info
+            ? infoUpdate || getMyMaterialDetail?.Info
+            : "-",
         qty: qtyUpdate,
         unit: getMyMaterialDetail?.SmallestUnit,
         requiredDate: dateConverter(requiredDateUpdate),
@@ -155,7 +187,9 @@ export const PurchaseReq = () => {
   };
 
   const deleteDetailDataUpdate = (e) => {
-    setDetailDataUpdate((prevDataArr) => prevDataArr.filter((obj, key) => key !== e));
+    setDetailDataUpdate((prevDataArr) =>
+      prevDataArr.filter((obj, key) => key !== e)
+    );
   };
 
   const generateDocDate = () => {
@@ -168,12 +202,15 @@ export const PurchaseReq = () => {
 
   const changePurchaseDetailData = async (e, key) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/purchaserequestd/${e}/${key}`, {
-        info: infoChange,
-        qty: qtyChange,
-        requiredDate: dateConverter(requiredDateChange),
-        qtyWO: 0,
-      });
+      await axios.patch(
+        `${process.env.REACT_APP_API_BASE_URL}/purchaserequestd/${e}/${key}`,
+        {
+          info: infoChange,
+          qty: qtyChange,
+          requiredDate: dateConverter(requiredDateChange),
+          qtyWO: 0,
+        }
+      );
       getPurchaseDetailByDocNo(e);
       toast.success("Data Changed", {
         position: "top-center",
@@ -189,39 +226,58 @@ export const PurchaseReq = () => {
       return;
     }
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/purchaserequesth`, {
-        generateDocDate: generateDocDate(),
-        series: series,
-        docDate: dateConverter(docDate),
-        JODoNo: JODocNo,
-        trip: "",
-        department: department,
-        information: information,
-        status: "OPEN",
-        createdBy: response.User,
-        changedBy: response.User,
-        PurchaseRequestd: detailData,
-      });
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/purchaserequesth`,
+        {
+          generateDocDate: generateDocDate(),
+          series: series,
+          docDate: dateConverter(docDate),
+          JODoNo: JODocNo,
+          trip: "",
+          department: department,
+          information: information,
+          status: "OPEN",
+          createdBy: response.User,
+          changedBy: response.User,
+          PurchaseRequestd: detailData,
+        }
+      );
       dataFetching();
       toast.success("Data Created", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
       });
+      handleReset();
     } catch (error) {
-      toast.warn("Data Sudah Ada", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-      });
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 
   const getPurchaseDetailByDocNo = async (params) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/purchaserequestd/${params}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/purchaserequestd/${params}`
+      );
       setGetPurchaseDetail(response.data);
-      setGetPurchaseDetailwew(Array.isArray(response.data) ? response.data : []);
+      setGetPurchaseDetailwew(
+        Array.isArray(response.data) ? response.data : []
+      );
     } catch (error) {
       console.log(error);
     }
@@ -239,7 +295,9 @@ export const PurchaseReq = () => {
 
   const deleteData = async (params) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/purchaserequesth/${params}`);
+      await axios.delete(
+        `${process.env.REACT_APP_API_BASE_URL}/purchaserequesth/${params}`
+      );
       dataFetching();
       toast.success("Data Deleted", {
         position: "top-center",
@@ -268,15 +326,18 @@ export const PurchaseReq = () => {
 
   const updateData = async (params) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/purchaserequesth/${params}`, {
-        JODoNo: JODocNoUpdate,
-        trip: "",
-        department: departmentUpdate,
-        information: informationUpdate,
-        status: "OPEN",
-        isPurchaseReturn: false,
-        changedBy: response.User,
-      });
+      await axios.patch(
+        `${process.env.REACT_APP_API_BASE_URL}/purchaserequesth/${params}`,
+        {
+          JODoNo: JODocNoUpdate,
+          trip: "",
+          department: departmentUpdate,
+          information: informationUpdate,
+          status: "OPEN",
+          isPurchaseReturn: false,
+          changedBy: response.User,
+        }
+      );
       if (detailDataUpdate) {
         await axios.post(
           `${process.env.REACT_APP_API_BASE_URL}/purchaserequestd/${params}`,
@@ -328,6 +389,7 @@ export const PurchaseReq = () => {
                 <td className="text-right">Series: </td>
                 <td>
                   <select
+                    value={series}
                     onChange={(e) => {
                       setSeries(e.target.value);
                     }}
@@ -350,6 +412,7 @@ export const PurchaseReq = () => {
                 <td className="text-right">Doc Date: </td>
                 <td>
                   <input
+                    value={docDate}
                     onChange={(e) => {
                       setDocDate(e.target.value);
                     }}
@@ -367,6 +430,7 @@ export const PurchaseReq = () => {
                 <td className="text-right">Job Order No: </td>
                 <td>
                   <select
+                    value={JODocNo}
                     onChange={(e) => {
                       setJODocNo(e.target.value);
                     }}
@@ -389,6 +453,7 @@ export const PurchaseReq = () => {
                 <td className="text-right">Department: </td>
                 <td>
                   <select
+                    value={department}
                     onChange={(e) => {
                       setDepartment(e.target.value);
                     }}
@@ -413,17 +478,20 @@ export const PurchaseReq = () => {
         <div className="w-[75%] flex gap-3 items-center">
           <label>Information:</label>
           <input
+            value={information}
             onChange={(e) => {
               setInformation(e.target.value);
             }}
             type="text"
             className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder=""
-            required
           />
         </div>
         <div className="pl-[100px] my-2">
-          <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
+          <button
+            type="submit"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+          >
             Save
           </button>
         </div>
@@ -434,7 +502,10 @@ export const PurchaseReq = () => {
             <tr>
               <td className="text-right">Material:</td>
               <td>
-                <select onChange={(e) => setMaterialVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <select
+                  onChange={(e) => setMaterialVal(e.target.value)}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                >
                   <option disabled selected hidden>
                     Pilih Material
                   </option>
@@ -462,6 +533,7 @@ export const PurchaseReq = () => {
               <td className="text-right">Quantity:</td>
               <td>
                 <input
+                  value={qty}
                   onChange={(e) => {
                     setQty(e.target.value);
                   }}
@@ -475,6 +547,7 @@ export const PurchaseReq = () => {
               <td className="text-right">Required Date:</td>
               <td>
                 <input
+                  value={requiredDate}
                   min={currentDate}
                   onChange={(e) => {
                     setRequiredDate(e.target.value);
@@ -485,7 +558,10 @@ export const PurchaseReq = () => {
                   required
                 />
               </td>
-              <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
+              <button
+                type="submit"
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+              >
                 Add
               </button>
             </tr>
@@ -523,9 +599,16 @@ export const PurchaseReq = () => {
           </thead>
           <tbody>
             {detailData.map((res, key) => {
+              console.log(res)
               return (
-                <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                  <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <tr
+                  key={key}
+                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                >
+                  <th
+                    scope="row"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  >
                     {res.materialCode}
                   </th>
                   <td className="px-6 py-4">{res.info}</td>
@@ -552,7 +635,7 @@ export const PurchaseReq = () => {
         <div></div>
       </div>
 
-      <div className="text-xl pt-4 font-bold">Header :</div>
+      {/* <div className="text-xl pt-4 font-bold">Header :</div>
       <div className="relative overflow-x-auto">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -601,8 +684,14 @@ export const PurchaseReq = () => {
           <tbody>
             {getData.map((res, key) => {
               return (
-                <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                  <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <tr
+                  key={key}
+                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                >
+                  <th
+                    scope="row"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  >
                     {res.DocNo}
                   </th>
                   <td className="px-6 py-4">{res.Series}</td>
@@ -613,16 +702,23 @@ export const PurchaseReq = () => {
                   <td className="px-6 py-4">{res.Information}</td>
                   <td className="px-6 py-4">{res.Status}</td>
                   <td className="px-6 py-4">{res.CreatedBy}</td>
-                  <td className="px-6 py-4">{dateConverter(res.CreatedDate)}</td>
+                  <td className="px-6 py-4">
+                    {dateConverter(res.CreatedDate)}
+                  </td>
                   <td className="px-6 py-4">{res.ChangedBy}</td>
-                  <td className="px-6 py-4">{dateConverter(res.ChangedDate)}</td>
+                  <td className="px-6 py-4">
+                    {dateConverter(res.ChangedDate)}
+                  </td>
                   <td className="px-6 py-4">
                     <button
                       onClick={() => {
                         deleteData(res.DocNo);
                       }}
                       type="button"
-                      className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                      className={`focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 ${
+                        res?.Status === "DELETED" &&
+                        "pointer-events-none !cursor-not-allowed !bg-red-800"
+                      }`}
                     >
                       delete
                     </button>
@@ -633,7 +729,10 @@ export const PurchaseReq = () => {
                         getPurchaseDetailByDocNo(res.DocNo);
                       }}
                       type="button"
-                      className="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
+                      className={`focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900 ${
+                        res?.Status === "DELETED" &&
+                        "pointer-events-none !cursor-not-allowed !bg-blue-800"
+                      }`}
                     >
                       Update
                     </button>
@@ -644,18 +743,35 @@ export const PurchaseReq = () => {
           </tbody>
         </table>
         <div></div>
-      </div>
-      <div className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${modal ? "block" : "hidden"}`}>
+      </div> */}
+      {/* <div
+        className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${
+          modal ? "block" : "hidden"
+        }`}
+      >
         <div className="space-y-6">
-          <div className="text-2xl font-bold mb-4 ">DocNo: {modalData.DocNo}</div>
+          <div className="text-2xl font-bold mb-4 ">
+            DocNo: {modalData.DocNo}
+          </div>
           <button
             onClick={() => {
               closeModal();
             }}
             className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
           <form onSubmit={updateData}>
@@ -675,7 +791,14 @@ export const PurchaseReq = () => {
                   <tr>
                     <td className="text-right">Doc Date: </td>
                     <td>
-                      <input value={modalData.DocDate + "T00:00"} min={currentDate} type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+                      <input
+                        value={modalData.DocDate + "T00:00"}
+                        min={currentDate}
+                        type="datetime-local"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder=""
+                        required
+                      />
                     </td>
                   </tr>
                 </table>
@@ -758,7 +881,11 @@ export const PurchaseReq = () => {
                 <tr>
                   <td className="text-right">Material:</td>
                   <td>
-                    <select onChange={(e) => setMaterialValUpdate(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select
+                      value={materialValUpdate}
+                      onChange={(e) => setMaterialValUpdate(e.target.value)}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
                       <option disabled selected hidden>
                         Pilih Material
                       </option>
@@ -774,6 +901,7 @@ export const PurchaseReq = () => {
                   <td className="text-right">Info:</td>
                   <td>
                     <input
+                      value={infoUpdate}
                       onChange={(e) => {
                         setInfoUpdate(e.target.value);
                       }}
@@ -786,6 +914,7 @@ export const PurchaseReq = () => {
                   <td className="text-right">Quantity:</td>
                   <td>
                     <input
+                      value={qtyUpdate}
                       onChange={(e) => {
                         setQtyUpdate(e.target.value);
                       }}
@@ -799,6 +928,7 @@ export const PurchaseReq = () => {
                   <td className="text-right">Required Date:</td>
                   <td>
                     <input
+                      value={requiredDateUpdate}
                       min={currentDate}
                       onChange={(e) => {
                         setRequiredDateUpdate(e.target.value);
@@ -809,7 +939,10 @@ export const PurchaseReq = () => {
                       required
                     />
                   </td>
-                  <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
+                  <button
+                    type="submit"
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+                  >
                     Add
                   </button>
                 </tr>
@@ -847,8 +980,14 @@ export const PurchaseReq = () => {
               <tbody>
                 {detailDataUpdate.map((res, key) => {
                   return (
-                    <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                      <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <tr
+                      key={key}
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                    >
+                      <th
+                        scope="row"
+                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      >
                         {res.materialCode}
                       </th>
                       <td className="px-6 py-4">{res.info}</td>
@@ -959,7 +1098,10 @@ export const PurchaseReq = () => {
               <tbody>
                 {getPurchaseDetail.map((res, key) => {
                   return (
-                    <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <tr
+                      key={key}
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                    >
                       <td className="px-6 py-4">
                         <button
                           onClick={() => {
@@ -985,7 +1127,7 @@ export const PurchaseReq = () => {
             <div></div>
           </div>
         </div>
-      </div>
+      </div> */}
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
     </div>
   );

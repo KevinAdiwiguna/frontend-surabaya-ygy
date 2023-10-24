@@ -26,6 +26,20 @@ export const GoodsReceipt = () => {
   const [vehicleNo, setVehicleNo] = useState("")
   const [information, setInformation] = useState("")
 
+
+  const handleReset = () => {
+    setGetSeriesVal("")
+    setGetDocDate("00/00/0000")
+    setPurchaseOrderNo("")
+    setSupplyDeliveryNo("")
+    setPurchaseOrderHeader('')
+    setPurchaseOrderDetail([])
+    setVehicleNo("")
+    setInformation("")
+    purchaseOrderDetail([])
+  }
+
+
   const closeModal = () => {
     setModal(false);
     setDetailDataUpdate([]);
@@ -131,6 +145,7 @@ export const GoodsReceipt = () => {
         autoClose: 3000,
         hideProgressBar: true,
       });
+      handleReset()
     } catch (error) {
       if (error.response) {
         toast.error(`${error.response.data.msg}`, {
@@ -164,7 +179,7 @@ export const GoodsReceipt = () => {
             <tr>
               <td className="text-right">Series: </td>
               <td>
-                <select onChange={(e) => setGetSeriesVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <select value={getMySeriesVal} onChange={(e) => setGetSeriesVal(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option value="" disabled selected hidden>
                     Pilih series
                   </option>
@@ -181,13 +196,14 @@ export const GoodsReceipt = () => {
             <tr>
               <td className="text-right">Doc Date: </td>
               <td>
-                <input onChange={(e) => setGetDocDate(e.target.value)} min={currentDate} type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+                <input value={getDocDate} onChange={(e) => setGetDocDate(e.target.value)} min={currentDate} type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
               </td>
             </tr>
             <tr>
               <td className="text-right">Purchase Order No: </td>
               <td>
                 <select
+                value={purchaseOrderNo}
                   onChange={(e) => {
                     setPurchaseOrderNo(e.target.value);
                   }}
@@ -222,13 +238,13 @@ export const GoodsReceipt = () => {
             <tr>
               <td className="text-right">Supply Delivery No: </td>
               <td>
-                <input onChange={(e)=> {setSupplyDeliveryNo(e.target.value)}} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+                <input value={supplyDeliveryNo} onChange={(e)=> {setSupplyDeliveryNo(e.target.value)}} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
               </td>
             </tr>
             <tr>
               <td className="text-right">Vehicle No: </td>
               <td>
-                <input onChange={(e)=> {setVehicleNo(e.target.value)}} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+                <input value={vehicleNo} onChange={(e)=> {setVehicleNo(e.target.value)}} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
               </td>
             </tr>
             <tr>
@@ -242,7 +258,7 @@ export const GoodsReceipt = () => {
 
         <div className="w-full  flex gap-3 justify-center items-center mx-auto mt-10">
           <label>Information:</label>
-          <input onChange={(e) => setInformation(e.target.value)} type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+          <input value={information} onChange={(e) => setInformation(e.target.value)} type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
           <button onClick={submitClick} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
             Save
           </button>

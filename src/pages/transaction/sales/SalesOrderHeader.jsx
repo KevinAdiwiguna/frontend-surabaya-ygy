@@ -290,56 +290,73 @@ export const SalesOrderHeader = () => {
 
   const submitClick = async (e) => {
     e.preventDefault();
+    if(!salesDetail){
+      return toast.error("Fill the Sales Detail!", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    }
     try {
-      // await axios.post(`${process.env.REACT_APP_API_BASE_URL}/salesorderh`, {
-      //   series: seriesVal,
-      //   generateDocDate: generateDocDate(),
-      //   docDate: docDate,
-      //   customerCode: customerVal,
-      //   shipToCode: shipToVal[0].PartnerCode,
-      //   taxToCode: taxToVal[0].PartnerCode,
-      //   salesCode: salesmanVal,
-      //   deliveryDate: deliveryDate,
-      //   poNo: poNo,
-      //   top: top,
-      //   discPercent: discount,
-      //   taxStatus: !tax ? "No" : tax,
-      //   taxPercent: taxVal,
-      //   currency: getFCurrency.Currency,
-      //   exchangeRate: exchangeRate,
-      //   totalGross: totalGross,
-      //   totalDisc: discountOutput,
-      //   taxValue: taxOutput,
-      //   totalNetto: totalNetto,
-      //   information: info,
-      //   status: "OPEN",
-      //   isPurchaseReturn: false,
-      //   createdBy: response.User,
-      //   changedBy: response.User,
-      //   salesOrderDetail: salesDetail,
-      // });
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/salesorderh`, {
+        series: seriesVal,
+        generateDocDate: generateDocDate(),
+        docDate: docDate,
+        customerCode: customerVal,
+        shipToCode: shipToVal[0].PartnerCode,
+        taxToCode: taxToVal[0].PartnerCode,
+        salesCode: salesmanVal,
+        deliveryDate: deliveryDate,
+        poNo: poNo,
+        top: top,
+        discPercent: discount,
+        taxStatus: !tax ? "No" : tax,
+        taxPercent: taxVal,
+        currency: getFCurrency.Currency,
+        exchangeRate: exchangeRate,
+        totalGross: totalGross,
+        totalDisc: discountOutput,
+        taxValue: taxOutput,
+        totalNetto: totalNetto,
+        information: info,
+        status: "OPEN",
+        isPurchaseReturn: false,
+        createdBy: response.User,
+        changedBy: response.User,
+        salesOrderDetail: salesDetail,
+      });
       toast.success("Data Saved", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
       });
-
+      
       resetForm()
     } catch (error) {
-      console.log(error);
-      toast.warn("Code Sudah Digunakan", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-      });
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 
   const resetForm = () => {
     setSeriesVal('')
     setCustomerVal('')
-    setCustomerShipTo('')
-    setCustomerTaxTo('')
+    setCustomerShipTo([])
+    setCustomerTaxTo([])
     setSalesmanVal('')
     setDeliveryDate('')
     setPoNo('')
