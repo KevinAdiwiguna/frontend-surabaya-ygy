@@ -231,18 +231,30 @@ export const ModalComp = (params) => {
         <div
           className={
             show
-              ? `fixed w-screen h-screen bg-white z-50 top-0 left-0`
+              ? `fixed w-screen h-screen bg-white z-50 top-0 left-0 text-black`
               : `hidden`
           }
         >
           <div>
-            <div className="w-full flex justify-around">
-              <div></div>
-              <div className="py-4">
-                <div>{DetailDocNo?.goodsissueh?.CustomerCode}</div>
+            <div className="w-full flex justify-around py-4">
+              <div>
+                <div className="font-bold text-3xl">CV. Gemilang Multi Kreasi</div>
+                <div className="font-bold text-lg">Jl. Berbek Industri 3 / 15 Sidoarjo</div>
+              </div>
+              <div className="py-2">
+                <div>Kepada:</div>
+                <div>{customer?.Name}</div>
                 <div>{customer?.Address}</div>
                 <div>{customer?.Address2}</div>
                 <div>{customer?.City}</div>
+              </div>
+            </div>
+            <div>
+            <div className="font-bold flex justify-around gap-20 border-black border-b">
+              <div>
+              SURAT JALAN PENGGANTI
+              </div>
+              <div>
               </div>
             </div>
             <div className="w-full flex justify-around">
@@ -258,9 +270,11 @@ export const ModalComp = (params) => {
               <div>
                 <div>No PO: {DetailDocNo?.goodsissueh?.PONo}</div>
                 <div>Cetakan ke: {DetailDocNo?.goodsissueh?.PrintCounter + 1}</div>
+                <div>{response?.User}</div>
               </div>
             </div>
-            <div className="relative overflow-x-auto pt-10">
+            </div>
+            <div className="relative overflow-x-auto border-t border-black pt-6">
               <table className="w-full text-sm text-left ">
                 <thead className="text-xs uppercase">
                   <tr>
@@ -297,7 +311,7 @@ export const ModalComp = (params) => {
               </table>
             </div>
           </div>
-          <div className="flex ml-20 gap-[100px]">
+          <div className="flex pl-20 gap-[100px] border-black border-t">
             <div className="p-2">
               <div>Dibuat Oleh</div>
               <div className="h-[100px]"></div>
