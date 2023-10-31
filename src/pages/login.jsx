@@ -44,7 +44,6 @@ export const Login = () => {
 
   return (
     <div
-      style={{ backgroundImage: `url("./images.png")` }}
       className="bg-center bgku"
     >
       <div className="flex justify-center items-center h-screen">
