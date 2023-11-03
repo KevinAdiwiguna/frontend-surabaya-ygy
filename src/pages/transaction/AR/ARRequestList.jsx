@@ -449,7 +449,7 @@ export const ModalComp = (params) => {
     response,
   } = params;
   const [DetailDocNo, setDetailDocNo] = useState([]);
-  const [ModifiedSalesOrderNoDetail, setModifiedSalesOrderNoDetail] = useState(
+  const [selectedHeader, setSelectedHeader] = useState(
     []
   );
 
@@ -462,6 +462,9 @@ export const ModalComp = (params) => {
   const [DocNo, setDocNo] = useState("");
   const [ARBook, setARBook] = useState([]);
   const [selectedARBook, setSelectedARBook] = useState([]);
+  const [collector, setCollector] = useState("")
+  const [getMyCollector, setGetMyCollector] = useState([]);
+  const [totalGross, setTotalGross] = useState(0);
 
   const getARBook = async () => {
     try {
@@ -501,12 +504,11 @@ export const ModalComp = (params) => {
       `${process.env.REACT_APP_API_BASE_URL}/requestlistdetail/${params}`
     );
     setDocNo(params);
-    setModifiedSalesOrderNoDetail(response.data);
+    setSelectedHeader(response.data.header);
     setSelectedARBook(response.data.detail);
     setSelectedARBookCheck(response.data.detail);
   };
 
-  console.table(typeof DetailDocNo == "object");
   useEffect(() => {
     if (typeof DetailDocNo == "string") {
       getDetailDocNo(DetailDocNo);
@@ -514,8 +516,21 @@ export const ModalComp = (params) => {
   }, [DetailDocNo]);
 
   useEffect(() => {
+    setCollector(selectedHeader?.CollectorCode)
+    setInformation(selectedHeader?.Information)
+  }, [selectedHeader])
+
+  useEffect(() => {
     getARBook();
   }, [selectedARBook]);
+
+  useEffect(() => {
+    if(ARBook) {
+      setTotalGross(ARBook.reduce((total, res) => total + parseInt(res.DocValue), 0))
+    }
+  }, [ARBook]);
+
+  
 
   const getQtyRemain = async (params) => {
     const response = await axios.get(
@@ -576,19 +591,37 @@ export const ModalComp = (params) => {
     }));
   };
 
+  const getCollector = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/collector`
+      );
+      setGetMyCollector(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleSave = async () => {
     try {
       await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/goodsissueheader/${DetailDocNo?.goodsissueh?.DocNo}`,
+        `${process.env.REACT_APP_API_BASE_URL}/arrequestlist/${DocNo}`,
         {
-          poNo: !PoNo ? DetailDocNo?.goodsissueh?.PONo : PoNo,
-          vehicleNo: !VehicleNo
-            ? DetailDocNo?.goodsissueh?.VehicleNo
-            : VehicleNo,
-          information: !Information
-            ? DetailDocNo?.goodsissued.Information
-            : Information,
-          changedBy: response.User,
+          collectorCode: collector,
+          customerGroup: "",
+          salesArea1: 0,
+          salesArea2: 0,
+          salesArea3: 0,
+          currency: 0,
+          totalCustomer: uniqueCheckedCustomers.size,
+          totalDocument: totalCheckedItems,
+          totalValue: totalGross,
+          information: Information,
+          status:"OPEN",
+          printCounter: 0,
+          createdBy: response?.User,
+          changedBy: response?.User,
+          details: selectedARBookCheck,
         }
       );
 
@@ -630,32 +663,27 @@ export const ModalComp = (params) => {
   };
 
   // update method
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [checkboxStatus, setCheckboxStatus] = useState({});
-
   const handleCheckboxChange = (res) => {
-    const { DocNo } = res;
+    const { DocNo, DocValue } = res;
     const isSelected = selectedARBookCheck.some(
       (item) => item.ARDocNo === DocNo
     );
 
     if (isSelected) {
       setSelectedARBookCheck((prevSelectedItems) =>
-        prevSelectedItems.filter((item) => !(item.ARDocNo === DocNo))
+        prevSelectedItems.filter((item) => item.ARDocNo !== DocNo)
       );
+      setTotalGross((prevTotal) => prevTotal - parseInt(DocValue));
     } else {
-      setSelectedARBookCheck((prevSelectedItems) => [
-        ...prevSelectedItems,
-        {
-          DocNo: prevSelectedItems.DocNo,
-          CustomerCode: prevSelectedItems.CustomerCode,
-          ARDocNo: prevSelectedItems.ARDocNo,
-        },
-      ]);
+      const newItem = selectedARBook.find((item) => item.ARDocNo === DocNo);
+      if (newItem) {
+        setSelectedARBookCheck(selectedARBookCheck.concat(newItem));
+        setTotalGross((prevTotal) => prevTotal + parseInt(DocValue));
+      }
+      
     }
   };
 
-  console.log(selectedARBookCheck);
   // update method - end
 
   const [printModal, setPrintModal] = useState(false);
@@ -729,6 +757,27 @@ export const ModalComp = (params) => {
       console.log(error);
     }
   };
+
+  const [totalCheckedItems, setTotalCheckedItems] = useState(0)
+  const [uniqueCheckedCustomers, setUniqueCheckedCustomers] = useState(
+    new Set()
+  );
+  const [selectedItemsChanged, setSelectedItemsChanged] = useState([]);
+
+  useEffect(() => {
+    // Menghitung totalCheckedItems
+    setTotalCheckedItems(selectedARBookCheck.length);
+
+    // Menghitung uniqueCheckedCustomers
+    const uniqueCustomers = new Set();
+    selectedARBookCheck.forEach((item) => uniqueCustomers.add(item.CustomerCode));
+    setUniqueCheckedCustomers(uniqueCustomers);
+    const newData = selectedARBookCheck.map((item) => ({
+      customerCode: item["CustomerCode"],
+      arDocNo: item["DocNo"],
+    }));
+    setSelectedItemsChanged(newData);
+  }, [selectedARBookCheck]);
 
   // // ---------------------------------------------------------------------------------------------------------------------
   // function mergeDataWithChecklist(selectedARBook, selectedItems) {
@@ -816,9 +865,8 @@ export const ModalComp = (params) => {
 
   return (
     <div
-      className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${
-        Modal ? "block" : "hidden"
-      }`}
+      className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${Modal ? "block" : "hidden"
+        }`}
     >
       {show ? (
         <div
@@ -1000,42 +1048,75 @@ export const ModalComp = (params) => {
                 </td>
               </tr>
             </table>
-            <hr />
-            <table className="text-sm w-full text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th className="w-14 px-4">PO NO</th>
+            <hr className="my-2" />
+            <table className="border-separate border-spacing-2">
+              <tr>
+                  <th className="text-right px-2">Collector</th>
                   <div className="my-1">
-                    <input
-                      onChange={(e) => setPoNo(e.target.value)}
-                      type="number"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100px] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder={DetailDocNo?.goodsissueh?.PONo}
-                    />
+                    <select
+                      onChange={(e) =>
+                        setCollector(e.target.value)
+                      }
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-[200px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                      <option>{selectedHeader?.CollectorCode}</option>
+                      {getMyCollector.map((res, key) => {
+                        return (
+                          <option key={key} value={res.Code}>
+                            {res.Code}
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
                 </tr>
                 <tr>
-                  <th className="w-14 px-4">Vehicle No</th>
-                  <div className="my-1">
-                    <input
-                      onChange={(e) => setVehicleNo(e.target.value)}
-                      type="number"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100px] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder={DetailDocNo?.goodsissueh?.VehicleNo}
-                    />
-                  </div>
-                </tr>
-                <tr>
-                  <th className="w-14 px-4">Information No</th>
+                  <th className="text-right px-2">Information</th>
                   <div className="my-1">
                     <input
                       onChange={(e) => setInformation(e.target.value)}
                       type="text"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder={DetailDocNo?.goodsissueh?.Information}
+                      placeholder={selectedHeader?.Information}
                     />
                   </div>
                 </tr>
+                <tr>
+                  <td className="text-right px-2">No of Customer : </td>
+                  <td>
+                    <input
+                      type="number"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      disabled
+                      value={uniqueCheckedCustomers.size}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td className="text-right px-2">No of Document : </td>
+                  <td>
+                    <input
+                      type="number"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      disabled
+                      value={totalCheckedItems}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td className="text-right px-2">Total Value : </td>
+                  <td>
+                    <input
+                      type="number"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      disabled
+                      value={totalGross}
+                    />
+                  </td>
+                </tr>
+            </table>
+            <table className="text-sm text-gray-500 dark:text-gray-400">
+              {/* <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"> */}
                 <div>
                   <td className="flex gap-4">
                     <button
@@ -1063,9 +1144,8 @@ export const ModalComp = (params) => {
                     </button>
                   </td>
                 </div>
-              </thead>
+              {/* </thead> */}
             </table>
-
             <div className="relative overflow-x-auto">
               <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
