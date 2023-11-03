@@ -51,7 +51,6 @@ const ARRequestList = () => {
 
   const handleCheckboxChange = (res) => {
     const { CustomerCode, DocNo, DocValue } = res;
-    console.log(res);
     const isSelected = selectedItems.some(
       (item) => item.CustomerCode === CustomerCode && item.DocNo === DocNo
     );
@@ -462,13 +461,19 @@ export const ModalComp = (params) => {
   const [TotalQty, setTotalQty] = useState();
   const [DocNo, setDocNo] = useState("");
   const [ARBook, setARBook] = useState([]);
+  const [selectedARBook, setSelectedARBook] = useState([]);
 
   const getARBook = async () => {
     try {
       const res = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/arrequestlist`
       );
-      setARBook(res.data);
+      const filteredData = res.data.filter((item) => {
+        return selectedARBook.some(
+          (selectedItem) => selectedItem.ARDocNo === item.DocNo
+        );
+      });
+      setARBook(filteredData);
     } catch (error) {
       if (error.response) {
         toast.error(`${error.response.data.msg}`, {
@@ -489,16 +494,29 @@ export const ModalComp = (params) => {
     }
   };
 
+  const [selectedARBookCheck, setSelectedARBookCheck] = useState([]);
+
   const getDetailDocNo = async (params) => {
     const response = await axios.get(
       `${process.env.REACT_APP_API_BASE_URL}/requestlistdetail/${params}`
     );
     setDocNo(params);
-    setDetailDocNo(response.data);
     setModifiedSalesOrderNoDetail(response.data);
+    setSelectedARBook(response.data.detail);
+    setSelectedARBookCheck(response.data.detail);
   };
 
-  console.table(ModifiedSalesOrderNoDetail)
+  console.table(typeof DetailDocNo == "object");
+  useEffect(() => {
+    if (typeof DetailDocNo == "string") {
+      getDetailDocNo(DetailDocNo);
+    }
+  }, [DetailDocNo]);
+
+  useEffect(() => {
+    getARBook();
+  }, [selectedARBook]);
+
   const getQtyRemain = async (params) => {
     const response = await axios.get(
       `${process.env.REACT_APP_API_BASE_URL}/goodsissue/${params}`
@@ -616,30 +634,28 @@ export const ModalComp = (params) => {
   const [checkboxStatus, setCheckboxStatus] = useState({});
 
   const handleCheckboxChange = (res) => {
-    const { CustomerCode, DocNo } = res;
-    const isSelected = checkboxStatus[CustomerCode + DocNo] || false;
+    const { DocNo } = res;
+    const isSelected = selectedARBookCheck.some(
+      (item) => item.ARDocNo === DocNo
+    );
 
-    // Toggle checkbox status
-    setCheckboxStatus((prevStatus) => ({
-      ...prevStatus,
-      [CustomerCode + DocNo]: !isSelected,
-    }));
-
-    // Update selectedItems based on the checkbox status
-    if (!isSelected) {
-      setSelectedItems((prevSelectedItems) => [
-        ...prevSelectedItems,
-        { CustomerCode, DocNo },
-      ]);
-    } else {
-      setSelectedItems((prevSelectedItems) =>
-        prevSelectedItems.filter(
-          (item) => item.CustomerCode !== CustomerCode || item.DocNo !== DocNo
-        )
+    if (isSelected) {
+      setSelectedARBookCheck((prevSelectedItems) =>
+        prevSelectedItems.filter((item) => !(item.ARDocNo === DocNo))
       );
+    } else {
+      setSelectedARBookCheck((prevSelectedItems) => [
+        ...prevSelectedItems,
+        {
+          DocNo: prevSelectedItems.DocNo,
+          CustomerCode: prevSelectedItems.CustomerCode,
+          ARDocNo: prevSelectedItems.ARDocNo,
+        },
+      ]);
     }
   };
 
+  console.log(selectedARBookCheck);
   // update method - end
 
   const [printModal, setPrintModal] = useState(false);
@@ -714,10 +730,89 @@ export const ModalComp = (params) => {
     }
   };
 
-  useEffect(() => {
-    // getCustomerByDocNo(DetailDocNo?.goodsissueh?.CustomerCode);
-    getARBook();
-  }, [DetailDocNo]);
+  // // ---------------------------------------------------------------------------------------------------------------------
+  // function mergeDataWithChecklist(selectedARBook, selectedItems) {
+  //   const mergedData = [...selectedARBook, ...selectedItems];
+
+  //   const selectedItemsIndex = {};
+  //   selectedItems.forEach((item) => {
+  //     selectedItemsIndex[`${item.CustomerCode}-${item.DocNo}`] = true;
+  //   });
+
+  //   for (const arBook of selectedARBook) {
+  //     const key = `${arBook.CustomerCode}-${arBook.DocNo}`;
+  //     const isChecklisted = selectedItemsIndex[key] || false;
+
+  //     if (
+  //       !mergedData.find(
+  //         (item) =>
+  //           item.CustomerCode === arBook.CustomerCode &&
+  //           item.DocNo === arBook.DocNo
+  //       )
+  //     ) {
+  //       mergedData.push({
+  //         CustomerCode: arBook.CustomerCode,
+  //         DocNo: arBook.DocNo,
+  //         ARDocNo: isChecklisted ? arBook.ARDocNo : "",
+  //       });
+  //     } else if (isChecklisted) {
+  //       const existingItem = mergedData.find(
+  //         (item) =>
+  //           item.CustomerCode === arBook.CustomerCode &&
+  //           item.DocNo === arBook.DocNo
+  //       );
+  //       existingItem.ARDocNo = `${existingItem.ARDocNo}, ${arBook.ARDocNo}`;
+  //     }
+  //   }
+
+  //   return mergedData;
+  // }
+
+  // const hasilGabungDenganChecklist = mergeDataWithChecklist(
+  //   selectedARBook,
+  //   selectedItems
+  // );
+  // const ARBookWithChecked = ARBook.map((item) => ({ ...item, checked: false }));
+
+  // // console.log(ARBookWithChecked,hasilGabungDenganChecklist)
+
+  // function mergeAndCheckDataWithChecklist(
+  //   ARBookWithChecked,
+  //   hasilGabungDenganChecklist
+  // ) {
+  //   return ARBookWithChecked.map((arBook) => {
+  //     const matchingItem = hasilGabungDenganChecklist.find(
+  //       (item) =>
+  //         item.ARDocNo === arBook.DocNo &&
+  //         item.CustomerCode === arBook.CustomerCode
+  //     );
+  //     if (matchingItem) {
+  //       return { ...arBook, checked: true };
+  //     } else {
+  //       return arBook;
+  //     }
+  //   });
+  // }
+
+  // const hasilAkhir = mergeAndCheckDataWithChecklist(
+  //   ARBookWithChecked,
+  //   hasilGabungDenganChecklist
+  // );
+  // console.log(hasilAkhir, hasilGabungDenganChecklist);
+
+  // function handleItemClick(index) {
+  //   const updatedARBook = [...ARBook]; // Salin array ARBook agar tidak mengubah array aslinya
+  //   updatedARBook[index].checked = !updatedARBook[index].checked; // Mengubah nilai checked
+
+  //   // Gunakan updatedARBook untuk melakukan apa pun yang Anda butuhkan
+  // }
+  // // Fungsi untuk menangani klik pada objek
+
+  // // ---------------------------------------------------------------------------------------------------------------------
+
+  // useEffect(() => {
+  //   getARBook();
+  // }, [DetailDocNo]);
 
   return (
     <div
@@ -889,11 +984,11 @@ export const ModalComp = (params) => {
                   <select
                     onChange={async (e) => {
                       setDetailDocNo(e.target.value);
-                      await getDetailDocNo()
+                      getDetailDocNo(e.target.val);
                     }}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-[200px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
-                    <option selected>Pilih</option>
+                    <option>Pilih</option>
                     {AllDocNo.map((res, key) => {
                       return (
                         <option key={key} value={res.DocNo}>
@@ -1029,12 +1124,14 @@ export const ModalComp = (params) => {
                         <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                           <input
                             type="checkbox"
-                            onChange={() => handleCheckboxChange(res)}
-                            checked={checkboxStatus[res.CustomerCode + res.DocNo]}
+                            onChange={() => {
+                              handleCheckboxChange(res);
+                            }}
+                            defaultChecked
                           />
                         </td>
                         <td className="px-6 py-4">{res.CustomerCode}</td>
-                        <td className="px-6 py-4">{res.DocDate}</td>
+                        <td cxlassName="px-6 py-4">{res.DocDate}</td>
                         <td className="px-6 py-4">{res.DocNo}</td>
                         <td className="px-6 py-4">{res.TOP}</td>
                         <td className="px-6 py-4">{res.DueDate}</td>
