@@ -615,7 +615,7 @@ export const ModalComp = (params) => {
           currency: 0,
           totalCustomer: uniqueCheckedCustomers.size,
           totalDocument: totalCheckedItems,
-          totalValue: totalGross,
+          totalValue: totalGross, 
           information: Information,
           status:"OPEN",
           printCounter: 0,

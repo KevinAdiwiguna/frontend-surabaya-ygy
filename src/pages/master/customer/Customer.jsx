@@ -36,9 +36,9 @@ export const Customer = () => {
   const [transactionType, setTransactionType] = useState();
   const [getTransactionType, setGetTransactionType] = useState([]);
   const [transactionType2, setTransactionType2] = useState();
-  const [cutPph, setCutPph] = useState(false);
-  const [isBlackList, setIsBlackList] = useState(false);
-  const [isDeleted, setIsDeleted] = useState(false);
+  const [cutPph, setCutPph] = useState(0);
+  const [isBlackList, setIsBlackList] = useState(0);
+  const [isDeleted, setIsDeleted] = useState(0);
   const [information, setInformation] = useState();
   const [getData, setGetData] = useState([]);
   const [getCountry, setGetCountry] = useState([]);
@@ -343,13 +343,23 @@ export const Customer = () => {
         autoClose: 3000,
         hideProgressBar: true,
       });
-    } catch (error) { 
-      toast.warn("Code Sudah Digunakan", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-      });
-
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 
