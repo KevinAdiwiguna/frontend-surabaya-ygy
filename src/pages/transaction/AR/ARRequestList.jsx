@@ -643,22 +643,32 @@ export const ModalComp = (params) => {
         );
       });
       setModal(false);
-      getSeries();
-      getSalesOrderNo();
       setDetailDocNo([]);
-      getAllDocNo();
-      getQtyRemain();
+      setCollector("")
+      setInformation("")
+      setARBook([])
       toast.success("Data Updated", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
       });
     } catch (error) {
-      toast.error("No Data updated", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-      });
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 
@@ -698,13 +708,12 @@ export const ModalComp = (params) => {
     if (printed) {
       try {
         await axios.patch(
-          `${process.env.REACT_APP_API_BASE_URL}/printgoodsissue/${DetailDocNo?.goodsissueh?.DocNo}`,
+          `${process.env.REACT_APP_API_BASE_URL}/printRequestList/${selectedHeader?.DocNo}`,
           {
             printedBy: response?.User,
           }
         );
         setPrinted(false);
-        setDetailDocNo([]);
         toast.success("Data Printed!", {
           position: "top-center",
           autoClose: 3000,
@@ -877,7 +886,7 @@ export const ModalComp = (params) => {
           }
         >
           <div>
-            <div className="w-full flex justify-around py-4">
+            <div className="w-full pl-4 py-4 border-black border-b">
               <div>
                 <div className="font-bold text-3xl">
                   CV. Gemilang Multi Kreasi
@@ -885,93 +894,114 @@ export const ModalComp = (params) => {
                 <div className="font-bold text-lg">
                   Jl. Berbek Industri 3 / 15 Sidoarjo
                 </div>
-              </div>
-              <div className="py-2">
-                <div>Kepada:</div>
-                <div>{customer?.Name}</div>
-                <div>{customer?.Address}</div>
-                <div>{customer?.Address2}</div>
-                <div>{customer?.City}</div>
+                <div>
+                  Telp. (031) 8494605
+                </div>
               </div>
             </div>
-            <div>
-              <div className="font-bold flex justify-around gap-20 border-black border-b">
-                <div>SURAT JALAN PENGGANTI</div>
-                <div></div>
+            <div className="flex items-center flex-col font-bold">
+              <div className="text-xl">
+                Daftar Penagihan Piutang (DPP)
               </div>
-              <div className="w-full flex justify-around">
-                <div>
-                  <div>No: {DetailDocNo?.goodsissueh?.DocNo}</div>
-                  <div>Tanggal: {DetailDocNo?.goodsissueh?.DocDate}</div>
-                  <div>Keterangan: {DetailDocNo?.goodsissueh?.Information}</div>
-                </div>
-                <div>
-                  <div>No SO: {DetailDocNo?.goodsissueh?.SODocNo}</div>
-                  <div>Nopol: {DetailDocNo?.goodsissueh?.VehicleNo}</div>
-                </div>
-                <div>
-                  <div>No PO: {DetailDocNo?.goodsissueh?.PONo}</div>
-                  <div>
-                    Cetakan ke: {DetailDocNo?.goodsissueh?.PrintCounter + 1}
-                  </div>
-                  <div>{response?.User}</div>
-                </div>
+              <div>
+                Tipe: per Customer
+              </div>
+              <div className="font-normal">
+                per {selectedHeader?.DocDate}
+              </div>
+            </div>
+            <div className="ml-4 my-2">
+              <table>
+                <tr className="flex gap-20">
+                  <td>No Dokumen: {selectedHeader?.DocNo}</td>
+                  <td>Tgl Tagih: {selectedHeader?.DocDate}</td>
+                  <td>Dokumen: {selectedHeader?.TotalDocument}</td>
+                  <td>Total (RP): {selectedHeader.TotalValue}</td>
+                </tr>
+              </table>
+              <div>
+                Keterangan: {selectedHeader.Information}
               </div>
             </div>
             <div className="relative overflow-x-auto border-t border-black pt-6">
-              <table className="w-full text-sm text-left ">
+              <table className="w-full text-sm text-left">
                 <thead className="text-xs uppercase">
                   <tr>
                     <th scope="col" className="px-6 py-3 text-center">
-                      Kode Barang
+                      Tgl Dokumen
                     </th>
                     <th scope="col" className="px-14 py-3 text-center">
-                      Lokasi
+                      No Dokumen
                     </th>
                     <th scope="col" className="px-14 py-3 text-center">
-                      Batch No
+                      TOP
                     </th>
                     <th scope="col" className="px-6 py-3 text-center">
-                      Satuan
+                      Jatuh Tempo
                     </th>
                     <th scope="col" className="px-6 py-3 text-center">
-                      Qty
+                      Kurs
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-center">
+                      Nilai Dokumen
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-center">
+                      Pembayaran
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-center">
+                      Sisa
                     </th>
                   </tr>
                 </thead>
-                {DetailDocNo?.goodsissued?.map((res, key) => {
+                {ARBook?.map((res, key) => {
                   return (
                     <tbody>
                       <tr className="bg-white dark:bg-gray-800 dark:border-gray-700">
                         <td className="px-6 py-2 text-center">
-                          {res.MaterialCode}
+                          {res.DocDate}
                         </td>
                         <td className="px-6 py-2 text-center">
-                          {res.Location}
+                          {res.DocNo}
                         </td>
-                        <td className="px-6 py-2 text-center">{res.BatchNo}</td>
-                        <td className="px-6 py-2 text-center">{res.Unit}</td>
-                        <td className="px-6 py-2 text-center">
-                          {Math.floor(res.Qty)}
-                        </td>
+                        <td className="px-6 py-2 text-center">{res.TOP}</td>
+                        <td className="px-6 py-2 text-center">{res.DueDate}</td>
+                        <td className="px-6 py-2 text-center">{res.Currency}</td>
+                        <td className="px-6 py-2 text-center">{Math.floor(res.DocValueLocal)}</td>
+                        <td className="px-6 py-2 text-center">{Math.floor(res.PaymentValueLocal)}</td>
+                        <td className="px-6 py-2 text-center">{res.DocValueLocal - res.PaymentValueLocal}</td>
                       </tr>
                     </tbody>
                   );
                 })}
               </table>
             </div>
+            <div className="flex justify-end mx-4 gap-10 border-t border-black border-dotted">
+                <div className="px-6 py-2 ">
+                  Total Tagihan
+                </div>
+                <div className="px-6 py-2 text-right">
+                  {ARBook.reduce((total, res) => total + (parseInt(res.DocValueLocal) - res.PaymentValueLocal), 0)}
+                </div>
+            </div>
           </div>
-          <div className="flex pl-20 gap-[100px] border-black border-t">
-            <div className="p-2">
-              <div>Dibuat Oleh</div>
-              <div className="h-[100px]"></div>
+          <div className="border-black border-t py-4 px-4">
+            <div>
+              Pembayaran harap di transfer ke:
             </div>
-            <div className="p-2">
-              <div>Mengetahui</div>
-              <div className="h-[100px]"></div>
+            <div>
+              BCA no.822.089.4658
             </div>
+            <div>
+              an. Sugiharto Setyabudi
+            </div>
+          </div>
+          <div className="flex pr-20 justify-end gap-[100px] ">
             <div className="p-2">
               <div>Penerima</div>
+              <div className="h-[100px]"></div>
+            </div>
+            <div className="p-2">
+              <div>Hormat Kami</div>
               <div className="h-[100px]"></div>
             </div>
           </div>
@@ -1032,8 +1062,8 @@ export const ModalComp = (params) => {
                   <select
                     onChange={async (e) => {
                       setDetailDocNo(e.target.value);
-                      getDetailDocNo(e.target.val);
                     }}
+                    value={DetailDocNo}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-[200px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
                     <option>Pilih</option>
@@ -1057,6 +1087,7 @@ export const ModalComp = (params) => {
                       onChange={(e) =>
                         setCollector(e.target.value)
                       }
+                      value={collector}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-[200px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     >
                       <option>{selectedHeader?.CollectorCode}</option>
@@ -1076,6 +1107,7 @@ export const ModalComp = (params) => {
                     <input
                       onChange={(e) => setInformation(e.target.value)}
                       type="text"
+                      value={Information}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder={selectedHeader?.Information}
                     />
@@ -1124,7 +1156,7 @@ export const ModalComp = (params) => {
                       type="button"
                       className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
                     >
-                      Save
+                      Update
                     </button>
                     <button
                       onClick={handlePrint}
