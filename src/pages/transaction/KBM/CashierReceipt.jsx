@@ -1259,7 +1259,7 @@ export const ModalComp = (params) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {ARBook.map((res, key) => {
+                  {detail.map((res, key) => {
                     return (
                       <tr
                         key={key}
@@ -1274,11 +1274,11 @@ export const ModalComp = (params) => {
                             defaultChecked
                           />
                         </td>
-                        <td className="px-6 py-4">{res.CustomerCode}</td>
-                        <td cxlassName="px-6 py-4">{res.DocDate}</td>
-                        <td className="px-6 py-4">{res.DocNo}</td>
-                        <td className="px-6 py-4">{res.TOP}</td>
-                        <td className="px-6 py-4">{res.DueDate}</td>
+                        <td className="px-6 py-4">{res.TransType}</td>
+                        <td cxlassName="px-6 py-4">{res.Currency}</td>
+                        <td className="px-6 py-4">{res.value}</td>
+                        <td className="px-6 py-4">{res.exchangeRate}</td>
+                        <td className="px-6 py-4">{res.valueLocal}</td>
                       </tr>
                     );
                   })}
