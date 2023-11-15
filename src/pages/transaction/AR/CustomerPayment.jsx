@@ -1,22 +1,22 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {toast, ToastContainer} from "react-toastify";
-import {useMe} from "../../../hooks/API/useMe";
+import { toast, ToastContainer } from "react-toastify";
+import { useMe } from "../../../hooks/API/useMe";
 
 const CustomerPayment = () => {
-  const {fetchMe, response} = useMe();
-	const [seriesVal,setSeriesVal] = useState()
-	const [getMySeries,setGetSeries] = useState([])
-	const [getMyRequestList,setGetRequestList] = useState([])
-	const [getMyRequestListDetail,setGetRequestListDetail] = useState([])
-	const currentDate = new Date().toISOString().slice(0, 16);
+  const { fetchMe, response } = useMe();
+  const [seriesVal, setSeriesVal] = useState()
+  const [getMySeries, setGetSeries] = useState([])
+  const [getMyRequestList, setGetRequestList] = useState([])
+  const [getMyRequestListDetail, setGetRequestListDetail] = useState([])
+  const currentDate = new Date().toISOString().slice(0, 16);
   const [docDate, setDocDate] = useState(currentDate);
   const [deliveryDate, setDeliveryDate] = useState("");
-	const [requestList, setRequestList] = useState([])
-	const [info, setInfo] = useState("");
+  const [requestList, setRequestList] = useState([])
+  const [info, setInfo] = useState("");
   const [Modal, setModal] = useState(false);
 
-	const handleDocDateChange = (e) => {
+  const handleDocDateChange = (e) => {
     const selectedDocDate = e.target.value;
     setDocDate(selectedDocDate);
 
@@ -31,7 +31,7 @@ const CustomerPayment = () => {
     );
     setAllDOcNo(response.data);
   };
-	
+
   const getSeries = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/seriescode/CUSTOMER PAYMENT`);
@@ -43,7 +43,7 @@ const CustomerPayment = () => {
 
   const getRequestList = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/arrequestlistp`);
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/arrequestlistpu`);
       setGetRequestList(response.data);
     } catch (error) {
       console.log(error);
@@ -53,18 +53,18 @@ const CustomerPayment = () => {
   const getRequestListDetail = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/customerpaymentd/${requestList}`);
-			console.log(response.data)
+      console.log(response.data)
       const modifiedData = response.data.map(item => {
-				const { TransType, ...rest } = item;
-				return { ...rest, TransactionType: TransType, PaymentLocal: 0 };
-			});
-			setGetRequestListDetail(modifiedData);
+        const { TransType, ...rest } = item;
+        return { ...rest, TransactionType: TransType, PaymentLocal: 0 };
+      });
+      setGetRequestListDetail(modifiedData);
     } catch (error) {
       console.log(error);
     }
   };
 
-  
+
   const [totalPaymentLocal, setTotalPaymentLocal] = useState(0);
   const [paidCount, setPaidCount] = useState([]);
   const [paidByCustomerCount, setPaidByCustomerCount] = useState(new Set());
@@ -103,7 +103,7 @@ const CustomerPayment = () => {
 
   const [getMyRequestListDetailChanged, setGetMyRequestListDetailChanged] = useState()
 
-	useEffect(()=>{
+  useEffect(() => {
     const isSelected = getMyRequestListDetail.some((item) => item.PaymentLocal > 0);
     if (isSelected) {
       const filterData = getMyRequestListDetail
@@ -127,23 +127,23 @@ const CustomerPayment = () => {
       "customerCode": item["CustomerCode"]
     }));
     setGetMyRequestListDetailChanged(newData)
-	},[getMyRequestListDetail])
+  }, [getMyRequestListDetail])
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(getMyRequestListDetailChanged)
-  },[getMyRequestListDetailChanged])
+  }, [getMyRequestListDetailChanged])
 
-	useEffect(()=>{ 
+  useEffect(() => {
     const uniqueCustomers = new Set();
     paidCount.forEach((item) => uniqueCustomers.add(item.CustomerCode));
     setPaidByCustomerCount(uniqueCustomers);
-	},[paidCount])
+  }, [paidCount])
 
-	useEffect(()=>{
-		getSeries()
-		getRequestList()
+  useEffect(() => {
+    getSeries()
+    getRequestList()
     getAllDocNo()
-	},[])
+  }, [])
 
   const generateDocDate = () => {
     const today = new Date(docDate);
@@ -156,19 +156,19 @@ const CustomerPayment = () => {
   const submitClick = async (e) => {
     e.preventDefault()
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/customerpayment`,{
-      generateDocDate: generateDocDate(),
-      series: seriesVal,
-      docDate: docDate,
-      arRequestListNo: requestList,
-      totalCustomer: paidByCustomerCount.size,
-      totalDocument: paidCount.length,
-      totalPayment: totalPaymentLocal,
-      information: info,
-      status: 'OPEN',
-      createdBy: response.User,
-      changedBy: response.User,
-      details: getMyRequestListDetailChanged
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/customerpayment`, {
+        generateDocDate: generateDocDate(),
+        series: seriesVal,
+        docDate: docDate,
+        arRequestListNo: requestList,
+        totalCustomer: paidByCustomerCount.size,
+        totalDocument: paidCount.length,
+        totalPayment: totalPaymentLocal,
+        information: info,
+        status: 'OPEN',
+        createdBy: response.User,
+        changedBy: response.User,
+        details: getMyRequestListDetailChanged
       })
       toast.success("Data Saved", {
         position: "top-center",
@@ -280,7 +280,7 @@ const CustomerPayment = () => {
               <tr>
                 <button
                   onClick={() => {
-										getRequestListDetail()
+                    getRequestListDetail()
                   }}
                   type="button"
                   className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
@@ -357,15 +357,15 @@ const CustomerPayment = () => {
                       <td className="px-6 py-4">{res.DC}</td>
                       <td className="px-6 py-4">{res.DocValue}</td>
                       <td className="px-6 py-4">
-												<input type="number" onChange={(e) => {
+                        <input type="number" onChange={(e) => {
                           handleChangeDataAPI(key, "Payment", e.target.value);
-                          }} 
+                        }}
                           className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00" />
                       </td>
                       <td className="px-6 py-4">{res.DocValue}</td>
                       <td className="px-6 py-4">
-												<input type="number" onChange={(e) => handleChangeDataAPI(key, "ExchangeRate", e.target.value)} className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00" />
-											</td>
+                        <input type="number" onChange={(e) => handleChangeDataAPI(key, "ExchangeRate", e.target.value)} className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00" />
+                      </td>
                       <td className="px-6 py-4">{res.PaymentLocal}</td>
                     </tr>
                   );
@@ -471,15 +471,82 @@ export const ModalComp = (params) => {
   const [ARBook, setARBook] = useState([]);
   const [collector, setCollector] = useState("")
   const [totalGross, setTotalGross] = useState(0);
+  const [customer, setCustomer] = useState([])
   const [detail, setDetail] = useState([]);
+  const [detailUpdated, setDetailUpdated] = useState([]);
 
   const getDetailDocNo = async (params) => {
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_BASE_URL}/customerpaymentd/${params}`
-    );
     setDocNo(params);
-    setDetail(response.data);
+
+    try {
+      const customerResponse = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/customerpayment/${params}`
+      );
+      const requestlistResponse = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/arrequestlist`
+      );
+
+      const customerData = customerResponse.data;
+      const requestlistData = requestlistResponse.data;
+
+      const customerDocNos = customerData.map((customerItem) => customerItem.ARDocNo);
+
+      const filteredRequestList = requestlistData.filter(
+        (item) => customerDocNos.includes(item.DocNo)
+      );
+
+      const updatedData = filteredRequestList.map((item) => {
+        const correspondingCustomer = customerData.find(
+          (customerItem) => customerItem.ARDocNo === item.DocNo
+        );
+
+        return {
+          ...item,
+          PrevPayment: correspondingCustomer.PaymentLocal,
+          Netto: item.DocValue - correspondingCustomer.PaymentLocal,
+          Payment: 0,
+          PaymentLocal: 0,
+          ExchangeRate: correspondingCustomer.ExchangeRate,
+          TaxPrefix: correspondingCustomer.TaxPrefix,
+          TaxNo: correspondingCustomer.TaxNo
+        };
+      });
+      // Set the combined data in the state variable
+      setCustomer(customerData)
+      setDetail(updatedData);
+      console.log(updatedData)
+      // Continue with your logic...
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      // Handle errors
+    }
   };
+
+  useEffect(() => {
+    const updatedData = detail.map((item) => {
+      const correspondingCustomer = customer.find(
+        (customerItem) => customerItem.ARDocNo === item.DocNo
+      );
+  
+      return {
+        ...item,
+        PrevPayment: correspondingCustomer.PaymentLocal,
+        Netto: item.DocValue - correspondingCustomer.PaymentLocal,
+        Payment: parseInt(correspondingCustomer.PaymentLocal) + parseInt(item.Payment),
+        PaymentLocal: parseInt(correspondingCustomer.PaymentLocal) + parseInt(item.Payment),
+        ExchangeRate: correspondingCustomer.ExchangeRate,
+        TaxPrefix: correspondingCustomer.TaxPrefix,
+        TaxNo: correspondingCustomer.TaxNo
+      };
+    });
+  
+    setDetailUpdated(updatedData);
+    console.log(detail)
+  }, [detail, customer]);
+
+//  useEffect(()=>{
+//   console.log(detailUpdated)
+//  },[detailUpdated])
 
   useEffect(() => {
     if (typeof DetailDocNo == "string") {
@@ -487,13 +554,34 @@ export const ModalComp = (params) => {
     }
   }, [DetailDocNo]);
 
+  const handleChangeDataAPI = (key, field, value) => {
+    setDetail((prevData) =>
+      prevData.map((data, index) => {
+        if (index === key) {
+          let updatedData = {
+            ...data,
+            [field]: value,
+          };
+          // Calculate PaymentLocal when ExchangeRate or Payment changes
+          if (field === "ExchangeRate" || field === "Payment") {
+            const exchangeRate = parseFloat(updatedData.ExchangeRate) || 1; // Use 1 as default if ExchangeRate is not a number
+            const payment = parseFloat(updatedData.Payment) || 0; // Use 0 as default if Payment is not a number
+            updatedData.PaymentLocal = (exchangeRate * payment).toFixed(2);
+          }
+          return updatedData;
+        }
+        return data;
+      })
+    );
+  };
+
   useEffect(() => {
     setCollector(selectedHeader?.CollectorCode)
     setInformation(selectedHeader?.Information)
   }, [selectedHeader])
 
   useEffect(() => {
-    if(ARBook) {
+    if (ARBook) {
       setTotalGross(ARBook.reduce((total, res) => total + parseInt(res.DocValue), 0))
     }
   }, [ARBook]);
@@ -536,48 +624,16 @@ export const ModalComp = (params) => {
   const handleSave = async () => {
     try {
       await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/arrequestlist/${DocNo}`,
+        `${process.env.REACT_APP_API_BASE_URL}/customerpayment/${DocNo}`,
         {
-          collectorCode: collector,
-          customerGroup: "",
-          salesArea1: 0,
-          salesArea2: 0,
-          salesArea3: 0,
-          currency: 0,
-          // totalCustomer: uniqueCheckedCustomers.size,
-          // totalDocument: totalCheckedItems,
-          totalValue: totalGross, 
           information: Information,
-          status:"OPEN",
-          printCounter: 0,
-          createdBy: response?.User,
-          changedBy: response?.User,
-          // details: selectedARBookCheck,
+          details: detailUpdated,
         }
       );
-
-      DetailDocNo?.goodsissued?.map(async (res, key) => {
-        await axios.patch(
-          `${process.env.REACT_APP_API_BASE_URL}/goodsissuedetail/${res.DocNo}/${res.Number}`,
-          {
-            batchNo: res.BatchNo,
-            docNo: res.DocNo,
-            information: res.Info,
-            location: res.Location,
-            materialCode: res.MaterialCode,
-            number: res.Number,
-            qty: res.Qty,
-            qtyNetto: res.QtyNetto,
-            qtyReturn: res.QtyReturn,
-            unit: res.Unit,
-          }
-        );
-      });
       setModal(false);
-      setDetailDocNo([]);
-      setCollector("")
+      setDetail([]);
+      setDetailDocNo("")
       setInformation("")
-      setARBook([])
       toast.success("Data Updated", {
         position: "top-center",
         autoClose: 3000,
@@ -608,168 +664,196 @@ export const ModalComp = (params) => {
       className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${Modal ? "block" : "hidden"
         }`}
     >
-        <div className="space-y-6">
-          <button
-            onClick={() => {
-              setModal(!Modal);
-            }}
-            className="absolute top-5 right-4 text-gray-600 hover:text-gray-800 focus:outline-none"
+      <div className="space-y-6">
+        <button
+          onClick={() => {
+            setModal(!Modal);
+          }}
+          className="absolute top-5 right-4 text-gray-600 hover:text-gray-800 focus:outline-none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-          <div className="w-full">
-            <table className="border-separate border-spacing-2">
-              <tr className="w-full">
-                <td className="text-right">DOC NO: </td>
-                <td>
-                  <select
-                    onChange={async (e) => {
-                      setDetailDocNo(e.target.value);
-                    }}
-                    value={DetailDocNo}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-[200px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  >
-                    <option>Pilih</option>
-                    {AllDocNo.map((res, key) => {
-                      return (
-                        <option key={key} value={res.DocNo}>
-                          {res.DocNo}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </td>
-              </tr>
-            </table>
-            <hr className="my-2" />
-            <table className="border-separate border-spacing-2">
-                <tr>
-                  <th className="text-right px-2">Information</th>
-                  <div className="my-1">
-                    <input
-                      onChange={(e) => setInformation(e.target.value)}
-                      type="text"
-                      value={Information}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder={selectedHeader?.Information}
-                    />
-                  </div>
-                </tr>
-            </table>
-            <table className="text-sm text-gray-500 dark:text-gray-400">
-              {/* <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"> */}
-                <div>
-                  <td className="flex gap-4">
-                    <button
-                      onClick={() => handleSave()}
-                      type="button"
-                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-                    >
-                      Update
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleDelete(DetailDocNo.goodsissueh.DocNo)
-                      }
-                      className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none  mx-auto dark:focus:ring-red-800"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </div>
-              {/* </thead> */}
-            </table>
-            <div className="relative overflow-x-auto">
-              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                  <tr>
-                    <th scope="col" className="px-6 py-3">
-                      Use
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      CustomerCode
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      DocDate
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      DocNo
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      TOP
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      DueDate
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Information
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      DC
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Currency
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      DocValue
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Payment
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Netto
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      ExchangeRate
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      NettoLocal
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {detail.map((res, key) => {
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+        <div className="w-full">
+          <table className="border-separate border-spacing-2">
+            <tr className="w-full">
+              <td className="text-right">DOC NO: </td>
+              <td>
+                <select
+                  onChange={async (e) => {
+                    setDetailDocNo(e.target.value);
+                  }}
+                  value={DetailDocNo}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-[200px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                >
+                  <option>Pilih</option>
+                  {AllDocNo.map((res, key) => {
                     return (
-                      <tr
-                        key={key}
-                        className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                      >
-                        <td className="px-6 py-4">{res.TransactionType}</td>
-                        <td className="px-6 py-4">{res.CustomerCode}</td>
-                        <td className="px-6 py-4">{res.DocDate}</td>
-                        <td className="px-6 py-4">{res.DocNo}</td>
-                        <td className="px-6 py-4">{res.TOP}</td>
-                        <td className="px-6 py-4">{res.DueDate}</td>
-                        <td className="px-6 py-4">{res.Information}</td>
-                        <td className="px-6 py-4">{res.DC}</td>
-                        <td className="px-6 py-4">{res.Currency}</td>
-                        <td className="px-6 py-4">{res.DocValue}</td>
-                        <td className="px-6 py-4">{res.PaymentValue}</td>
-                        <td className="px-6 py-4">{res.DocValue}</td>
-                        <td className="px-6 py-4">{res.ExchangeRateDiff}</td>
-                        <td className="px-6 py-4">{res.DocValue}</td>
-                      </tr>
+                      <option key={key} value={res.DocNo}>
+                        {res.DocNo}
+                      </option>
                     );
                   })}
-                </tbody>
-              </table>
+                </select>
+              </td>
+            </tr>
+          </table>
+          <hr className="my-2" />
+          <table className="border-separate border-spacing-2">
+            <tr>
+              <th className="text-right px-2">Information</th>
+              <div className="my-1">
+                <input
+                  onChange={(e) => setInformation(e.target.value)}
+                  type="text"
+                  value={Information}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={selectedHeader?.Information}
+                />
+              </div>
+            </tr>
+          </table>
+          <table className="text-sm text-gray-500 dark:text-gray-400">
+            {/* <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"> */}
+            <div>
+              <td className="flex gap-4">
+                <button
+                  onClick={() => handleSave()}
+                  type="button"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+                >
+                  Update
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleDelete(DetailDocNo.goodsissueh.DocNo)
+                  }
+                  className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none  mx-auto dark:focus:ring-red-800"
+                >
+                  Delete
+                </button>
+              </td>
             </div>
+            {/* </thead> */}
+          </table>
+          <div className="relative overflow-x-auto">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" className="px-6 py-3">
+                    TransactionType
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    CustomerCode
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DocDate
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DocNo
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    TOP
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DueDate
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Information
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DC
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Tax Prefix
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Tax No
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Currency
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    DocValue
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Prev Payment
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Netto
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Payment
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    ExchangeRate
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Payment Local
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {detail.map((res, key) => {
+                  return (
+                    <tr
+                      key={key}
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                    >
+                      <td className="px-6 py-4">{res.TransactionType}</td>
+                      <td className="px-6 py-4">{res.CustomerCode}</td>
+                      <td className="px-6 py-4">{res.DocDate}</td>
+                      <td className="px-6 py-4">{res.DocNo}</td>
+                      <td className="px-6 py-4">{res.TOP}</td>
+                      <td className="px-6 py-4">{res.DueDate}</td>
+                      <td className="px-6 py-4">
+                        <input type="text" onChange={(e) => {
+                          handleChangeDataAPI(key, "Information", e.target.value);
+                        }}
+                          className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.Information} />
+                      </td>
+                      <td className="px-6 py-4">{res.DC}</td>
+                      <td className="px-6 py-4">{res.TaxPrefix}</td>
+                      <td className="px-6 py-4">{res.TaxNo}</td>
+                      <td className="px-6 py-4">{res.Currency}</td>
+                      <td className="px-6 py-4">{Math.floor(res.DocValue)}</td>
+                      <td className="px-6 py-4">{Math.floor(res.PrevPayment)}</td>
+                      <td className="px-6 py-4">{res.Netto}</td>
+                      <td className="px-6 py-4">
+                        <input type="number" onChange={(e) => {
+                          handleChangeDataAPI(key, "Payment", e.target.value);
+                        }}
+                          className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00" />
+                      </td>
+                      <td className="px-6 py-4">
+                        <input type="number" onChange={(e) => {
+                          handleChangeDataAPI(key, "ExchangeRate", e.target.value);
+                        }}
+                          className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1.00" />
+                      </td>
+                      {/* <td className="px-6 py-4">{res.ExchangeRateDiff}</td> */}
+                      <td className="px-6 py-4">{Math.floor(res.PaymentLocal)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
+      </div>
     </div>
   );
 };
