@@ -633,6 +633,10 @@ const CashierReceipt = () => {
         Modal={Modal}
         setModal={setModal}
         AllDocNo={AllDocNo}
+        getTransType={getMyTransactionType}
+        getCurrency={getMyCurrency}
+        getCustomerCode={getMyCustomer}
+        getBank={getMyBank}
         getSeries={getSeries}
         getAllDocNo={getAllDocNo}
       />
@@ -650,6 +654,10 @@ export const ModalComp = (params) => {
     setModal,
     AllDocNo,
     getSeries,
+    getTransType,
+    getCurrency,
+    getCustomerCode,
+    getBank,
     getSalesOrderNo,
     getAllDocNo,
     response,
@@ -659,57 +667,19 @@ export const ModalComp = (params) => {
     []
   );
 
-  const [QtyRemain, setQtyRemain] = useState([]);
-  const [updatedQty, setUpdatedQty] = useState({});
   const [Information, setInformation] = useState("");
-  const [TotalQty, setTotalQty] = useState();
   const [DocNo, setDocNo] = useState("");
   const [ARBook, setARBook] = useState([]);
-  const [selectedARBook, setSelectedARBook] = useState([]);
-  const [collector, setCollector] = useState("")
-  const [totalGross, setTotalGross] = useState(0);
-  const [detail,setDetail] = useState([])
-  const [giroDetail,setGiroDetail] = useState([])
-
-  const getARBook = async () => {
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/arrequestlist`
-      );
-      const filteredData = res.data.filter((item) => {
-        return selectedARBook.some(
-          (selectedItem) => selectedItem.ARDocNo === item.DocNo
-        );
-      });
-      setARBook(filteredData);
-    } catch (error) {
-      if (error.response) {
-        toast.error(`${error.response.data.msg}`, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-        });
-      } else if (error.request) {
-        console.error("Request Error:", error.request);
-        toast.error("Network error. Please check your internet connection.", {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-        });
-      } else {
-        console.error("Error:", error.message);
-      }
-    }
-  };
-
-  const [selectedARBookCheck, setSelectedARBookCheck] = useState([]);
+  const [detail, setDetail] = useState([])
+  const [giroDetail, setGiroDetail] = useState([])
 
   const getDetailDocNo = async (params) => {
     const response = await axios.get(
       `${process.env.REACT_APP_API_BASE_URL}/cashierreceipt/${params}`
     );
     setDocNo(params);
-    setDetail(response.data.d)
+    setSelectedHeader(response.data.h)
+    // setDetail(response.data.d)
     setGiroDetail(response.data.g)
   };
 
@@ -719,35 +689,6 @@ export const ModalComp = (params) => {
     }
   }, [DetailDocNo]);
 
-  useEffect(() => {
-    setCollector(selectedHeader?.CollectorCode)
-    setInformation(selectedHeader?.Information)
-  }, [selectedHeader])
-
-  useEffect(() => {
-    getARBook();
-  }, [selectedARBook]);
-
-  useEffect(() => {
-    if(ARBook) {
-      setTotalGross(ARBook.reduce((total, res) => total + parseInt(res.DocValue), 0))
-    }
-  }, [ARBook]);
-
-  
-
-  const getQtyRemain = async (params) => {
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_BASE_URL}/goodsissue/${params}`
-    );
-    setQtyRemain(response.data);
-  };
-  const GetTotalQty = async (params) => {
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_BASE_URL}/goodsissueqty/${params}`
-    );
-    setTotalQty(response.data);
-  };
   const handleDelete = async (parmas) => {
     await axios.delete(
       `${process.env.REACT_APP_API_BASE_URL}/goodsissue/${parmas}`
@@ -764,57 +705,75 @@ export const ModalComp = (params) => {
     getAllDocNo();
   };
 
+  const [giroTotalValue, setGiroTotalValue] = useState(0)
+  const [totalValue, setTotalValue] = useState(0)
+
   useEffect(() => {
-    getQtyRemain(DetailDocNo?.goodsissueh?.SODocNo);
-    GetTotalQty(DetailDocNo?.goodsissueh?.SODocNo);
-  }, [DetailDocNo?.goodsissueh]);
+    setTotalValue(
+      parseInt(giroTotalValue) + (detail.reduce((total, item) => total + parseInt(item.ValueLocal), 0))
+    )
+  }, [detail, giroTotalValue])
+
+  useEffect(() => {
+    setGiroTotalValue(
+      giroDetail.reduce((total, item) => total + item.GiroValueLocal, "")
+    )
+  }, [giroDetail])
+
+  const handleChangeDataAPIDetail = (key, field, value) => {
+    setDetail((prevData) =>
+      prevData.map((data, index) => {
+        if (index === key) {
+          let updatedData = {
+            ...data,
+            [field]: value,
+          };
+          // Calculate PaymentLocal when ExchangeRate or Payment changes
+          if (field === "ExchangeRate" || field === "Value") {
+            const exchangeRate = parseFloat(updatedData.ExchangeRate) || 1; // Use 1 as default if ExchangeRate is not a number
+            const payment = parseFloat(updatedData.Value) || 0; // Use 0 as default if Payment is not a number
+            updatedData.ValueLocal = (exchangeRate * payment).toFixed(2);
+          }
+          return updatedData;
+        }
+        return data;
+      })
+    );
+  };
 
   const handleChangeDataAPI = (key, field, value) => {
-    setDetailDocNo((prevDetailDocNo) => {
-      const updatedGoodsIssued = prevDetailDocNo.goodsissued.map(
-        (data, index) => {
-          if (index === key) {
-            return {
-              ...data,
-              [field]: value,
-            };
+    setGiroDetail((prevData) =>
+      prevData.map((data, index) => {
+        if (index === key) {
+          let updatedData = {
+            ...data,
+            [field]: value,
+          };
+          // Calculate PaymentLocal when ExchangeRate or Payment changes
+          if (field === "ExchangeRate" || field === "GiroValue") {
+            const exchangeRate = parseFloat(updatedData.ExchangeRate) || 1; // Use 1 as default if ExchangeRate is not a number
+            const payment = parseFloat(updatedData.GiroValue) || 0; // Use 0 as default if Payment is not a number
+            updatedData.GiroValueLocal = (exchangeRate * payment).toFixed(2);
           }
-          return data;
+          return updatedData;
         }
-      );
-      return {
-        ...prevDetailDocNo,
-        goodsissued: updatedGoodsIssued,
-      };
-    });
-
-    // Update the updatedQty state
-    setUpdatedQty((prevUpdatedQty) => ({
-      ...prevUpdatedQty,
-      [key]: value,
-    }));
+        return data;
+      })
+    );
   };
 
   const handleSave = async () => {
     try {
       await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/arrequestlist/${DocNo}`,
+        `${process.env.REACT_APP_API_BASE_URL}/cashierreceipt/${DocNo}`,
         {
-          collectorCode: collector,
-          customerGroup: "",
-          salesArea1: 0,
-          salesArea2: 0,
-          salesArea3: 0,
-          currency: 0,
-          totalCustomer: uniqueCheckedCustomers.size,
-          totalDocument: totalCheckedItems,
-          totalValue: totalGross, 
+          totalDebit: totalValue,
+          totalGiro: giroTotalValue,
           information: Information,
-          status:"OPEN",
-          printCounter: 0,
-          createdBy: response?.User,
+          status: "OPEN",
           changedBy: response?.User,
-          details: selectedARBookCheck,
+          cashierG: giroDetail,
+          cashierD: detail,
         }
       );
 
@@ -837,7 +796,6 @@ export const ModalComp = (params) => {
       });
       setModal(false);
       setDetailDocNo([]);
-      setCollector("")
       setInformation("")
       setARBook([])
       toast.success("Data Updated", {
@@ -862,28 +820,6 @@ export const ModalComp = (params) => {
       } else {
         console.error("Error:", error.message);
       }
-    }
-  };
-
-  // update method
-  const handleCheckboxChange = (res) => {
-    const { DocNo, DocValue } = res;
-    const isSelected = selectedARBookCheck.some(
-      (item) => item.ARDocNo === DocNo
-    );
-
-    if (isSelected) {
-      setSelectedARBookCheck((prevSelectedItems) =>
-        prevSelectedItems.filter((item) => item.ARDocNo !== DocNo)
-      );
-      setTotalGross((prevTotal) => prevTotal - parseInt(DocValue));
-    } else {
-      const newItem = selectedARBook.find((item) => item.ARDocNo === DocNo);
-      if (newItem) {
-        setSelectedARBookCheck(selectedARBookCheck.concat(newItem));
-        setTotalGross((prevTotal) => prevTotal + parseInt(DocValue));
-      }
-      
     }
   };
 
@@ -946,41 +882,6 @@ export const ModalComp = (params) => {
     setPrinted(print);
     setPrintModal(false);
   };
-
-  const [customer, setCustomer] = useState("");
-
-  const getCustomerByDocNo = async (params) => {
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/customer/${params}`
-      );
-      setCustomer(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const [totalCheckedItems, setTotalCheckedItems] = useState(0)
-  const [uniqueCheckedCustomers, setUniqueCheckedCustomers] = useState(
-    new Set()
-  );
-
-  const [selectedItemsChanged, setSelectedItemsChanged] = useState([]);
-
-  useEffect(() => {
-    // Menghitung totalCheckedItems
-    setTotalCheckedItems(selectedARBookCheck.length);
-
-    // Menghitung uniqueCheckedCustomers
-    const uniqueCustomers = new Set();
-    selectedARBookCheck.forEach((item) => uniqueCustomers.add(item.CustomerCode));
-    setUniqueCheckedCustomers(uniqueCustomers);
-    const newData = selectedARBookCheck.map((item) => ({
-      customerCode: item["CustomerCode"],
-      arDocNo: item["DocNo"],
-    }));
-    setSelectedItemsChanged(newData);
-  }, [selectedARBookCheck]);
 
   return (
     <div
@@ -1086,12 +987,12 @@ export const ModalComp = (params) => {
               </table>
             </div>
             <div className="flex justify-end mx-4 gap-10 border-t border-black border-dotted">
-                <div className="px-6 py-2 ">
-                  Total Tagihan
-                </div>
-                <div className="px-6 py-2 text-right">
-                  {ARBook.reduce((total, res) => total + (parseInt(res.DocValueLocal) - res.PaymentValueLocal), 0)}
-                </div>
+              <div className="px-6 py-2 ">
+                Total Tagihan
+              </div>
+              <div className="px-6 py-2 text-right">
+                {ARBook.reduce((total, res) => total + (parseInt(res.DocValueLocal) - res.PaymentValueLocal), 0)}
+              </div>
             </div>
           </div>
           <div className="border-black border-t py-4 px-4">
@@ -1190,48 +1091,72 @@ export const ModalComp = (params) => {
             </table>
             <hr className="my-2" />
             <table className="border-separate border-spacing-2">
-                <tr>
-                  <th className="text-right px-2">Information</th>
-                  <div className="my-1">
-                    <input
-                      onChange={(e) => setInformation(e.target.value)}
-                      type="text"
-                      value={Information}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder={selectedHeader?.Information}
-                    />
-                  </div>
-                </tr>
+              <tr>
+                <th className="text-right px-2">Information</th>
+                <div className="my-1">
+                  <input
+                    onChange={(e) => setInformation(e.target.value)}
+                    type="text"
+                    value={Information}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder={selectedHeader?.Information}
+                  />
+                </div>
+              </tr>
+              <tr>
+                <th className="text-right px-2">Total Value</th>
+                <div className="my-1">
+                  <input
+                    disabled
+                    type="text"
+                    value={Math.floor(totalValue)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder={selectedHeader?.TotalDebet}
+                  />
+                </div>
+              </tr>
+              <tr>
+                <th className="text-right px-2">Total Giro Value</th>
+                <div className="my-1">
+                  <input
+                    disabled
+                    type="text"
+                    value={Math.floor(giroTotalValue)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder={selectedHeader?.TotalGiro}
+                  />
+                </div>
+              </tr>
             </table>
             <table className="text-sm text-gray-500 dark:text-gray-400">
               {/* <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"> */}
-                <div>
-                  <td className="flex gap-4">
-                    <button
-                      onClick={() => handleSave()}
-                      type="button"
-                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
-                    >
-                      Update
-                    </button>
-                    <button
-                      onClick={handlePrint}
-                      type="button"
-                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none mx-auto dark:focus:ring-blue-800"
-                    >
-                      Print
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleDelete(DetailDocNo.goodsissueh.DocNo)
-                      }
-                      className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none  mx-auto dark:focus:ring-red-800"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </div>
+              <div>
+                <td className="flex gap-4">
+                  <button
+                    onClick={() => handleSave()}
+                    type="button"
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+                  >
+                    Update
+                  </button>
+                  <button
+                    onClick={handlePrint}
+                    type="button"
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none mx-auto dark:focus:ring-blue-800"
+                  >
+                    Print
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleDelete(DetailDocNo.goodsissueh.DocNo)
+                    }
+                    className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none  mx-auto dark:focus:ring-red-800"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </div>
               {/* </thead> */}
             </table>
             <div className="font-bold text-xl">
@@ -1265,20 +1190,42 @@ export const ModalComp = (params) => {
                         key={key}
                         className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                       >
-                        <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                          <input
-                            type="checkbox"
-                            onChange={() => {
-                              handleCheckboxChange(res);
-                            }}
-                            defaultChecked
-                          />
+                        <td className="px-6 py-4">
+                          <select
+                            onChange={(e) =>
+                              handleChangeDataAPI(
+                                key,
+                                "TransType",
+                                e.target.value
+                              )
+                            }
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[80%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder={res.TransType}
+
+                          >
+                            {getTransType.map((res, key) => {
+                              return (
+                                <option key={key} value={res.Type}>
+                                  {res.Type}
+                                </option>
+                              );
+                            })}
+                          </select>
                         </td>
-                        <td className="px-6 py-4">{res.TransType}</td>
                         <td cxlassName="px-6 py-4">{res.Currency}</td>
-                        <td className="px-6 py-4">{res.value}</td>
-                        <td className="px-6 py-4">{res.exchangeRate}</td>
-                        <td className="px-6 py-4">{res.valueLocal}</td>
+                        <td className="px-6 py-4">
+                          <input type="text" onChange={(e) => {
+                            handleChangeDataAPIDetail(key, "Value", e.target.value);
+                          }}
+                            className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.Value} />
+                        </td>
+                        <td className="px-6 py-4">
+                          <input type="text" onChange={(e) => {
+                            handleChangeDataAPIDetail(key, "ExchangeRate", e.target.value);
+                          }}
+                            className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.ExchangeRate} />
+                        </td>
+                        <td className="px-6 py-4">{res.ValueLocal}</td>
                       </tr>
                     );
                   })}
@@ -1325,31 +1272,105 @@ export const ModalComp = (params) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {ARBook.map((res, key) => {
+                  {giroDetail.map((res, key) => {
                     return (
                       <tr
                         key={key}
                         className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                       >
-                        <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                          <input
-                            type="checkbox"
-                            onChange={() => {
-                              handleCheckboxChange(res);
-                            }}
-                            defaultChecked
-                          />
+                        <td className="px-6 py-4">
+                          <select
+                            onChange={(e) =>
+                              handleChangeDataAPI(
+                                key,
+                                "CustomerCode",
+                                e.target.value
+                              )
+                            }
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[80%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder={res.CustomerCode}
+
+                          >
+                            {getCustomerCode.map((res, key) => {
+                              return (
+                                <option key={key} value={res.Code}>
+                                  {res.Code}
+                                </option>
+                              );
+                            })}
+                          </select>
                         </td>
-                        <td className="px-6 py-4">{res.CustomerCode}</td>
-                        <td cxlassName="px-6 py-4">{res.DocDate}</td>
-                        <td className="px-6 py-4">{res.DocNo}</td>
-                        <td className="px-6 py-4">{res.TOP}</td>
+                        <td className="px-6 py-4">
+                          <select
+                            onChange={(e) =>
+                              handleChangeDataAPI(
+                                key,
+                                "Bank",
+                                e.target.value
+                              )
+                            }
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder={res.Bank}
+
+                          >
+                            {getBank.map((res, key) => {
+                              return (
+                                <option key={key} value={res.Code}>
+                                  {res.Code}
+                                </option>
+                              );
+                            })}
+                          </select>
+                        </td>
+                        <td className="px-6 py-4">
+                          <input type="text" onChange={(e) => {
+                            handleChangeDataAPI(key, "GiroNo", e.target.value);
+                          }}
+                            className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.GiroNo} />
+                        </td>
                         <td className="px-6 py-4">{res.DueDate}</td>
-                        <td className="px-6 py-4">{res.Information}</td>
-                        <td className="px-6 py-4">{res.DC}</td>
-                        <td className="px-6 py-4">{res.Currency}</td>
-                        <td className="px-6 py-4">{res.DocValue}</td>
-                        <td className="px-6 py-4">{res.PaymentValue}</td>
+                        <td className="px-6 py-4">
+                          <select
+                            onChange={(e) =>
+                              handleChangeDataAPI(
+                                key,
+                                "Currency",
+                                e.target.value
+                              )
+                            }
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder={res.Currency}
+
+                          >
+                            {getCurrency.map((res, key) => {
+                              return (
+                                <option key={key} value={res.Code}>
+                                  {res.Code}
+                                </option>
+                              );
+                            })}
+                          </select>
+                        </td>
+                        <td className="px-6 py-4">
+                          <input type="number" onChange={(e) => {
+                            handleChangeDataAPI(key, "GiroValue", e.target.value);
+                          }}
+                            className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={Math.floor(res.GiroValue)} />
+                        </td>
+                        <td className="px-6 py-4">
+                          <input type="number" onChange={(e) => {
+                            handleChangeDataAPI(key, "ExchangeRate", e.target.value);
+                          }}
+                            className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={Math.floor(res.ExchangeRate)} />
+                        </td>
+                        <td className="px-6 py-4">{Math.floor(res.GiroValueLocal)}</td>
+                        <td className="px-6 py-4">
+                          <input type="text" onChange={(e) => {
+                            handleChangeDataAPI(key, "Infomation", e.target.value);
+                          }}
+                            className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.Information} />
+                        </td>
+                        <td className="px-6 py-4">{res.Status}</td>
                       </tr>
                     );
                   })}
