@@ -672,6 +672,10 @@ export const ModalComp = (params) => {
   const [ARBook, setARBook] = useState([]);
   const [detail, setDetail] = useState([])
   const [giroDetail, setGiroDetail] = useState([])
+  const [detailForPrint, setDetailForPrint] = useState([])
+  const [giroDetailForPrint, setGiroDetailForPrint] = useState([])
+  const [selectedHeaderForPrint, setSelectedHeaderForPrint] = useState([])
+
 
   const getDetailDocNo = async (params) => {
     const response = await axios.get(
@@ -679,7 +683,10 @@ export const ModalComp = (params) => {
     );
     setDocNo(params);
     setSelectedHeader(response.data.h)
-    // setDetail(response.data.d)
+    setSelectedHeaderForPrint(response.data.h)
+    setDetail(response.data.d)
+    setDetailForPrint(response.data.d)
+    setGiroDetailForPrint(response.data.g)
     setGiroDetail(response.data.g)
   };
 
@@ -776,24 +783,6 @@ export const ModalComp = (params) => {
           cashierD: detail,
         }
       );
-
-      DetailDocNo?.goodsissued?.map(async (res, key) => {
-        await axios.patch(
-          `${process.env.REACT_APP_API_BASE_URL}/goodsissuedetail/${res.DocNo}/${res.Number}`,
-          {
-            batchNo: res.BatchNo,
-            docNo: res.DocNo,
-            information: res.Info,
-            location: res.Location,
-            materialCode: res.MaterialCode,
-            number: res.Number,
-            qty: res.Qty,
-            qtyNetto: res.QtyNetto,
-            qtyReturn: res.QtyReturn,
-            unit: res.Unit,
-          }
-        );
-      });
       setModal(false);
       setDetailDocNo([]);
       setInformation("")
@@ -837,7 +826,7 @@ export const ModalComp = (params) => {
     if (printed) {
       try {
         await axios.patch(
-          `${process.env.REACT_APP_API_BASE_URL}/printRequestList/${selectedHeader?.DocNo}`,
+          `${process.env.REACT_APP_API_BASE_URL}/cashierreceiptprint/${DocNo}`,
           {
             printedBy: response?.User,
           }
@@ -897,41 +886,36 @@ export const ModalComp = (params) => {
           }
         >
           <div>
-            <div className="w-full pl-4 py-4 border-black border-b">
-              <div>
-                <div className="font-bold text-3xl">
-                  CV. Gemilang Multi Kreasi
+            <div className="pl-4 py-4 flex justify-between border-black border-b">
+              <div className="font-bold text-3xl">
+                CV. Gemilang Multi Kreasi
+              </div>
+              <div className="font-bold text-3xl pr-4">
+                Bukti khas Masuk
+              </div>
+            </div>
+            <div className="flex justify-around">
+              <div className="ml-4 my-2">
+                <table>
+                  <tr className="flex gap-20">
+                    <td>No Dokumen: {selectedHeaderForPrint?.DocNo}</td>
+                    <td>Tgl: {selectedHeaderForPrint?.DocDate}</td>
+                  </tr>
+                </table>
+                <div>
+                  Keterangan: {selectedHeaderForPrint?.Information}
                 </div>
-                <div className="font-bold text-lg">
-                  Jl. Berbek Industri 3 / 15 Sidoarjo
+              </div>
+              <div className="mr-4 my-2">
+                <div>
+                  Cetakan ke: {selectedHeaderForPrint?.PrintCounter + 1}
                 </div>
                 <div>
-                  Telp. (031) 8494605
+                  Ke: {response?.Name}
                 </div>
-              </div>
-            </div>
-            <div className="flex items-center flex-col font-bold">
-              <div className="text-xl">
-                Daftar Penagihan Piutang (DPP)
-              </div>
-              <div>
-                Tipe: per Customer
-              </div>
-              <div className="font-normal">
-                per {selectedHeader?.DocDate}
-              </div>
-            </div>
-            <div className="ml-4 my-2">
-              <table>
-                <tr className="flex gap-20">
-                  <td>No Dokumen: {selectedHeader?.DocNo}</td>
-                  <td>Tgl Tagih: {selectedHeader?.DocDate}</td>
-                  <td>Dokumen: {selectedHeader?.TotalDocument}</td>
-                  <td>Total (RP): {selectedHeader.TotalValue}</td>
-                </tr>
-              </table>
-              <div>
-                Keterangan: {selectedHeader.Information}
+                <div>
+                  {selectedHeaderForPrint?.PrintedDate}
+                </div>
               </div>
             </div>
             <div className="relative overflow-x-auto border-t border-black pt-6">
@@ -939,80 +923,72 @@ export const ModalComp = (params) => {
                 <thead className="text-xs uppercase">
                   <tr>
                     <th scope="col" className="px-6 py-3 text-center">
-                      Tgl Dokumen
+                      Tipe Transaksi
                     </th>
                     <th scope="col" className="px-14 py-3 text-center">
-                      No Dokumen
-                    </th>
-                    <th scope="col" className="px-14 py-3 text-center">
-                      TOP
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-center">
-                      Jatuh Tempo
+                      Nilai
                     </th>
                     <th scope="col" className="px-6 py-3 text-center">
                       Kurs
                     </th>
                     <th scope="col" className="px-6 py-3 text-center">
-                      Nilai Dokumen
+                      Nilai Tukar
                     </th>
                     <th scope="col" className="px-6 py-3 text-center">
-                      Pembayaran
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-center">
-                      Sisa
+                      Nilai (IDR)
                     </th>
                   </tr>
                 </thead>
-                {ARBook?.map((res, key) => {
-                  return (
-                    <tbody>
+                <tbody>
+                  {detailForPrint?.map((res, key) => {
+                    return (
                       <tr className="bg-white dark:bg-gray-800 dark:border-gray-700">
                         <td className="px-6 py-2 text-center">
-                          {res.DocDate}
+                          {res.TransType}
                         </td>
-                        <td className="px-6 py-2 text-center">
-                          {res.DocNo}
-                        </td>
-                        <td className="px-6 py-2 text-center">{res.TOP}</td>
-                        <td className="px-6 py-2 text-center">{res.DueDate}</td>
+                        <td className="px-6 py-2 text-center">{Math.floor(res.Value)}</td>
                         <td className="px-6 py-2 text-center">{res.Currency}</td>
-                        <td className="px-6 py-2 text-center">{Math.floor(res.DocValueLocal)}</td>
-                        <td className="px-6 py-2 text-center">{Math.floor(res.PaymentValueLocal)}</td>
-                        <td className="px-6 py-2 text-center">{res.DocValueLocal - res.PaymentValueLocal}</td>
+                        <td className="px-6 py-2 text-center">{Math.floor(res.ExchangeRate)}</td>
+                        <td className="px-6 py-2 text-center">{res.ValueLocal}</td>
                       </tr>
-                    </tbody>
-                  );
-                })}
+                    );
+                  })}
+                  {giroDetailForPrint?.map((res, key) => {
+                    return (
+                      <tr className="bg-white dark:bg-gray-800 dark:border-gray-700">
+                        <td className="px-6 py-2 text-center">
+                          {res.CustomerCode} / {res.Bank} {res.GiroNo}
+                        </td>
+                        <td className="px-6 py-2 text-center">{Math.floor(res.GiroValue)}</td>
+                        <td className="px-6 py-2 text-center">{res.Currency}</td>
+                        <td className="px-6 py-2 text-center">{Math.floor(res.ExchangeRate)}</td>
+                        <td className="px-6 py-2 text-center">{res.GiroValueLocal}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
               </table>
             </div>
             <div className="flex justify-end mx-4 gap-10 border-t border-black border-dotted">
               <div className="px-6 py-2 ">
-                Total Tagihan
+                Total Nilai
               </div>
               <div className="px-6 py-2 text-right">
-                {ARBook.reduce((total, res) => total + (parseInt(res.DocValueLocal) - res.PaymentValueLocal), 0)}
+                {selectedHeaderForPrint?.TotalDebet}
               </div>
             </div>
           </div>
-          <div className="border-black border-t py-4 px-4">
-            <div>
-              Pembayaran harap di transfer ke:
-            </div>
-            <div>
-              BCA no.822.089.4658
-            </div>
-            <div>
-              an. Sugiharto Setyabudi
-            </div>
-          </div>
-          <div className="flex pr-20 justify-end gap-[100px] ">
+          <div className="flex pr-20 gap-[100px] border-black border-t py-4 px-4">
             <div className="p-2">
-              <div>Penerima</div>
+              <div>Mengetahui,</div>
               <div className="h-[100px]"></div>
             </div>
             <div className="p-2">
-              <div>Hormat Kami</div>
+              <div>Diperiksa,</div>
+              <div className="h-[100px]"></div>
+            </div>
+            <div className="p-2">
+              <div>Diterima,</div>
               <div className="h-[100px]"></div>
             </div>
           </div>
