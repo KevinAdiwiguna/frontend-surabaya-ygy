@@ -207,16 +207,6 @@ export const SidebarComp = () => {
                   label="Account Receivable"
                   className="text-sm"
                 >
-                  <Link to="/AR Customer Debet Note">
-                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                      AR Customer Debet Note
-                    </p>
-                  </Link>
-                  <Link to="/AR Customer Credit Note">
-                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                      AR Customer Credit Note
-                    </p>
-                  </Link>
                   <Link to="/AR Request List">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       AR Request List
@@ -230,16 +220,6 @@ export const SidebarComp = () => {
                   <Link to="/AR Settlement">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       AR Settlement
-                    </p>
-                  </Link>
-                  <Link to="/AR Clearing Giro">
-                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                      AR Clearing Giro
-                    </p>
-                  </Link>
-                  <Link to="/AR Reject Giro">
-                    <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                      AR Reject Giro
                     </p>
                   </Link>
                 </Sidebar.Collapse>
@@ -296,11 +276,11 @@ export const SidebarComp = () => {
                       Cashier Receipt
                     </p>
                   </Link>
-                  <Link to="/Cashier Cash Bank In">
+                  {/* <Link to="/Cashier Cash Bank In">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Cashier Cash Bank In
                     </p>
-                  </Link>
+                  </Link> */}
                 </Sidebar.Collapse>
 
                 <Sidebar.Collapse
@@ -313,11 +293,11 @@ export const SidebarComp = () => {
                       Cashier Payment
                     </p>
                   </Link>
-                  <Link to="/Cashier Cash Bank Out">
+                  {/* <Link to="/Cashier Cash Bank Out">
                     <p className="flex items-center p-3 pl-10 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                       Cashier Cash Bank Out
                     </p>
-                  </Link>
+                  </Link> */}
                 </Sidebar.Collapse>
 
                 {/* <Sidebar.Collapse icon={TbPackages} label="Asset">
