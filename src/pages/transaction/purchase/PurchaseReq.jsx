@@ -64,24 +64,36 @@ export const PurchaseReq = () => {
   };
 
   const getMaterial = async () => {
-    const data = await axios.get(
-      `${process.env.REACT_APP_API_BASE_URL}/material`
-    );
-    setGetMaterial(data.data);
+    try {
+      const data = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/material`
+      );
+      setGetMaterial(data.data);
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const getDepartment = async () => {
-    const data = await axios.get(
-      `${process.env.REACT_APP_API_BASE_URL}/department`
-    );
-    setGetDepartment(data.data);
+    try {
+      const data = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/department`
+      );
+      setGetDepartment(data.data);
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const getJobOrder = async () => {
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_BASE_URL}/joborder`
-    );
-    setGetJobOrder(response.data);
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/joborder`
+      );
+      setGetJobOrder(response.data);
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const getMaterialDetail = async (params) => {
@@ -417,7 +429,7 @@ export const PurchaseReq = () => {
                       setDocDate(e.target.value);
                     }}
                     min={currentDate}
-                    type="datetime-local"
+                    type="date"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder=""
                     required

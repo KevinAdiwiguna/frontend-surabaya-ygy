@@ -42,7 +42,7 @@ export const PurchaseOrder = () => {
   const [discValue, setDiscValue] = useState(0);
   const [orderDetail, setOrderDetail] = useState([]);
   const [modalData, setModalData] = useState([]);
-  const [modal, setModal] = useState(false);
+  const [Modal, setModal] = useState(false);
   const [GetMyjobOrder, setGetJobOrder] = useState([]);
   const [JODocNo, setJODocNo] = useState("");
   const [detailDataUpdate, setDetailDataUpdate] = useState([]);
@@ -259,8 +259,8 @@ export const PurchaseOrder = () => {
       setNetto(disc3);
       setDiscNominal(
         (quantity * price * detailDisc) / 100 +
-          (disc * detailDisc2) / 100 +
-          (disc2 * detailDisc3) / 100
+        (disc * detailDisc2) / 100 +
+        (disc2 * detailDisc3) / 100
       );
     } else {
       const disc = quantity * price - discValue;
@@ -326,8 +326,8 @@ export const PurchaseOrder = () => {
       setNettoUpdate(disc3);
       setDiscNominalUpdate(
         (quantityUpdate * priceUpdate * detailDiscUpdate) / 100 +
-          (disc * detailDisc2Update) / 100 +
-          (disc2 * detailDisc3Update) / 100
+        (disc * detailDisc2Update) / 100 +
+        (disc2 * detailDisc3Update) / 100
       );
     } else {
       const disc = quantityUpdate * priceUpdate - discValueUpdate;
@@ -366,8 +366,8 @@ export const PurchaseOrder = () => {
       setNettoChange(disc3);
       setDiscNominalChange(
         (quantityChange * priceChange * detailDiscChange) / 100 +
-          (disc * detailDisc2Change) / 100 +
-          (disc2 * detailDisc3Change) / 100
+        (disc * detailDisc2Change) / 100 +
+        (disc2 * detailDisc3Change) / 100
       );
     } else {
       const disc = quantityChange * priceChange - discValueChange;
@@ -429,7 +429,7 @@ export const PurchaseOrder = () => {
           qtyReceived: 0,
         }
       );
-      await getPurchaseDetailByDocNo(doc) ;
+      await getPurchaseDetailByDocNo(doc);
       let purchaseDetail = await getPurchaseDetailByDocNo(doc);
       let gross = 0;
       for (let i = 0; i < purchaseDetail.length; i++) {
@@ -538,6 +538,8 @@ export const PurchaseOrder = () => {
   useEffect(() => {
     calculateTotalNetto();
   }, [totalGross, taxVal, tax, discount]);
+
+  console.log(materialVal, quantity)
 
   const addOrderDetail = () => {
     if (!materialVal || !quantity) {
@@ -720,7 +722,7 @@ export const PurchaseOrder = () => {
         approvedDate: "",
         printCounter: 0,
         printedBy: "",
-        printedDate: "",
+        // printedDate: "",
         isSalesReturn: false,
         createdBy: response.User,
         changedBy: response.User,
@@ -732,7 +734,7 @@ export const PurchaseOrder = () => {
         autoClose: 3000,
         hideProgressBar: true,
       });
-    handleReset();
+      handleReset();
     } catch (error) {
       if (error.response) {
         toast.error(`${error.response.data.msg}`, {
@@ -797,7 +799,7 @@ export const PurchaseOrder = () => {
         autoClose: 3000,
         hideProgressBar: true,
       });
-    } catch (error) {}
+    } catch (error) { }
   };
   const approveData = async (params) => {
     try {
@@ -816,7 +818,7 @@ export const PurchaseOrder = () => {
         autoClose: 3000,
         hideProgressBar: true,
       });
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const updateData = async (params) => {
@@ -995,7 +997,7 @@ export const PurchaseOrder = () => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
                     <option value="" disabled selected hidden>
-                      Pilih supplier
+                      Pilih Job Order
                     </option>
                     {GetMyjobOrder.map((res, key) => {
                       return (
@@ -1133,6 +1135,13 @@ export const PurchaseOrder = () => {
                   >
                     Save
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setModal(!Modal)}
+                    className="text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 focus:outline-none mx-auto dark:focus:ring-yellow-800"
+                  >
+                    Update
+                  </button>
                 </td>
               </tr>
             </table>
@@ -1190,7 +1199,6 @@ export const PurchaseOrder = () => {
               <td className="text-right">Material:</td>
               <td>
                 <select
-                value={materialVal}
                   onChange={(e) => setMaterialVal(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
@@ -1611,9 +1619,8 @@ export const PurchaseOrder = () => {
           </table>
         </div> */}
         <div
-          className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${
-            modal ? "block" : "hidden"
-          }`}
+          className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${Modal ? "block" : "hidden"
+            }`}
         >
           <div className="space-y-6">
             <div className="text-2xl font-bold mb-4 ">
@@ -2374,7 +2381,564 @@ export const PurchaseOrder = () => {
           </div>
         </div>
       </div>
+      <ModalComp
+        response={response}
+        Modal={Modal}
+        setModal={setModal}
+        AllDocNo={getData}
+        getSeries={getSeries}
+      // getAllDocNo={getAllDocNo}
+      />
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
+    </div>
+  );
+};
+
+export const ModalComp = (params) => {
+  const {
+    Modal,
+    setModal,
+    AllDocNo,
+    getSeries,
+    getSalesOrderNo,
+    getAllDocNo,
+    response,
+  } = params;
+  const [DetailDocNo, setDetailDocNo] = useState([]);
+  const [selectedHeader, setSelectedHeader] = useState(
+    []
+  );
+
+  const [QtyRemain, setQtyRemain] = useState([]);
+  const [updatedQty, setUpdatedQty] = useState({});
+  const [PoNo, setPoNo] = useState("");
+  const [VehicleNo, setVehicleNo] = useState("");
+  const [Information, setInformation] = useState("");
+  const [TotalQty, setTotalQty] = useState();
+  const [DocNo, setDocNo] = useState("");
+  const [ARBook, setARBook] = useState([]);
+  const [collector, setCollector] = useState("")
+  const [totalGross, setTotalGross] = useState(0);
+  const [customer, setCustomer] = useState([])
+  const [detail, setDetail] = useState([]);
+  const [detailUpdated, setDetailUpdated] = useState([]);
+
+  const getDetailDocNo = async (params) => {
+    setDocNo(params);
+
+    try {
+      const customerResponse = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/customerpayment/${params}`
+      );
+      const requestlistResponse = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/arrequestlist`
+      );
+
+      const customerData = customerResponse.data;
+      const requestlistData = requestlistResponse.data;
+
+      const customerDocNos = customerData.map((customerItem) => customerItem.ARDocNo);
+
+      const filteredRequestList = requestlistData.filter(
+        (item) => customerDocNos.includes(item.DocNo)
+      );
+
+      const updatedData = filteredRequestList.map((item) => {
+        const correspondingCustomer = customerData.find(
+          (customerItem) => customerItem.ARDocNo === item.DocNo
+        );
+
+        return {
+          ...item,
+          PrevPayment: correspondingCustomer.PaymentLocal,
+          Netto: item.DocValue - correspondingCustomer.PaymentLocal,
+          Payment: 0,
+          PaymentLocal: 0,
+          ExchangeRate: correspondingCustomer.ExchangeRate,
+          TaxPrefix: correspondingCustomer.TaxPrefix,
+          TaxNo: correspondingCustomer.TaxNo
+        };
+      });
+      // Set the combined data in the state variable
+      setCustomer(customerData)
+      setDetail(updatedData);
+      console.log(updatedData)
+      // Continue with your logic...
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      // Handle errors
+    }
+  };
+
+  useEffect(() => {
+    const updatedData = detail.map((item) => {
+      const correspondingCustomer = customer.find(
+        (customerItem) => customerItem.ARDocNo === item.DocNo
+      );
+
+      return {
+        ...item,
+        PrevPayment: correspondingCustomer.PaymentLocal,
+        Netto: item.DocValue - correspondingCustomer.PaymentLocal,
+        Payment: parseInt(correspondingCustomer.PaymentLocal) + parseInt(item.Payment),
+        PaymentLocal: parseInt(correspondingCustomer.PaymentLocal) + parseInt(item.Payment),
+        ExchangeRate: correspondingCustomer.ExchangeRate,
+        TaxPrefix: correspondingCustomer.TaxPrefix,
+        TaxNo: correspondingCustomer.TaxNo
+      };
+    });
+
+    setDetailUpdated(updatedData);
+    console.log(detail)
+  }, [detail, customer]);
+
+  //  useEffect(()=>{
+  //   console.log(detailUpdated)
+  //  },[detailUpdated])
+
+  useEffect(() => {
+    if (typeof DetailDocNo == "string") {
+      getDetailDocNo(DetailDocNo);
+    }
+  }, [DetailDocNo]);
+
+  const handleChangeDataAPI = (key, field, value) => {
+    setDetail((prevData) =>
+      prevData.map((data, index) => {
+        if (index === key) {
+          let updatedData = {
+            ...data,
+            [field]: value,
+          };
+          // Calculate PaymentLocal when ExchangeRate or Payment changes
+          if (field === "ExchangeRate" || field === "Payment") {
+            const exchangeRate = parseFloat(updatedData.ExchangeRate) || 1; // Use 1 as default if ExchangeRate is not a number
+            const payment = parseFloat(updatedData.Payment) || 0; // Use 0 as default if Payment is not a number
+            updatedData.PaymentLocal = (exchangeRate * payment).toFixed(2);
+          }
+          return updatedData;
+        }
+        return data;
+      })
+    );
+  };
+
+  useEffect(() => {
+    setCollector(selectedHeader?.CollectorCode)
+    setInformation(selectedHeader?.Information)
+  }, [selectedHeader])
+
+  useEffect(() => {
+    if (ARBook) {
+      setTotalGross(ARBook.reduce((total, res) => total + parseInt(res.DocValue), 0))
+    }
+  }, [ARBook]);
+
+  const getQtyRemain = async (params) => {
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_BASE_URL}/goodsissue/${params}`
+    );
+    setQtyRemain(response.data);
+  };
+
+  const GetTotalQty = async (params) => {
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_BASE_URL}/goodsissueqty/${params}`
+    );
+    setTotalQty(response.data);
+  };
+
+  const handleDelete = async (parmas) => {
+    await axios.delete(
+      `${process.env.REACT_APP_API_BASE_URL}/goodsissue/${parmas}`
+    );
+    toast.success("Data Deleted", {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: true,
+    });
+    setModal(false);
+    getSeries();
+    getSalesOrderNo();
+    setDetailDocNo([]);
+    getAllDocNo();
+  };
+
+  useEffect(() => {
+    getQtyRemain(DetailDocNo?.goodsissueh?.SODocNo);
+    GetTotalQty(DetailDocNo?.goodsissueh?.SODocNo);
+  }, [DetailDocNo?.goodsissueh]);
+
+  const handleSave = async () => {
+    try {
+      await axios.patch(
+        `${process.env.REACT_APP_API_BASE_URL}/customerpayment/${DocNo}`,
+        {
+          information: Information,
+          details: detailUpdated,
+        }
+      );
+      setModal(false);
+      setDetail([]);
+      setDetailDocNo("")
+      setInformation("")
+      toast.success("Data Updated", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
+  };
+
+  return (
+    <div
+      className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${Modal ? "block" : "hidden"
+        }`}
+    >
+      <div className="space-y-6">
+        <button
+          onClick={() => {
+            setModal(!Modal);
+          }}
+          className="absolute top-5 right-4 text-gray-600 hover:text-gray-800 focus:outline-none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+        <div className="w-full">
+          <table className="border-separate border-spacing-2">
+            <tr className="w-full">
+              <td className="text-right">DOC NO: </td>
+              <td>
+                <select
+                  onChange={async (e) => {
+                    setDetailDocNo(e.target.value);
+                  }}
+                  value={DetailDocNo}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-[200px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                >
+                  <option>Pilih</option>
+                  {AllDocNo.map((res, key) => {
+                    return (
+                      <option key={key} value={res.DocNo}>
+                        {res.DocNo}
+                      </option>
+                    );
+                  })}
+                </select>
+              </td>
+            </tr>
+          </table>
+          <hr className="my-2" />
+          <table className="border-separate border-spacing-2">
+
+            <tr>
+              <th className="text-right px-2">Supplier</th>
+              <div className="my-1">
+                <input
+                  onChange={(e) => setInformation(e.target.value)}
+                  type="text"
+                  value={Information}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={selectedHeader?.Information}
+                />
+              </div>
+            </tr>
+            <tr>
+              <td className="text-right">Delivery Date: </td>
+              <td>
+                <input
+                  type="date"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder=""
+                  required
+                // min={docDate}
+                // value={deliveryDate}
+                // onChange={(e) => setDeliveryDate(e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="text-right">Job Order No: </td>
+              <td>
+                <select
+                  // value={JODocNo}
+                  onChange={(e) => {
+                    // setJODocNo(e.target.value);
+                  }}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                >
+                  <option value="" disabled selected hidden>
+                    Pilih Job Order
+                  </option>
+                  {/* {GetMyjobOrder.map((res, key) => {
+                    return (
+                      <option value={res.DocNo} key={key}>
+                        {res.DocNo}
+                      </option>
+                    );
+                  })} */}
+                </select>
+              </td>
+            </tr>
+
+            <tr>
+              <td className="text-right">Term Of Payment: </td>
+              <td>
+                <input
+                  // value={top}
+                  onChange={(e) => {
+                    // setTop(e.target.value);
+                  }}
+                  type="number"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="0"
+                  required
+                />
+              </td>
+              <td>Days</td>
+            </tr>
+            <tr>
+              <td className="text-right">Currency: </td>
+              <td>
+                <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  {/* <option>{getFCurrency.Currency}</option> */}
+                </select>
+              </td>
+              <td className="text-right">Exchange Rate: </td>
+              <td>
+                <input
+                  onChange={(e) => {
+                    // setExchangeRate(e.target.value);
+                  }}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  // value={exchangeRate}
+                  required
+                // disabled={disabled}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <select
+                  // value={tax}
+                  onChange={(e) => {
+                    // setTax(e.target.value);
+                  }}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                >
+                  <option disabled selected hidden>
+                    Pilih
+                  </option>
+                  <option value="No">No</option>
+                  <option value="Include">Include</option>
+                  <option value="Exclude">Exclude</option>
+                </select>
+              </td>
+              <td>
+                <input
+                  // value={taxVal}
+                  onChange={(e) => {
+                    // setTaxVal(e.target.value);
+                  }}
+                  type="number"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="10.00"
+                />
+              </td>
+              <td> % Tax</td>
+            </tr>
+            <tr>
+              <td className="text-right">Discount: </td>
+              <td>
+                <input
+                  // value={discount}
+                  onChange={(e) => {
+                    // setDiscount(e.target.value);
+                  }}
+                  type="number"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="0.00"
+                />
+              </td>
+              <td> %</td>
+            </tr>
+
+            <tr>
+              <td className="text-right">Send To: </td>
+              <td>
+                <select
+                  // value={sendTo}
+                  // onChange={(e) => setSendTo(e.target.value)}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                >
+                  <option value="" disabled selected hidden>
+                    Pilih
+                  </option>
+                  <option value="JL. Berbek Industri 3 no 15">
+                    JL. Berbek Industri 3 no 15
+                  </option>
+                  <option value="-">-</option>
+                  <option value="-">-</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th className="text-right px-2">Information</th>
+              <div className="my-1">
+                <input
+                  onChange={(e) => setInformation(e.target.value)}
+                  type="text"
+                  value={Information}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder={selectedHeader?.Information}
+                />
+              </div>
+            </tr>
+          </table>
+          <table className="text-sm text-gray-500 dark:text-gray-400">
+            {/* <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"> */}
+            <div>
+              <td className="flex gap-4">
+                <button
+                  onClick={() => handleSave()}
+                  type="button"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+                >
+                  Update
+                </button>
+                <button
+                  // onClick={handlePrint}
+                  type="button"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none mx-auto dark:focus:ring-blue-800"
+                >
+                  Print
+                </button>
+                <button
+                  // onClick={handlePrint}
+                  type="button"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none mx-auto dark:focus:ring-blue-800"
+                >
+                  Approve
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleDelete(DetailDocNo.goodsissueh.DocNo)
+                  }
+                  className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none  mx-auto dark:focus:ring-red-800"
+                >
+                  Delete
+                </button>
+              </td>
+            </div>
+            <div className="text-xl font-bold mb-4 pt-10">Detail</div>
+            <div className="relative overflow-x-auto">
+              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="col" className="px-6 py-3">
+                      Number
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Code
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Info
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Unit
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Qty
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Price
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Gross
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      DiscPercent
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      DiscPercent2
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      DiscPercent3
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      DiscValue
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      DiscNominal
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Netto
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orderDetail.map((res, key) => {
+                    return (
+                      <tr
+                        key={key}
+                        className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                      >
+                        <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                          {res.number}
+                        </td>
+                        <td className="px-6 py-4">{res.materialCode}</td>
+                        <td className="px-6 py-4">{res.info}</td>
+                        <td className="px-6 py-4">{res.unit}</td>
+                        <td className="px-6 py-4">{res.qty}</td>
+                        <td className="px-6 py-4">{res.price}</td>
+                        <td className="px-6 py-4">{res.gross}</td>
+                        <td className="px-6 py-4">{res.discPercent}</td>
+                        <td className="px-6 py-4">{res.discPercent2}</td>
+                        <td className="px-6 py-4">{res.discPercent3}</td>
+                        <td className="px-6 py-4">{res.discValue}</td>
+                        <td className="px-6 py-4">{res.discNominal}</td>
+                        <td className="px-6 py-4">{res.netto}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };
