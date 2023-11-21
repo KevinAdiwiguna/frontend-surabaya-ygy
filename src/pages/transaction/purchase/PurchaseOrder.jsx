@@ -2387,6 +2387,8 @@ export const PurchaseOrder = () => {
         setModal={setModal}
         AllDocNo={getData}
         getSeries={getSeries}
+        getJobOrder={GetMyjobOrder}
+        getMySupplier={getMySupplier}
       // getAllDocNo={getAllDocNo}
       />
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
@@ -2402,17 +2404,17 @@ export const ModalComp = (params) => {
     getSeries,
     getSalesOrderNo,
     getAllDocNo,
+    getJobOrder,
+    getMySupplier,
     response,
+    getCurrencyFunc,
   } = params;
   const [DetailDocNo, setDetailDocNo] = useState([]);
   const [selectedHeader, setSelectedHeader] = useState(
     []
   );
 
-  const [QtyRemain, setQtyRemain] = useState([]);
-  const [updatedQty, setUpdatedQty] = useState({});
-  const [PoNo, setPoNo] = useState("");
-  const [VehicleNo, setVehicleNo] = useState("");
+  const [header, setHeader] = useState([])
   const [Information, setInformation] = useState("");
   const [TotalQty, setTotalQty] = useState();
   const [DocNo, setDocNo] = useState("");
@@ -2422,79 +2424,33 @@ export const ModalComp = (params) => {
   const [customer, setCustomer] = useState([])
   const [detail, setDetail] = useState([]);
   const [detailUpdated, setDetailUpdated] = useState([]);
+  const [deliveryDate, setDeliveryDate] = useState("");
+  const [JODocNo, setJODocNo] = useState("")
+  const [supplier, setSupplier] = useState("")
+  const [top, setTop] = useState("")
+  const [exchangeRate, setExchangeRate] = useState(0);
+  const [tax, setTax] = useState();
+  const [taxVal, setTaxVal] = useState(0)
+  const [discount, setDiscount] = useState(0)
 
   const getDetailDocNo = async (params) => {
     setDocNo(params);
-
     try {
-      const customerResponse = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/customerpayment/${params}`
-      );
-      const requestlistResponse = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/arrequestlist`
+      const header = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${params}`
       );
 
-      const customerData = customerResponse.data;
-      const requestlistData = requestlistResponse.data;
-
-      const customerDocNos = customerData.map((customerItem) => customerItem.ARDocNo);
-
-      const filteredRequestList = requestlistData.filter(
-        (item) => customerDocNos.includes(item.DocNo)
+      const detail = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/purchaseorderd/${params}`
       );
-
-      const updatedData = filteredRequestList.map((item) => {
-        const correspondingCustomer = customerData.find(
-          (customerItem) => customerItem.ARDocNo === item.DocNo
-        );
-
-        return {
-          ...item,
-          PrevPayment: correspondingCustomer.PaymentLocal,
-          Netto: item.DocValue - correspondingCustomer.PaymentLocal,
-          Payment: 0,
-          PaymentLocal: 0,
-          ExchangeRate: correspondingCustomer.ExchangeRate,
-          TaxPrefix: correspondingCustomer.TaxPrefix,
-          TaxNo: correspondingCustomer.TaxNo
-        };
-      });
-      // Set the combined data in the state variable
-      setCustomer(customerData)
-      setDetail(updatedData);
-      console.log(updatedData)
-      // Continue with your logic...
+      
+      setHeader(header.data)
+      setDetail(detail.data)
+      setGetFCurrency(header.data.Currency)
     } catch (error) {
       console.error("Error fetching data:", error);
-      // Handle errors
     }
   };
-
-  useEffect(() => {
-    const updatedData = detail.map((item) => {
-      const correspondingCustomer = customer.find(
-        (customerItem) => customerItem.ARDocNo === item.DocNo
-      );
-
-      return {
-        ...item,
-        PrevPayment: correspondingCustomer.PaymentLocal,
-        Netto: item.DocValue - correspondingCustomer.PaymentLocal,
-        Payment: parseInt(correspondingCustomer.PaymentLocal) + parseInt(item.Payment),
-        PaymentLocal: parseInt(correspondingCustomer.PaymentLocal) + parseInt(item.Payment),
-        ExchangeRate: correspondingCustomer.ExchangeRate,
-        TaxPrefix: correspondingCustomer.TaxPrefix,
-        TaxNo: correspondingCustomer.TaxNo
-      };
-    });
-
-    setDetailUpdated(updatedData);
-    console.log(detail)
-  }, [detail, customer]);
-
-  //  useEffect(()=>{
-  //   console.log(detailUpdated)
-  //  },[detailUpdated])
 
   useEffect(() => {
     if (typeof DetailDocNo == "string") {
@@ -2534,20 +2490,6 @@ export const ModalComp = (params) => {
     }
   }, [ARBook]);
 
-  const getQtyRemain = async (params) => {
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_BASE_URL}/goodsissue/${params}`
-    );
-    setQtyRemain(response.data);
-  };
-
-  const GetTotalQty = async (params) => {
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_BASE_URL}/goodsissueqty/${params}`
-    );
-    setTotalQty(response.data);
-  };
-
   const handleDelete = async (parmas) => {
     await axios.delete(
       `${process.env.REACT_APP_API_BASE_URL}/goodsissue/${parmas}`
@@ -2564,10 +2506,38 @@ export const ModalComp = (params) => {
     getAllDocNo();
   };
 
+   const [getFCurrency, setGetFCurrency] = useState("");
+
+  const getCurrencyByCustomer = async (params) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/supplier/${params}`
+      );
+      setGetFCurrency(response.data.Currency);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    getQtyRemain(DetailDocNo?.goodsissueh?.SODocNo);
-    GetTotalQty(DetailDocNo?.goodsissueh?.SODocNo);
-  }, [DetailDocNo?.goodsissueh]);
+    getCurrencyByCustomer(supplier);
+  }, [supplier]);
+
+
+  const [disabled, setDisabled] = useState(false);
+
+  const checkExchangeRate = () => {
+    if (getFCurrency === "IDR") {
+      setDisabled(true);
+      setExchangeRate(1.0);
+    } else {
+      setDisabled(false);
+    }
+  };
+
+  useEffect(() => {
+    checkExchangeRate();
+  }, [getFCurrency]);
 
   const handleSave = async () => {
     try {
@@ -2606,6 +2576,8 @@ export const ModalComp = (params) => {
       }
     }
   };
+
+  console.log({header, detail})
 
   return (
     <div
@@ -2664,13 +2636,23 @@ export const ModalComp = (params) => {
             <tr>
               <th className="text-right px-2">Supplier</th>
               <div className="my-1">
-                <input
-                  onChange={(e) => setInformation(e.target.value)}
-                  type="text"
-                  value={Information}
+              <select
+                  onChange={(e) => {
+                    setSupplier(e.target.value);
+                  }}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder={selectedHeader?.Information}
-                />
+                >
+                  <option value="" disabled selected hidden>
+                    {header?.SupplierCode}
+                  </option>
+                  {getMySupplier.map((res, key) => {
+                    return (
+                      <option value={res.Code} key={key}>
+                        {res.Code}
+                      </option>
+                    );
+                  })}
+                </select>
               </div>
             </tr>
             <tr>
@@ -2679,11 +2661,8 @@ export const ModalComp = (params) => {
                 <input
                   type="date"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder=""
-                  required
-                // min={docDate}
-                // value={deliveryDate}
-                // onChange={(e) => setDeliveryDate(e.target.value)}
+                  value={deliveryDate || header?.DeliveryDate}
+                  onChange={(e) => setDeliveryDate(e.target.value)}
                 />
               </td>
             </tr>
@@ -2691,22 +2670,21 @@ export const ModalComp = (params) => {
               <td className="text-right">Job Order No: </td>
               <td>
                 <select
-                  // value={JODocNo}
                   onChange={(e) => {
-                    // setJODocNo(e.target.value);
+                    setJODocNo(e.target.value);
                   }}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
                   <option value="" disabled selected hidden>
-                    Pilih Job Order
+                    {header?.JODocNo}
                   </option>
-                  {/* {GetMyjobOrder.map((res, key) => {
+                  {getJobOrder.map((res, key) => {
                     return (
                       <option value={res.DocNo} key={key}>
                         {res.DocNo}
                       </option>
                     );
-                  })} */}
+                  })}
                 </select>
               </td>
             </tr>
@@ -2715,14 +2693,12 @@ export const ModalComp = (params) => {
               <td className="text-right">Term Of Payment: </td>
               <td>
                 <input
-                  // value={top}
                   onChange={(e) => {
-                    // setTop(e.target.value);
+                    setTop(e.target.value);
                   }}
                   type="number"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="0"
-                  required
+                  placeholder={header?.TOP}
                 />
               </td>
               <td>Days</td>
@@ -2731,34 +2707,34 @@ export const ModalComp = (params) => {
               <td className="text-right">Currency: </td>
               <td>
                 <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  {/* <option>{getFCurrency.Currency}</option> */}
+                  <option>{getFCurrency}</option>
                 </select>
               </td>
               <td className="text-right">Exchange Rate: </td>
               <td>
                 <input
                   onChange={(e) => {
-                    // setExchangeRate(e.target.value);
+                    setExchangeRate(e.target.value);
                   }}
                   type="text"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  // value={exchangeRate}
+                  value={exchangeRate}
                   required
-                // disabled={disabled}
+                disabled={disabled}
                 />
               </td>
             </tr>
             <tr>
               <td>
                 <select
-                  // value={tax}
+                  value={tax}
                   onChange={(e) => {
-                    // setTax(e.target.value);
+                    setTax(e.target.value);
                   }}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
                   <option disabled selected hidden>
-                    Pilih
+                    {header?.TaxStatus}
                   </option>
                   <option value="No">No</option>
                   <option value="Include">Include</option>
@@ -2767,13 +2743,13 @@ export const ModalComp = (params) => {
               </td>
               <td>
                 <input
-                  // value={taxVal}
+                  value={taxVal || header?.TaxValue}
                   onChange={(e) => {
-                    // setTaxVal(e.target.value);
+                    setTaxVal(e.target.value);
                   }}
                   type="number"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="10.00"
+                  placeholder={header?.TaxValue}
                 />
               </td>
               <td> % Tax</td>
@@ -2782,13 +2758,13 @@ export const ModalComp = (params) => {
               <td className="text-right">Discount: </td>
               <td>
                 <input
-                  // value={discount}
+                  value={discount || header?.Discount}
                   onChange={(e) => {
-                    // setDiscount(e.target.value);
+                    setDiscount(e.target.value);
                   }}
                   type="number"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="0.00"
+                  placeholder={header?.Discount}
                 />
               </td>
               <td> %</td>
@@ -2825,10 +2801,8 @@ export const ModalComp = (params) => {
                 />
               </div>
             </tr>
-          </table>
-          <table className="text-sm text-gray-500 dark:text-gray-400">
-            {/* <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"> */}
-            <div>
+            <tr>
+              <td></td>
               <td className="flex gap-4">
                 <button
                   onClick={() => handleSave()}
@@ -2857,11 +2831,13 @@ export const ModalComp = (params) => {
                     handleDelete(DetailDocNo.goodsissueh.DocNo)
                   }
                   className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none  mx-auto dark:focus:ring-red-800"
-                >
+                > 
                   Delete
                 </button>
               </td>
-            </div>
+            </tr>
+          </table>
+          <table className="text-sm text-gray-500 dark:text-gray-400">
             <div className="text-xl font-bold mb-4 pt-10">Detail</div>
             <div className="relative overflow-x-auto">
               <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -2909,30 +2885,7 @@ export const ModalComp = (params) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {orderDetail.map((res, key) => {
-                    return (
-                      <tr
-                        key={key}
-                        className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                      >
-                        <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                          {res.number}
-                        </td>
-                        <td className="px-6 py-4">{res.materialCode}</td>
-                        <td className="px-6 py-4">{res.info}</td>
-                        <td className="px-6 py-4">{res.unit}</td>
-                        <td className="px-6 py-4">{res.qty}</td>
-                        <td className="px-6 py-4">{res.price}</td>
-                        <td className="px-6 py-4">{res.gross}</td>
-                        <td className="px-6 py-4">{res.discPercent}</td>
-                        <td className="px-6 py-4">{res.discPercent2}</td>
-                        <td className="px-6 py-4">{res.discPercent3}</td>
-                        <td className="px-6 py-4">{res.discValue}</td>
-                        <td className="px-6 py-4">{res.discNominal}</td>
-                        <td className="px-6 py-4">{res.netto}</td>
-                      </tr>
-                    );
-                  })}
+                  {/* {orderDetail.map((res, kb */}
                 </tbody>
               </table>
             </div>
