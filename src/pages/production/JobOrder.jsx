@@ -7,8 +7,9 @@ import { toast, ToastContainer } from 'react-toastify'
 export const JobOrder = () => {
   const { fetchMe, response } = useMe();
   const currentDate = new Date().toISOString().slice(0, 16)
+  const [modal, setModal] = useState(false)
 
-
+  // fetch state
   const [getSeries, setGetSeries] = useState([])
   const [getSalesOrderNo, setGetSalesOrderNo] = useState([])
   const [getJobOrder, setGetJobOrder] = useState([])
@@ -17,7 +18,7 @@ export const JobOrder = () => {
   const [getFormula, setGetFormula] = useState([])
 
 
-
+  // submit state
   const [selectedSeries, setSelectedSeries] = useState('')
   const [selectedSalesOrderNo, setSelectedSalesOrderNo] = useState('')
   const [selectedJobOrder, setSelectedJobOrder] = useState('')
@@ -34,43 +35,41 @@ export const JobOrder = () => {
   const [checkQtyOutput, setCheckQtyOutput] = useState(false)
   const [information, setInformation] = useState('')
   const [priority, setPriority] = useState('')
+  const [setLevel, setSetLevel] = useState()
 
   const getSeriesFetch = async () => {
     const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/seriesCode/JOB ORDER`)
     setGetSeries(res?.data)
   }
-
   const getSalesOrderNoFetch = async () => {
     const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesorderh`)
     setGetSalesOrderNo(res?.data)
   }
-
   const getJobOrderFetch = async () => {
     const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/joborder`)
     setGetJobOrder(res?.data)
   }
-
+  const getSelectedJobOrderFetch = async (params) => {
+    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/joborder/${params}`)
+    setSetLevel(res.data.Level)
+  }
   const getLocationFetch = async () => {
     const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location`)
     setGetLocation(res?.data)
   }
-
   const getDepartementFetch = async () => {
     const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/department`)
     setGetDepartement(res?.data)
   }
-
   const getFormulaFetch = async () => {
-    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/woth`)
+    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/bomh`)
     setGetFormula(res?.data)
   }
-
   const getMaterialCode = async (params) => {
-    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/woth/${params}`)
+    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/bomh/${params}`)
     setSelectedMaterialCode(res?.data?.MaterialCode)
     setSelectedUnit(res?.data?.Unit)
   }
-
 
 
   const fetchFunction = () => {
@@ -107,10 +106,10 @@ export const JobOrder = () => {
     setInformation('')
   }
 
-
   useEffect(() => {
     fetchFunction()
   }, [])
+
 
 
   const generateDocDate = () => {
@@ -122,9 +121,8 @@ export const JobOrder = () => {
   };
 
   const hanleSave = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    console.log(selectedLocation)
     try {
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/joborder`, {
         generateDocDate: generateDocDate(),
@@ -141,15 +139,15 @@ export const JobOrder = () => {
         IODocNo: "",
         WODocNo: "",
         parentJODocNo: selectedJobOrder,
-        level: !selectedJobOrder ? 0 : 1,
-        priority: priority,
+        level: setLevel + 1 || 0,
+        priority: parseInt(priority),
         location: selectedLocation,
         department: selectedDepartement,
         excludeCostDistribution: excludeFromCostDistribution,
         formula: selectedFormula,
         materialCode: selectedMaterialCode,
         unit: selectedUnit,
-        qtyTarget: qtyTarget,
+        qtyTarget: parseFloat(qtyTarget),
         qtyOutput: 0,
         checkQtyOutput: checkQtyOutput,
         totalCost: 0,
@@ -163,6 +161,8 @@ export const JobOrder = () => {
         autoClose: 3000,
         hideProgressBar: true,
       });
+      resetFunction()
+      fetchFunction()
     } catch (error) {
       if (error.response) {
         toast.error(`${error.response.data.msg}`, {
@@ -184,78 +184,17 @@ export const JobOrder = () => {
 
   }
 
-  // const [informationUpdate, setInformationUpdate] = useState("");
-  // const [detailDataUpdate, setDetailDataUpdate] = useState([])
-  // const [modalData, setModalData] = useState([])
-  // const [modal, setModal] = useState(false)
-  // const [getMySeries, setGetSeries] = useState([])
-  // const [getMySalesOrder, setGetSalesOrder] = useState([])
-  // const [docDate,setDocDate] = useState(currentDate)
-  // const [getMyJobOrder, setGetJobOrder] = useState([])
-  // const [plannedFinishDate, setPlannedFinishDate] = useState("")
-  // const [actualStartDate, setActualStartDate] = useState("")
-  // const [actualFinishDate, setActualFinishDate] = useState("")
-  // const [requiredDate, setRequiredDate] = useState("")
-  // const [getMyLocation, setGetLocation] = useState("")
 
-  //   const handleDocDateChange = (e) => {
-  //   const selectedDocDate = e.target.value;
-  //   setDocDate(selectedDocDate);
-  // };
-  // const closeModal = () => {
-  //   setModal(false)
-  //   setDetailDataUpdate([])
-  //   setInformationUpdate("")
-  //   // setDeliveryDateUpdate('')
-  // }
-
-  // const getSalesOrder = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       `${process.env.REACT_APP_API_BASE_URL}/salesorderh`
-  //     );
-  //     setGetSalesOrder(response.data)
-  //   } catch (error) {
-
-  //   }
-  // }
-
-  // const getLocation = async () => {
-  //   const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location`)
-  //   setGetLocation(res.data)
-  // }
-
-  // const getJobOrder = async () => {
-  //   try {
-  //     const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/joborder`)
-  //     setGetJobOrder(response.data)
-  //   } catch (error) {
-
-  //   }
-  // }
-
-  // const getSeries = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       `${process.env.REACT_APP_API_BASE_URL}/seriescode/JOB ORDER`
-  //     );
-  //     setGetSeries(response.data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // useEffect(()=>{
-  //   getSeries()
-  //   getSalesOrder()
-  //   getJobOrder()
-  //   getLocation()
-  // },[])
 
   return (
     <div>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar
+      />
       <div className='text-2xl font-bold mb-4'>Job Order</div>
-      <form action="post" onSubmit={hanleSave}>
+      <form onSubmit={hanleSave}>
         <div className='w-full'>
           <div className='flex justify-start items-center'>
             <table className='border-separate border-spacing-2 '>
@@ -276,7 +215,7 @@ export const JobOrder = () => {
                 <td className='text-right'>Sales Order No: </td>
                 <td>
                   <select onChange={(e) => setSelectedSalesOrderNo(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value="" disabled selected hidden>Pilih nomor sales order</option>
+                    <option value="" selected >Pilih nomor sales order</option>
                     {getSalesOrderNo.map((res, key) => {
                       return (
                         <option value={res.DocNo} key={key}>{res.DocNo}</option>
@@ -302,7 +241,11 @@ export const JobOrder = () => {
                 <td>
                   <input type="date"
                     onChange={(e) => setPlannedFinishDate(e.target.value)}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    min={currentDate}
+                    required
+                  />
                 </td>
               </tr>
               <tr>
@@ -329,7 +272,10 @@ export const JobOrder = () => {
                 <td>
                   <input type="date"
                     onChange={(e) => setRequiredDate(e.target.value)}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    required
+                  />
                 </td>
                 <td className='text-right'>Internal Order No: </td>
                 <td>
@@ -341,8 +287,12 @@ export const JobOrder = () => {
               <tr>
                 <td className='text-right'>Parent Job Order: </td>
                 <td>
-                  <select onChange={(e) => setSelectedJobOrder(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value="" disabled selected hidden>Pilih parent job order</option>
+                  <select onChange={async (e) => {
+                    await getSelectedJobOrderFetch(e.target.value)
+                    setSelectedJobOrder(e.target.value)
+                  }}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="" selected >Pilih parent job order</option>
                     {getJobOrder.map((res, key) => {
                       return (
                         <option value={res.DocNo} key={key}>{res.DocNo}</option>
@@ -352,7 +302,7 @@ export const JobOrder = () => {
                 </td>
                 <td className='text-right'>Work Order No: </td>
                 <td>
-                  <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
+                  <input type="number" disabled className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" />
                 </td>
               </tr>
               <tr>
@@ -360,14 +310,14 @@ export const JobOrder = () => {
                 <td>
                   <select onChange={e => setPriority(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="" disabled selected hidden>Pilih priority</option>
-                    <option value="HIGH">1. HIGH</option>
-                    <option value="MEDIUM">2. MEDIUM</option>
-                    <option value="LOW">3. LOW</option>
+                    <option value="1">1. HIGH</option>
+                    <option value="2">2. MEDIUM</option>
+                    <option value="3">3. LOW</option>
                   </select>
                 </td>
                 <td className='text-right'> Level: </td>
                 <td>
-                  <input type="number" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
+                  <input type="number" disabled value={setLevel + 1 || 0} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
                 </td>
               </tr>
               <tr>
@@ -387,7 +337,7 @@ export const JobOrder = () => {
                 <td className='text-right'>Department: </td>
                 <td>
                   <select onChange={(e) => setSelectedDepartement(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value="" disabled selected hidden>Pilih department</option>
+                    <option value="" selected >Pilih department</option>
                     {getDepartement.map((res, key) => {
                       return (
                         <option key={key} value={res.Code}>{res.Code}</option>
@@ -398,7 +348,7 @@ export const JobOrder = () => {
               </tr>
               <tr>
                 <td className='float-right'>
-                  <input type="checkbox" onChange={(e) => setExcludeFromCostDistribution(!excludeFromCostDistribution)} name="" id="" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
+                  <input type="checkbox" onChange={(e) => setExcludeFromCostDistribution(!excludeFromCostDistribution)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" />
                 </td>
                 <td className=''>
                   Exclude from cost distribution
@@ -408,14 +358,14 @@ export const JobOrder = () => {
                 <td className='text-right'>Formula: </td>
                 <td>
                   <select onChange={async (e) => {
-                    await getMaterialCode(e.target.value.split(',')[0]);
-                    setSelectedFormula(e.target.value.split(',')[1]);
+                    await getMaterialCode(e.target.value);
+                    await setSelectedFormula(e.target.value);
                   }}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value="" disabled selected hidden>Pilih formula</option>
-                    {getFormula.map((res, key) => {
+                    <option selected >Pilih formula</option>
+                    {getFormula?.map((res, key) => {
                       return (
-                        <option key={key} value={`${res.Code},${res.Formula}`}>{res.Formula}</option>
+                        <option key={key} value={`${res?.Formula}`}>{res?.Formula}</option>
                       )
                     })}
                   </select>
@@ -447,7 +397,7 @@ export const JobOrder = () => {
                   <input type="text" disabled className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
                 </td>
                 <td className='float-right'>
-                  <input type="checkbox" onChange={() => setCheckQtyOutput(!checkQtyOutput)} name="" id="" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+                  <input type="checkbox" onChange={() => setCheckQtyOutput(!checkQtyOutput)} name="" id="" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" />
                 </td>
                 <td className=''>
                   Check Qty Output &lt;= Qty Target
@@ -464,288 +414,469 @@ export const JobOrder = () => {
 
           <div className='w-[75%] flex gap-3 justify-center items-center mx-auto my-10'>
             <label>Information:</label>
-            <input type="text" onChange={(e) => setInformation(e.target.value)} className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+            <input type="text" onChange={(e) => setInformation(e.target.value)} className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" />
           </div>
         </div>
 
         <div>
           <button
-            type="button"
-            onClick={() => hanleSave()}
+            type="submit"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
           >
             Save
           </button>
+          <button
+            type='button'
+            onClick={() => setModal(true)}
+            className="text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 focus:outline-none mx-auto dark:focus:ring-yellow-800"
+
+          >
+            Update
+          </button>
+
         </div>
 
       </form>
 
-      {/* <div className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${modal ? 'block' : 'hidden'}`}>
-        <div className="space-y-6">
-          <div className="text-2xl font-bold mb-4 ">DocNo: {modalData.DocNo}</div>
-          <button
-            onClick={() => {
-              closeModal()
-            }}
-            className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-          <form onSubmit="">
-            <div className='w-[75%]'>
-              <div className='flex justify-start items-center'>
-                <table className='border-separate border-spacing-2 w-1/2'>
-                  <tr>
-                    <td className='text-right'>Series: </td>
-                    <td>
-                      <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option value="" disabled selected hidden>{modalData.Series}</option>
-                      </select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className='text-right'>Doc Date: </td>
-                    <td>
-                      <input value={modalData.DocDate + "T00:00"} min={currentDate} type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
-                    </td>
-                  </tr>
-                </table>
-                <table className='border-separate border-spacing-2 w-1/2'>
-                  <tr>
-                    <td className='text-right'>Series: </td>
-                    <td>
-                      <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option value="" disabled selected hidden>Pilih series</option>
-                        <option value="US">United States</option>
-                        <option value="CA">Canada</option>
-                        <option value="FR">France</option>
-                        <option value="DE">Germany</option>
-                      </select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className='text-right font-bold'>Doc No: </td>
-                    <td>
-                      <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option value="" disabled selected hidden>Pilih document number</option>
-                        <option value="US">United States</option>
-                        <option value="CA">Canada</option>
-                        <option value="FR">France</option>
-                        <option value="DE">Germany</option>
-                      </select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className='text-right'>Doc Date: </td>
-                    <td>
-                      <input type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className='text-right'>Purchase Order No: </td>
-                    <td>
-                      <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option value="" disabled selected hidden>Pilih nomor purchase order</option>
-                      </select>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-            <div className='w-[75%] flex gap-3 items-center'>
-              <label>Information:</label>
-              <input placeholder={modalData.Information} onChange={(e) => { setInformationUpdate(e.target.value) }} type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required value={informationUpdate} />
-            </div>
-            <div className='pl-[100px] my-2'>
-              <button onClick="" type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">Update</button>
-            </div>
-          </form>
-          <div>
-            <form onSubmit="">
-              <table className='border-separate border-spacing-2'>
+      <JobOrderModal modal={modal} setModal={setModal} />
+
+    </div>
+  )
+}
+
+
+
+export const JobOrderModal = ({ modal, setModal }) => {
+  const { fetchMe, response } = useMe();
+  const currentDate = new Date().toISOString().slice(0, 16)
+
+  const [getDocNoJobOrder, setGetDocNoJobOrder] = useState([])
+  const [getSalesOrderNo, setGetSalesOrderNo] = useState([])
+  const [getLocation, setGetLocation] = useState([])
+  const [getWoth, setGetWoth] = useState([])
+  const [getWothDetail, setGetWothDetail] = useState([])
+  const [getDepartment, setGetDepartment] = useState([])
+
+  const [selectedDocNoAllData, setSelectedDocNoAllData] = useState()
+
+  // fetch state
+  const getFetchDoNoJobOrder = async () => {
+    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/joborder`)
+    setGetDocNoJobOrder(res?.data)
+  }
+  const getAllDataJobOrder = async (params) => {
+    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/joborder/${params}`)
+    setSelectedDocNoAllData(res?.data)
+  }
+  const getSalesOrderNoFetch = async () => {
+    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/salesorderh`)
+    setGetSalesOrderNo(res?.data)
+  }
+  const getLocationFetch = async () => {
+    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location`)
+    setGetLocation(res?.data)
+  }
+  const getWorkOrderTemplateFetch = async () => {
+    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/bomh`)
+    setGetWoth(res?.data)
+  }
+  const getWorkOrderTemplateDetail = async (params) => {
+    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/bomh/${params}`)
+    setGetWothDetail(res?.data)
+  }
+  const getDepartementFetch = async () => {
+    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/department`)
+    setGetDepartment(res?.data)
+  }
+
+  const [getLevelFetch, setGetLevelFetch] = useState({})
+  const getLevelFromJobOrder = async (params) => {
+    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/joborder/${params}`)
+    setGetLevelFetch(res.data)
+  }
+
+  const [updateRequiredDate, setUpdateRequiredDate] = useState('')
+  const [updatePlannedFinishDate, setUpdatePlannedFinishDate] = useState(selectedDocNoAllData?.PlannedFinishDate)
+  const [selectedSalesORder, setSelectedSalesORder] = useState(selectedDocNoAllData?.SODocNo)
+  const [selectedJobOrderNo, setSelectedJobOrderNo] = useState(selectedDocNoAllData?.ParentJODocNo)
+  const [selectedLocation, setSelectedLocation] = useState(selectedDocNoAllData?.Location)
+  const [selectedDepartement, setSelectedDepartement] = useState(selectedDocNoAllData?.Department)
+  const [selectedInformation, setSelectedInformation] = useState(selectedDocNoAllData?.Information)
+  const [updatePriority, setUpdatePriority] = useState('')
+  const [excludeCostDistribution, setExcludeCostDistribution] = useState(selectedDocNoAllData?.ExcludeCostDistribution)
+  const [qtyTarget, setQtyTarget] = useState()
+
+  const resetData = () => {
+    setGetDocNoJobOrder([])
+    setGetSalesOrderNo([])
+    setGetLocation([])
+    setGetWoth([])
+    setGetWothDetail([])
+    setGetDepartment([])
+    setSelectedDocNoAllData([])
+  }
+
+  useEffect(() => {
+    setExcludeCostDistribution(selectedDocNoAllData?.ExcludeCostDistribution || false);
+  }, [selectedDocNoAllData]);
+
+  useEffect(() => {
+    getFetchDoNoJobOrder()
+    fetchMe()
+  }, [modal])
+
+
+  const handleDelete = async (parms) => {
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/joborder/${parms}`)
+      toast.success("Data deleted", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
+  }
+
+
+  const handleUpdate = async (e) => {
+    e.preventDefault()
+    try {
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/joborder/${selectedDocNoAllData.DocNo}`, {
+        plannedFinishDate: !updatePlannedFinishDate ? selectedDocNoAllData.PlannedFinishDate : updatePlannedFinishDate,
+        requiredDate: !updateRequiredDate ? selectedDocNoAllData.RequiredDate : updateRequiredDate,
+        SODocNo: !selectedSalesORder ? selectedDocNoAllData.SODocNo : selectedSalesORder,
+        parentJODocNo: !selectedJobOrderNo ? selectedDocNoAllData.ParentJODocNo : selectedJobOrderNo,
+        priority: !updatePriority ? selectedDocNoAllData?.Priority : updatePriority,
+        location: !selectedLocation ? selectedDocNoAllData?.Location : selectedLocation,
+        department: !selectedDepartement ? selectedDocNoAllData?.Department : selectedDepartement,
+        formula: !getWothDetail?.Formula ? selectedDocNoAllData?.Formula : getWothDetail?.Formula,
+        materialCode: !getWothDetail?.MaterialCode ? selectedDocNoAllData?.MaterialCode : getWothDetail?.MaterialCode,
+        unit: !getWothDetail?.Unit ? selectedDocNoAllData?.Unit : getWothDetail?.Unit,
+        qtyTarget: !qtyTarget ? selectedDocNoAllData?.QtyTarget : qtyTarget,
+        information: !selectedInformation ? selectedDocNoAllData?.Information : selectedInformation,
+        changedBy: response?.User
+      })
+      toast.success("Data Created", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+      setModal(false)
+    } catch (error) {
+      if (error.response) {
+        toast.error(`${error.response.data.msg}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else if (error.request) {
+        console.error("Request Error:", error.request);
+        toast.error("Network error. Please check your internet connection.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+        });
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
+  }
+
+
+
+
+
+  return (
+    <div className={`bg-slate-50 fixed w-[90%] h-[90%] top-6 left-24 rounded-lg border border-black overflow-y-scroll p-5 ${modal ? 'block' : 'hidden'}`}>
+      <div className="space-y-6">
+        <div className="text-2xl font-bold mb-4 ">DocNo: {selectedDocNoAllData?.DocNo}</div>
+        <button
+          onClick={() => {
+            setModal(false)
+            resetData()
+          }}
+          className="absolute top-0 right-4 text-gray-600 hover:text-gray-800 focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <form onSubmit={handleUpdate}>
+          <div className='w-full'>
+            <div className='flex justify-start items-center'>
+              <table className='border-separate border-spacing-2 '>
                 <tr>
-                  <td className='text-right'>Supplier: </td>
+                  <td className='text-right'>Series: </td>
                   <td>
-                    <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                      <option value="" disabled selected hidden>Pilih supplier</option>
+                    <select disabled className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value={selectedDocNoAllData?.Series | ''} disabled selected hidden>{selectedDocNoAllData?.Series || 'pilih DocNo'}</option>
                     </select>
                   </td>
                 </tr>
                 <tr>
-                  <td className="text-right">Supply Delivery No: </td>
+                  <td className='text-right'>DocNo: </td>
+                  <td>
+                    <select onChange={async (e) => {
+                      await getAllDataJobOrder(e?.target?.value)
+                      await getSalesOrderNoFetch()
+                      await getLocationFetch()
+                      await getWorkOrderTemplateFetch()
+                      await getDepartementFetch()
+                    }} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value="" selected >Pilih DocNo</option>
+                      {getDocNoJobOrder.map((res, key) => {
+                        return (
+                          <option value={res.DocNo} key={key}>{res.DocNo}</option>
+                        )
+                      })}
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td className='text-right'>Sales Order No: </td>
+                  <td>
+                    <select onChange={(e) => setSelectedSalesORder(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value={selectedDocNoAllData?.SODocNo} selected >{selectedDocNoAllData?.SODocNo}</option>
+                      {getSalesOrderNo?.map((res, key) => {
+                        return (
+                          <option value={res?.DocNo} key={key}>{res?.DocNo}</option>
+                        )
+                      })}
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+
+                  <td className='text-right'>Planned Start Date: </td>
                   <td>
                     <input
-                      type="number"
+                      type="date"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="0"
+                      placeholder=""
+                      disabled
+                      value={selectedDocNoAllData?.PlannedFinishDate}
+                    />
+                  </td>
+                  <td className='text-right'>Planned Finish Date: </td>
+                  <td>
+                    <input type="date"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder=""
+                      min={currentDate}
+                      defaultValue={selectedDocNoAllData?.PlannedFinishDate}
+                      onChange={e => setUpdatePlannedFinishDate(e.target.value)}
                       required
                     />
                   </td>
                 </tr>
                 <tr>
-                  <td className="text-right">Vehicle No: </td>
+                  <td className='text-right'>Actual Start Date: </td>
                   <td>
                     <input
-                      type="number"
+                      type="datetime-local"
+                      defaultValue="1998-12-31T00:00"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="0"
-                      required
+                      placeholder=""
+                      disabled
                     />
+                  </td>
+                  <td className='text-right'>Actual Finish Date: </td>
+                  <td>
+                    <input type="datetime-local"
+                      defaultValue="1998-12-31T00:00"
+                      disabled
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" />
                   </td>
                 </tr>
                 <tr>
-                  <td className="text-right">Batch No: </td>
+                  <td className='text-right'>Required Date: </td>
                   <td>
-                    <input
-                      type="number"
-                      className="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="0"
+                    <input type="date"
+                      onChange={(e) => setUpdateRequiredDate(e.target.value)}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder=""
+                      defaultValue={selectedDocNoAllData?.RequiredDate}
                       required
                     />
+                  </td>
+                  <td className='text-right'>Internal Order No: </td>
+                  <td>
+                    <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value="" disabled selected hidden>Pilih nomor order</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td className='text-right'>Parent Job Order: </td>
+                  <td>
+                    <select onChange={async (e) => {
+                      await getLevelFromJobOrder(e.target.value)
+                      setSelectedJobOrderNo(e.target.value)
+                    }}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value={selectedDocNoAllData?.ParentJODocNo} selected >{!selectedDocNoAllData?.ParentJODocNo ? 'pilih data' : selectedDocNoAllData?.ParentJODocNo + ' current'}</option>
+                      {getDocNoJobOrder
+                        .filter(item => selectedDocNoAllData !== item.DocNo)
+                        .map((res, key) => (
+                          <option value={res.DocNo} key={key}>{res.DocNo}</option>
+                        ))}
+                    </select>
+                  </td>
+                  <td className='text-right'>Work Order No: </td>
+                  <td>
+                    <input type="number" disabled className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" />
+                  </td>
+                </tr>
+                <tr>
+                  <td className='text-right'>Priority: </td>
+                  <td>
+                    <select onChange={e => setUpdatePriority(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value={selectedDocNoAllData?.Priority} selected >{`${selectedDocNoAllData?.Priority} current`}</option>
+                      <option value={1}>1. HIGH</option>
+                      <option value={2}>2. MEDIUM</option>
+                      <option value={3}>3. LOW</option>
+                    </select>
+                  </td>
+                  <td className='text-right'> Level: </td>
+                  <td>
+                    <input type="number" disabled value={!getLevelFetch?.Level ? selectedDocNoAllData?.Level : getLevelFetch?.Level} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
+                  </td>
+                </tr>
+                <tr>
+                  <td className='text-right'>Location: </td>
+                  <td>
+                    <select onChange={e => setSelectedLocation(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value={selectedDocNoAllData?.Location} selected >{`${selectedDocNoAllData?.Location} current`}</option>
+                      {getLocation.map((res, key) => {
+                        return (
+                          <option value={res.Code} key={key}>{res.Code}</option>
+                        )
+                      })}
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td className='text-right'>Department: </td>
+                  <td>
+                    <select onChange={e => setSelectedDepartement(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value={selectedDocNoAllData?.Department} selected >{`${selectedDocNoAllData?.Department} current`}</option>
+                      {getDepartment.map((res, key) => {
+                        return (
+                          <option key={key} value={res.Code}>{res.Code}</option>
+                        )
+                      })}
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td className='float-right'>
+                    <input type="checkbox" onChange={() => setExcludeCostDistribution(!excludeCostDistribution)} defaultChecked={selectedDocNoAllData?.ExcludeCostDistribution} name="" id="" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" />
+                  </td>
+                  <td className=''>
+                    Exclude from cost distribution
+                  </td>
+                </tr>
+                <tr>
+                  <td className='text-right'>Formula: </td>
+                  <td>
+                    <select onChange={async (e) => {
+                      await getWorkOrderTemplateDetail(e.target.value);
+                    }}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value={selectedDocNoAllData?.Formula} selected >{`${selectedDocNoAllData?.Formula} current`}</option>
+                      {getWoth?.map((res, key) => {
+                        return (
+                          <option key={key} value={res?.Formula}>{res?.Formula}</option>
+                        )
+                      })}
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td className='text-right'>Material Code: </td>
+                  <td>
+                    <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value={getWothDetail?.MaterialCode || selectedDocNoAllData?.MaterialCode} disabled selected >{getWothDetail?.MaterialCode || selectedDocNoAllData?.MaterialCode}</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td className='text-right'>Unit: </td>
+                  <td>
+                    <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value={getWothDetail?.Unit || selectedDocNoAllData?.Unit} disabled selected >{getWothDetail?.Unit || selectedDocNoAllData?.Unit}</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td className='text-right'>Qty Target: </td>
+                  <td>
+                    <input type="text" onChange={e => setQtyTarget(e.target.value)} defaultValue={selectedDocNoAllData?.QtyTarget} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
+                  </td>
+                  <td className='text-right'>Qty Output: </td>
+                  <td>
+                    <input type="text" disabled className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
+                  </td>
+                  <td className='float-right'>
+                    <input type="checkbox" defaultChecked={selectedDocNoAllData?.CheckQtyOutput} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" />
+                  </td>
+                  <td className=''>
+                    Check Qty Output &lt;= Qty Target
+                  </td>
+                </tr>
+                <tr>
+                  <td className='text-right'>Total Cost: </td>
+                  <td>
+                    <input type="text" defaultValue={selectedDocNoAllData?.TotalCost} disabled className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00" required />
                   </td>
                 </tr>
               </table>
-            </form>
-          </div>
-          <div className="relative overflow-x-auto">
-            <div className='text-xl font-bold'>New Detail Data:</div>
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" className="px-6 py-3">
-                    Code
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Info
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Unit
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Qty
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Required Date
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    QtyPO
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Control
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {detailDataUpdate.map((res, key) => {
-                  return (
-                    <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                      <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {res.materialCode}
-                      </th>
-                      <td className="px-6 py-4">
-                        {res.info}
-                      </td>
-                      <td className="px-6 py-4">
-                        {res.unit}
-                      </td>
-                      <td className="px-6 py-4">
-                        {res.qty}
-                      </td>
-                      <td className="px-6 py-4">
-                        {res.requiredDate}
-                      </td>
-                      <td className="px-6 py-4">
-                        {res.qtyPO}
-                      </td>
-                      <td className="px-6 py-4">
-                        <button onClick="" type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">delete</button>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-            <div>
             </div>
-          </div>
-          <div>
-            <table className='border-separate border-spacing-2'>
-              <tr>
-                <td className="text-right">Info:</td>
-                <td>
-                  <input type="text" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" value="" />
-                </td>
-                <td className="text-right">Quantity:</td>
-                <td>
-                  <input value="" type="number" className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required min="0" />
-                </td>
-                <td className="text-right">Required Date:</td>
-                <td>
-                  <input min={currentDate} type="datetime-local" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
-                </td>
-                <button
-                  onClick=""
-                  type="button"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
-                  Change
-                </button>
-              </tr>
-            </table>
-          </div>
-          <div className="relative overflow-x-auto">
-            <div className='text-xl font-bold'>Detail:</div>
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" className="px-6 py-3">
-                    Control
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Code
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Info
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Unit
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Qty
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Required Date
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    QtyPO
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                  <td className="px-6 py-4">
-                    <button
-                      onClick=""
-                      type="button"
-                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800">
-                      Select
-                    </button>
-                  </td>
-                  <td className="px-6 py-4"></td>
-                  <td className="px-6 py-4"></td>
-                  <td className="px-6 py-4"></td>
-                  <td className="px-6 py-4"></td>
-                  <td className="px-6 py-4"></td>
-                  <td className="px-6 py-4"></td>
-                </tr>
-              </tbody>
-            </table>
-            <div>
-            </div>
-          </div>
-        </div>
-      </div> */}
 
+            <div className='w-[75%] flex gap-3 justify-center items-center mx-auto my-10'>
+              <label>Information:</label>
+              <input type="text" onChange={e => setSelectedInformation(e.target.value)} defaultValue={selectedDocNoAllData?.Information} className="inline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" />
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  mx-auto dark:focus:ring-blue-800"
+            >
+              Save
+            </button>
+            <button
+              onClick={async () => {
+                await handleDelete(selectedDocNoAllData?.DocNo)
+              }
+              }
+              type='button'
+              className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none  mx-auto dark:focus:ring-red-800"
+            >
+              Delete
+            </button>
+          </div>
+
+        </form>
+      </div>
     </div >
   )
 }
+
