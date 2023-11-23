@@ -2632,7 +2632,7 @@ export const ModalComp = (params) => {
           totalNetto: totalNetto,
           taxValue: taxOutput,
           totalDisc: discountOutput,
-          detail: detail,
+          details: detail,
         }
       );
       setModal(false);
