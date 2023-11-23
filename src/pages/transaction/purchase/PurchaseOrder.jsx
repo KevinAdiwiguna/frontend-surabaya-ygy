@@ -2421,6 +2421,9 @@ export const ModalComp = (params) => {
   const [ARBook, setARBook] = useState([]);
   const [collector, setCollector] = useState("")
   const [totalGross, setTotalGross] = useState(0);
+  const [totalNetto, setTotalNetto] = useState(0);
+  const [discountOutput, setDiscountOutput] = useState(0);
+  const [taxOutput, setTaxOutput] = useState(0)
   const [customer, setCustomer] = useState([])
   const [detail, setDetail] = useState([]);
   const [detailUpdated, setDetailUpdated] = useState([]);
@@ -2430,8 +2433,9 @@ export const ModalComp = (params) => {
   const [top, setTop] = useState("")
   const [exchangeRate, setExchangeRate] = useState(0);
   const [tax, setTax] = useState();
-  const [taxVal, setTaxVal] = useState(0)
+  const [taxPercent, setTaxPercent] = useState(0)
   const [discount, setDiscount] = useState(0)
+  const [sendTo, setSendTo] = useState("")
 
   const getDetailDocNo = async (params) => {
     setDocNo(params);
@@ -2458,6 +2462,20 @@ export const ModalComp = (params) => {
     }
   }, [DetailDocNo]);
 
+  useEffect(()=>{
+    setSupplier(header.SupplierCode)
+    setDeliveryDate(header.DeliveryDate)
+    setJODocNo(header.JODocNo)
+    setTop(header.TOP)
+    setGetFCurrency(header.Currency)
+    setExchangeRate(header.ExchangeRate)
+    setTax(header.TaxStatus)
+    setTaxPercent(header.TaxPercent)
+    setDiscount(header.DiscPercent)
+    setSendTo(header.SendTo)
+    setInformation(header.Information)
+  },[header])
+
   const handleChangeDataAPI = (key, field, value) => {
     setDetail((prevData) =>
       prevData.map((data, index) => {
@@ -2467,10 +2485,27 @@ export const ModalComp = (params) => {
             [field]: value,
           };
           // Calculate PaymentLocal when ExchangeRate or Payment changes
-          if (field === "ExchangeRate" || field === "Payment") {
-            const exchangeRate = parseFloat(updatedData.ExchangeRate) || 1; // Use 1 as default if ExchangeRate is not a number
-            const payment = parseFloat(updatedData.Payment) || 0; // Use 0 as default if Payment is not a number
-            updatedData.PaymentLocal = (exchangeRate * payment).toFixed(2);
+          if (field === "Price" || field === "Qty" || field === "DiscPercent" || field === "DiscPercent2" || field === "DiscPercent3" || field === "DiscValue") {
+            const Qty = parseFloat(updatedData.Qty) || 0; // Use 0 as default if Qty is not a number
+            const Price = parseFloat(updatedData.Price) || 0; // Use 0 as default if Price is not a number
+            const Disc = parseFloat(updatedData.DiscPercent) || 0;
+            const Disc2 = parseFloat(updatedData.DiscPercent2) || 0;
+            const Disc3 = parseFloat(updatedData.DiscPercent3) || 0;
+            const DiscValue = parseFloat(updatedData.DiscValue) || 0;
+            updatedData.Gross = (Qty * Price).toFixed(2);
+            if (field === "DiscPercent" || field === "DiscPercent2" || field === "DiscPercent3") {
+              const disc =
+                Qty * Price -
+                (Qty * Price * Disc) / 100;
+              const disc2 = disc - (disc * Disc2) / 100;
+              const disc3 = disc2 - (disc2 * Disc3) / 100;
+              updatedData.Netto = disc3
+              updatedData.DiscNominal = (Qty * Price * Disc) / 100 + (disc * Disc2) / 100 + (disc2 * Disc3) / 100
+            } else {
+              const disc = Qty * Price - DiscValue;
+              updatedData.DiscNominal = DiscValue;
+              updatedData.Netto = disc;
+            } 
           }
           return updatedData;
         }
@@ -2478,6 +2513,44 @@ export const ModalComp = (params) => {
       })
     );
   };
+
+    const calculateTaxUpdate = (e) => {
+    if (tax === "No") {
+      return 0;
+    }
+    let total = (e * taxPercent) / 100;
+    return total;
+  };
+
+    const calculateTotalGrossUpdate = () => {
+    let total = 0;
+    for (let i = 0; i < detail.length; i++) {
+      let obj = detail[i];
+      let nettoAsInteger = parseFloat(obj.Netto);
+      total += nettoAsInteger;
+    }
+    setTotalGross(total);
+  };
+
+  const calculateTotalNettoUpdate = () => {
+    let nettoDiscount = (totalGross * discount) / 100;
+    let totalNetto = totalGross - nettoDiscount;
+    let taxes = calculateTaxUpdate(totalNetto);
+    if (tax === "Exclude") {
+      totalNetto = totalNetto + taxes;
+    }
+    setDiscountOutput(nettoDiscount);
+    setTaxOutput(taxes);
+    setTotalNetto(totalNetto);
+  };
+
+  useEffect(() => {
+    calculateTotalNettoUpdate();
+  }, [totalGross, taxPercent, tax, discount]);
+
+  useEffect(() => {
+    calculateTotalGrossUpdate();
+  }, [detail]);
 
   useEffect(() => {
     setCollector(selectedHeader?.CollectorCode)
@@ -2542,15 +2615,39 @@ export const ModalComp = (params) => {
   const handleSave = async () => {
     try {
       await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/customerpayment/${DocNo}`,
+        `${process.env.REACT_APP_API_BASE_URL}/purchaseorderh/${DocNo}`,
         {
+          supplier: supplier,
+          deliveryDate: deliveryDate,
+          JODocNo: JODocNo,
+          TOP: top,
+          currency: getFCurrency,
+          exchangeRate: exchangeRate,
+          taxStatus: tax,
+          taxPercent: taxPercent,
+          discPercent: discount,
+          sendTo: sendTo,
           information: Information,
-          details: detailUpdated,
+          totalGross: totalGross,
+          totalNetto: totalNetto,
+          taxValue: taxOutput,
+          totalDisc: discountOutput,
+          detail: detail,
         }
       );
       setModal(false);
       setDetail([]);
       setDetailDocNo("")
+      setSupplier("")
+      setDeliveryDate("")
+      setJODocNo("")
+      setTop(0)
+      setGetFCurrency("")
+      setExchangeRate(0)
+      setTax("")
+      setTaxPercent(0)
+      setDiscount(0)
+      setSendTo("")
       setInformation("")
       toast.success("Data Updated", {
         position: "top-center",
@@ -2743,13 +2840,13 @@ export const ModalComp = (params) => {
               </td>
               <td>
                 <input
-                  value={taxVal || header?.TaxValue}
+                  value={taxPercent || header?.TaxPercent}
                   onChange={(e) => {
-                    setTaxVal(e.target.value);
+                    setTaxPercent(e.target.value);
                   }}
                   type="number"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder={header?.TaxValue}
+                  placeholder={header?.TaxPercent}
                 />
               </td>
               <td> % Tax</td>
@@ -2758,13 +2855,13 @@ export const ModalComp = (params) => {
               <td className="text-right">Discount: </td>
               <td>
                 <input
-                  value={discount || header?.Discount}
+                  value={discount || header?.DiscPercent}
                   onChange={(e) => {
                     setDiscount(e.target.value);
                   }}
                   type="number"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder={header?.Discount}
+                  placeholder={header?.DiscPercent}
                 />
               </td>
               <td> %</td>
@@ -2774,12 +2871,12 @@ export const ModalComp = (params) => {
               <td className="text-right">Send To: </td>
               <td>
                 <select
-                  // value={sendTo}
-                  // onChange={(e) => setSendTo(e.target.value)}
+                  value={sendTo || header?.SendTo}
+                  onChange={(e) => setSendTo(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
                   <option value="" disabled selected hidden>
-                    Pilih
+                    {header?.SendTo}
                   </option>
                   <option value="JL. Berbek Industri 3 no 15">
                     JL. Berbek Industri 3 no 15
@@ -2795,9 +2892,9 @@ export const ModalComp = (params) => {
                 <input
                   onChange={(e) => setInformation(e.target.value)}
                   type="text"
-                  value={Information}
+                  value={Information || header?.Information}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder={selectedHeader?.Information}
+                  placeholder={header?.Information}
                 />
               </div>
             </tr>
@@ -2825,6 +2922,8 @@ export const ModalComp = (params) => {
                 >
                   Approve
                 </button>
+              </td>
+              <td>
                 <button
                   type="button"
                   onClick={() =>
@@ -2836,16 +2935,55 @@ export const ModalComp = (params) => {
                 </button>
               </td>
             </tr>
+            <tr>
+                  <td className="text-right">Total Gross : </td>
+                  <td>
+                    <input
+                      type="number"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="0.00"
+                      disabled
+                      value={totalGross}
+                    />
+                  </td>
+                  <td className="text-right">Total Disc: </td>
+                  <td>
+                    <input
+                      type="number"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="0.00"
+                      disabled
+                      value={discountOutput}
+                    />
+                  </td>
+                  <td className="text-right">Tax: </td>
+                  <td>
+                    <input
+                      type="number"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="0.00"
+                      disabled
+                      value={taxOutput}
+                    />
+                  </td>
+                  <td className="text-right font-bold">Total Netto: </td>
+                  <td>
+                    <input
+                      type="text"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="0.00"
+                      disabled
+                      value={totalNetto}
+                    />
+                  </td>
+                </tr>
           </table>
-          <table className="text-sm text-gray-500 dark:text-gray-400">
+          
             <div className="text-xl font-bold mb-4 pt-10">Detail</div>
             <div className="relative overflow-x-auto">
               <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
-                    <th scope="col" className="px-6 py-3">
-                      Number
-                    </th>
                     <th scope="col" className="px-6 py-3">
                       Code
                     </th>
@@ -2885,11 +3023,64 @@ export const ModalComp = (params) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* {orderDetail.map((res, kb */}
+                  {detail.map((res,key)=>{
+                    return (
+                      <tr key={key}
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                        <td className="px-6 py-4">{res.MaterialCode}</td>
+                        <td className="px-6 py-4">
+                        <input type="text" onChange={(e) => {
+                          handleChangeDataAPI(key, "Info", e.target.value);
+                        }}
+                          className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.Info} />
+                        </td>
+                        <td className="px-6 py-4">{res.Unit}</td>
+                        <td className="px-6 py-4">
+                        <input type="text" onChange={(e) => {
+                          handleChangeDataAPI(key, "Qty", e.target.value);
+                        }}
+                          className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.Qty} />
+                        </td>
+                        <td className="px-6 py-4">
+                        <input type="text" onChange={(e) => {
+                          handleChangeDataAPI(key, "Price", e.target.value);
+                        }}
+                          className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.Price} />
+                        </td>
+                        <td className="px-6 py-4">{res.Gross}</td>
+                        <td className="px-6 py-4">
+                        <input type="text" onChange={(e) => {
+                          handleChangeDataAPI(key, "DiscPercent", e.target.value);
+                        }}
+                          className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.DiscPercent} />
+                        </td>
+                        <td className="px-6 py-4">
+                        <input type="text" onChange={(e) => {
+                          handleChangeDataAPI(key, "DiscPercent2", e.target.value);
+                        }}
+                          className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.DiscPercent2} />
+                        </td>
+                        <td className="px-6 py-4">
+                        <input type="text" onChange={(e) => {
+                          handleChangeDataAPI(key, "DiscPercent3", e.target.value);
+                        }}
+                          className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.DiscPercent3} />
+                        </td>
+                        <td className="px-6 py-4">
+                        <input type="text" onChange={(e) => {
+                          handleChangeDataAPI(key, "DiscValue", e.target.value);
+                        }}
+                          className="bg-gray-50 border w-[100px] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={res.DiscValue} />
+                        </td>
+                        <td className="px-6 py-4">{res.DiscNominal}</td>
+                        <td className="px-6 py-4">{res.Netto}</td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
-          </table>
+          
         </div>
       </div>
     </div>
