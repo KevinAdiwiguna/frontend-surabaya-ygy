@@ -893,7 +893,7 @@ export const ModalComp = (params) => {
                 <tr className="flex gap-20">
                   <td>SJ Supllier : {header[0]?.SupplierDlvDocNo}</td>
                   <td>Nopol : {header[0]?.VehicleNo}</td>
-                  <td>Cetakan ke: {header[0]?.PrintCounter}</td>
+                  <td>Cetakan ke: {header[0]?.PrintCounter + 1}</td>
                   <td>{response?.Name}</td>
                 </tr>
               </table>
@@ -932,7 +932,7 @@ export const ModalComp = (params) => {
                         <td className="px-6 py-2 text-center">{res.Name}</td>
                         <td className="px-6 py-2 text-center">{res.Location}</td>
                         <td className="px-6 py-2 text-center">{res.Qty}</td>
-                        <td className="px-6 py-2 text-center">{Math.floor(res.Unit)}</td>
+                        <td className="px-6 py-2 text-center">{res.Unit}</td>
                       </tr>
                     </tbody>
                   );
