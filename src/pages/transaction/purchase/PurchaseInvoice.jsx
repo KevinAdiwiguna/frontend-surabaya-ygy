@@ -43,13 +43,13 @@ export const PurchaseInvoice = () => {
     setCostDistribution("")
     setTop("");
     setTax("");
-    setTaxVal("");
+    setTaxVal(0);
     setTaxNo("");
     setTaxNo2("");
     setDiscount("");
     setInfo("");
     setCutPph("");
-    setCutPphPercent("");
+    setCutPphPercent(0);
     setGoodsReceiptDocNo("")
     setGetPurchaseInvoiceDetail([])
   };
@@ -281,50 +281,48 @@ export const PurchaseInvoice = () => {
 
   const submitClick = async () => {
     try {
-      // await axios.post(
-      //   `${process.env.REACT_APP_API_BASE_URL}/purchaseinvoice`,
-      //   {
-      //     generateDocDate: generateDocDate(),
-      //     series,
-      //     docDate: docDate,
-      //     poDocNo: getMyGoodsReceiptDetail[0]?.PODocNo,
-      //     joDocNo: jobOrder,
-      //     trip: "",
-      //     transactionType: "",
-      //     grDocNo: goodsReceiptDocNo,
-      //     batchNo: getMyGoodsReceiptDetail[0]?.BatchNo,
-      //     supplierCode: getMyGoodsReceiptDetail[0]?.SupplierCode,
-      //     supplierTaxTo: getMyGoodsReceiptDetail[0]?.SupplierCode,
-      //     supplierInvNo: supplierInvoiceNo,
-      //     top: top,
-      //     currency: getFCurrency?.Currency,
-      //     exchangeRate: exchangeRate,
-      //     totalCost: "",
-      //     costDistribution: costDistribution,
-      //     taxStatus: tax,
-      //     taxPercent: taxVal,
-      //     taxPrefix: taxNo,
-      //     taxNo: taxNo2,
-      //     discPercent: discount,
-      //     totalGross,
-      //     totalDisc: discountOutput,
-      //     downPayment: 0,
-      //     taxValue: taxOutput,
-      //     taxValueInTaxCur: taxOutput,
-      //     totalNetto,
-      //     cutPPh: cutPph,
-      //     pphPercent: cutPphPercent,
-      //     pphValue: cutPphVal,
-      //     information: info,
-      //     status: "OPEN",
-      //     printCounter: 0,
-      //     printedBy: "",
-      //     printedDate: "",
-      //     createdBy: response?.User,
-      //     changedBy: response?.User,
-      //     details: getMyPurchaseInvoiceDetail,
-      //   }
-      // );
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/purchaseinvoice`,
+        {
+          generateDocDate: generateDocDate(),
+          series,
+          docDate: docDate,
+          poDocNo: getMyGoodsReceiptDetail[0]?.PODocNo,
+          joDocNo: jobOrder,
+          trip: "",
+          transactionType: "",
+          grDocNo: goodsReceiptDocNo,
+          batchNo: getMyGoodsReceiptDetail[0]?.BatchNo,
+          supplierCode: getMyGoodsReceiptDetail[0]?.SupplierCode,
+          supplierTaxTo: getMyGoodsReceiptDetail[0]?.SupplierCode,
+          supplierInvNo: supplierInvoiceNo,
+          top: top,
+          currency: getFCurrency?.Currency,
+          exchangeRate: exchangeRate,
+          totalCost: 0,
+          costDistribution: costDistribution,
+          taxStatus: tax,
+          taxPercent: taxVal,
+          taxPrefix: taxNo,
+          taxNo: taxNo2,
+          discPercent: discount,
+          totalGross,
+          totalDisc: discountOutput,
+          downPayment: 0,
+          taxValue: taxOutput,
+          taxValueInTaxCur: taxOutput,
+          totalNetto,
+          cutPPh: cutPph,
+          pphPercent: cutPphPercent,
+          pphValue: cutPphVal,
+          information: info,
+          status: "OPEN",
+          printCounter: 0,
+          createdBy: response?.User,
+          changedBy: response?.User,
+          details: getMyPurchaseInvoiceDetail,
+        }
+      );
       toast.success("Data Created", {
         position: "top-center",
         autoClose: 3000,
@@ -393,7 +391,7 @@ export const PurchaseInvoice = () => {
                 />
               </td>
             </tr>
-            
+
 
             <tr>
               <td className="text-right">Goods Receipt No: </td>
@@ -578,9 +576,8 @@ export const PurchaseInvoice = () => {
                   required
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
-                  <option selected value="No">
-                    No
-                  </option>
+                  <option selected value="" >Pilih</option>
+                  <option value="No">No</option>
                   <option value="Include">Include</option>
                   <option value="Exclude">Exclude</option>
                 </select>
